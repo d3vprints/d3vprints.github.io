@@ -11,11 +11,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
-      - name: Clean install
-        run: |
-          rm -f package-lock.json
-          npm install
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
       - run: npm run build
       - uses: peaceiris/actions-gh-pages@v3
         with:
