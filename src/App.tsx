@@ -593,7 +593,7 @@ const Contact = () => {
       const json = await res.json();
       console.log('Uploadcare response:', json);
       if (json.file) {
-        uploaded.push({ name: file.name, url: `https://ucarecdn.com/${json.file}/` });
+        uploaded.push({ name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` });
       } else {
         console.error('Uploadcare error:', json);
         alert(`File upload failed: ${JSON.stringify(json)}`);
