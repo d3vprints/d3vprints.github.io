@@ -275,7 +275,6 @@ const CustomPrints = () => {
                 referrerPolicy="no-referrer"
               />
             </div>
-            {/* Overlay tag */}
             <div className="absolute top-8 right-8 glass px-4 py-2 rounded-full text-xs font-mono font-bold uppercase tracking-widest">
               Material: Carbon Fiber PLA
             </div>
@@ -326,7 +325,7 @@ const DetailModal = ({ item, onClose }: { item: any; onClose: () => void }) => {
           </div>
           <h3 className="text-3xl font-bold mb-6">{item.title || item.name}</h3>
           <p className="text-gray-600 mb-8 leading-relaxed">
-            {item.description || "High-quality 3D printed product crafted with precision and care. Perfect for your home, office, or as a unique gift."}
+            {item.description || "High-quality 3D printed product crafted with precision and care."}
           </p>
           
           <div className="bg-brand-light p-6 rounded-2xl mb-8">
@@ -510,75 +509,17 @@ const Gallery = () => {
   const [activeCategory, setActiveCategory] = useState('All');
 
   const galleryItems = [
-    {
-      id: 1,
-      title: "Custom Lithophane Night Light",
-      category: "Lithophanes",
-      description: "A high-detail lithophane created from a family portrait, mounted on a custom LED night light base. Printed with 0.1mm layer height for photographic clarity.",
-      specs: "Material: PLA+ White | Print Time: 14h | Resolution: 0.1mm",
-      image: "https://picsum.photos/seed/print1/800/800"
-    },
-    {
-      id: 2,
-      title: "Industrial Gear Prototype",
-      category: "Functional",
-      description: "A functional replacement gear for a vintage lathe. Printed in Carbon Fiber Nylon for high strength and heat resistance.",
-      specs: "Material: CF-Nylon | Infill: 100% | Tolerance: ±0.1mm",
-      image: "https://picsum.photos/seed/print2/800/800"
-    },
-    {
-      id: 3,
-      title: "Articulated Dragon Sculpture",
-      category: "Artistic",
-      description: "A fully articulated dragon printed in one piece. Features 42 moving joints and a stunning silk-finish gradient.",
-      specs: "Material: Silk PLA | Print Time: 22h | Size: 45cm",
-      image: "https://picsum.photos/seed/print3/800/800"
-    },
-    {
-      id: 4,
-      title: "Architectural Scale Model",
-      category: "Functional",
-      description: "A 1:50 scale model of a modern residential complex. Used for client presentations and spatial planning.",
-      specs: "Material: Matte PLA | Parts: 12 | Scale: 1:50",
-      image: "https://picsum.photos/seed/print4/800/800"
-    },
-    {
-      id: 5,
-      title: "Custom Orthopedic Grip",
-      category: "Functional",
-      description: "An ergonomically designed grip for a surgical tool, customized to the surgeon's hand scan.",
-      specs: "Material: TPU (Flexible) | Shore Hardness: 95A",
-      image: "https://picsum.photos/seed/print5/800/800"
-    },
-    {
-      id: 6,
-      title: "Curved Lithophane Lamp",
-      category: "Lithophanes",
-      description: "A 360-degree lithophane lampshade featuring a panoramic landscape. Creates a warm, atmospheric glow.",
-      specs: "Material: PLA | Diameter: 150mm | Light: Warm LED",
-      image: "https://picsum.photos/seed/print6/800/800"
-    },
-    {
-      id: 7,
-      title: "Low-Poly Planter Set",
-      category: "Artistic",
-      description: "A set of three geometric planters with integrated drainage. Designed for succulents and small indoor plants.",
-      specs: "Material: Marble PLA | Finish: Matte",
-      image: "https://picsum.photos/seed/print7/800/800"
-    },
-    {
-      id: 8,
-      title: "Mechanical Linkage Assembly",
-      category: "Functional",
-      description: "A complex four-bar linkage system used for testing mechanical movements before final metal production.",
-      specs: "Material: PETG | Assembly: Snap-fit",
-      image: "https://picsum.photos/seed/print8/800/800"
-    }
+    { id: 1, title: "Custom Lithophane Night Light", category: "Lithophanes", description: "A high-detail lithophane created from a family portrait, mounted on a custom LED night light base.", specs: "Material: PLA+ White | Print Time: 14h | Resolution: 0.1mm", image: "https://picsum.photos/seed/print1/800/800" },
+    { id: 2, title: "Industrial Gear Prototype", category: "Functional", description: "A functional replacement gear for a vintage lathe. Printed in Carbon Fiber Nylon for high strength.", specs: "Material: CF-Nylon | Infill: 100% | Tolerance: ±0.1mm", image: "https://picsum.photos/seed/print2/800/800" },
+    { id: 3, title: "Articulated Dragon Sculpture", category: "Artistic", description: "A fully articulated dragon printed in one piece. Features 42 moving joints and a stunning silk-finish gradient.", specs: "Material: Silk PLA | Print Time: 22h | Size: 45cm", image: "https://picsum.photos/seed/print3/800/800" },
+    { id: 4, title: "Architectural Scale Model", category: "Functional", description: "A 1:50 scale model of a modern residential complex used for client presentations.", specs: "Material: Matte PLA | Parts: 12 | Scale: 1:50", image: "https://picsum.photos/seed/print4/800/800" },
+    { id: 5, title: "Custom Orthopedic Grip", category: "Functional", description: "An ergonomically designed grip for a surgical tool, customized to the surgeon's hand scan.", specs: "Material: TPU (Flexible) | Shore Hardness: 95A", image: "https://picsum.photos/seed/print5/800/800" },
+    { id: 6, title: "Curved Lithophane Lamp", category: "Lithophanes", description: "A 360-degree lithophane lampshade featuring a panoramic landscape.", specs: "Material: PLA | Diameter: 150mm | Light: Warm LED", image: "https://picsum.photos/seed/print6/800/800" },
+    { id: 7, title: "Low-Poly Planter Set", category: "Artistic", description: "A set of three geometric planters with integrated drainage.", specs: "Material: Marble PLA | Finish: Matte", image: "https://picsum.photos/seed/print7/800/800" },
+    { id: 8, title: "Mechanical Linkage Assembly", category: "Functional", description: "A complex four-bar linkage system used for testing mechanical movements.", specs: "Material: PETG | Assembly: Snap-fit", image: "https://picsum.photos/seed/print8/800/800" }
   ];
 
-  const filteredItems = activeCategory === 'All' 
-    ? galleryItems 
-    : galleryItems.filter(item => item.category === activeCategory);
+  const filteredItems = activeCategory === 'All' ? galleryItems : galleryItems.filter(item => item.category === activeCategory);
 
   return (
     <section id="gallery" className="py-24 px-6 bg-gray-50">
@@ -590,15 +531,8 @@ const Gallery = () => {
           </div>
           <div className="flex gap-2">
             {['All', 'Lithophanes', 'Functional', 'Artistic'].map((cat) => (
-              <button 
-                key={cat} 
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  activeCategory === cat 
-                    ? 'bg-brand-dark text-white shadow-md' 
-                    : 'bg-white text-gray-500 hover:bg-gray-100'
-                }`}
-              >
+              <button key={cat} onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat ? 'bg-brand-dark text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
                 {cat}
               </button>
             ))}
@@ -608,40 +542,18 @@ const Gallery = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item) => (
-              <motion.div 
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                key={item.id} 
-                className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm"
-              >
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
-                />
+              <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} key={item.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm">
+                <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button 
-                    onClick={() => setSelectedItem(item)}
-                    className="bg-white text-brand-dark px-4 py-2 rounded-xl text-sm font-bold hover:scale-105 transition-transform"
-                  >
-                    View Details
-                  </button>
+                  <button onClick={() => setSelectedItem(item)} className="bg-white text-brand-dark px-4 py-2 rounded-xl text-sm font-bold hover:scale-105 transition-transform">View Details</button>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
       </div>
-
-      {/* Detail Modal */}
       <AnimatePresence>
-        {selectedItem && (
-          <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
-        )}
+        {selectedItem && <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
       </AnimatePresence>
     </section>
   );
@@ -649,13 +561,9 @@ const Gallery = () => {
 
 const Contact = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    projectType: '',
-    message: ''
-  });
-  const [files, setFiles] = useState<File[]>([]);
+  const [formData, setFormData] = useState({ name: '', email: '', projectType: '', message: '' });
+  const [uploadedFiles, setUploadedFiles] = useState<{name: string, url: string}[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const projectTypes = [
@@ -665,40 +573,66 @@ const Contact = () => {
     { id: 'custom', title: 'Custom Project', description: 'Something unique or specific', icon: <FileText className="w-6 h-6" /> }
   ];
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFiles(Array.from(e.target.files));
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    setUploading(true);
+
+    const uploaded: {name: string, url: string}[] = [];
+    for (const file of files) {
+      const data = new FormData();
+      data.append('UPLOADCARE_PUB_KEY', 'bc495550492636fc4db6');
+      data.append('UPLOADCARE_STORE', '1');
+      data.append('file', file);
+
+      try {
+        const res = await fetch('https://upload.uploadcare.com/base/', {
+          method: 'POST',
+          body: data
+        });
+        const json = await res.json();
+        uploaded.push({ name: file.name, url: `https://ucarecdn.com/${json.file}/` });
+      } catch (err) {
+        console.error('Upload error:', err);
+      }
     }
+
+    setUploadedFiles(prev => [...prev, ...uploaded]);
+    setUploading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
-    
-    const data = new FormData();
-    data.append('name', formData.name);
-    data.append('email', formData.email);
-    data.append('projectType', formData.projectType);
-    data.append('message', formData.message);
-    files.forEach(file => {
-      data.append('files', file);
-    });
+
+    const fileLinks = uploadedFiles.length > 0
+      ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n')
+      : 'No files uploaded';
 
     try {
-      const response = await fetch('/api/inquiries', {
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        body: data
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
+          subject: `New D3V Prints Inquiry: ${formData.projectType}`,
+          name: formData.name,
+          email: formData.email,
+          projectType: formData.projectType,
+          message: formData.message,
+          files: fileLinks
+        })
       });
+
       if (response.ok) {
         setStatus('success');
         setFormData({ name: '', email: '', projectType: '', message: '' });
-        setFiles([]);
+        setUploadedFiles([]);
         setStep(1);
       } else {
         setStatus('error');
       }
     } catch (error) {
-      console.error("Submission error:", error);
       setStatus('error');
     }
   };
@@ -710,24 +644,17 @@ const Contact = () => {
           <div className="relative z-10 grid lg:grid-cols-5 gap-16">
             <div className="lg:col-span-2">
               <h2 className="text-5xl font-bold mb-8 leading-tight">Start Your <br /><span className="text-brand-primary">Project</span></h2>
-              <p className="text-xl text-gray-400 mb-12">
-                Follow our interactive process to get a precise quote for your 3D printing needs.
-              </p>
-              
+              <p className="text-xl text-gray-400 mb-12">Follow our interactive process to get a precise quote for your 3D printing needs.</p>
               <div className="hidden lg:block space-y-8">
                 {[1, 2, 3].map((s) => (
                   <div key={s} className={`flex items-center gap-4 transition-opacity ${step >= s ? 'opacity-100' : 'opacity-30'}`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 ${step >= s ? 'bg-brand-primary border-brand-primary text-brand-dark' : 'border-white/20'}`}>
-                      {s}
-                    </div>
-                    <div className="text-sm font-bold uppercase tracking-widest">
-                      {s === 1 ? 'Select Project' : s === 2 ? 'Project Details' : 'Contact Info'}
-                    </div>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 ${step >= s ? 'bg-brand-primary border-brand-primary text-brand-dark' : 'border-white/20'}`}>{s}</div>
+                    <div className="text-sm font-bold uppercase tracking-widest">{s === 1 ? 'Select Project' : s === 2 ? 'Project Details' : 'Contact Info'}</div>
                   </div>
                 ))}
               </div>
             </div>
-            
+
             <div className="lg:col-span-3 bg-white rounded-[2.5rem] p-8 lg:p-12 text-brand-dark">
               {status === 'success' ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12">
@@ -736,12 +663,7 @@ const Contact = () => {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">Order Received!</h3>
                   <p className="text-gray-500 mb-8">We've received your details and will get back to you with a quote within 24 hours.</p>
-                  <button 
-                    onClick={() => setStatus('idle')}
-                    className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors"
-                  >
-                    Start New Order
-                  </button>
+                  <button onClick={() => setStatus('idle')} className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Start New Order</button>
                 </div>
               ) : (
                 <div className="h-full flex flex-col">
@@ -750,17 +672,9 @@ const Contact = () => {
                       <h3 className="text-2xl font-bold mb-6">What are we printing today?</h3>
                       <div className="grid sm:grid-cols-2 gap-4">
                         {projectTypes.map((type) => (
-                          <button
-                            key={type.id}
-                            onClick={() => {
-                              setFormData({ ...formData, projectType: type.title });
-                              setStep(2);
-                            }}
-                            className="text-left p-6 rounded-3xl border-2 border-gray-100 hover:border-brand-primary hover:bg-brand-primary/5 transition-all group"
-                          >
-                            <div className="w-12 h-12 rounded-2xl bg-gray-100 group-hover:bg-brand-primary/20 flex items-center justify-center mb-4 transition-colors">
-                              {type.icon}
-                            </div>
+                          <button key={type.id} onClick={() => { setFormData({ ...formData, projectType: type.title }); setStep(2); }}
+                            className="text-left p-6 rounded-3xl border-2 border-gray-100 hover:border-brand-primary hover:bg-brand-primary/5 transition-all group">
+                            <div className="w-12 h-12 rounded-2xl bg-gray-100 group-hover:bg-brand-primary/20 flex items-center justify-center mb-4 transition-colors">{type.icon}</div>
                             <div className="font-bold text-lg">{type.title}</div>
                             <div className="text-sm text-gray-500 mt-1">{type.description}</div>
                           </button>
@@ -775,62 +689,45 @@ const Contact = () => {
                         <h3 className="text-2xl font-bold">Project Details</h3>
                         <span className="text-sm font-bold text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">{formData.projectType}</span>
                       </div>
-                      
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Description / Requirements</label>
-                          <textarea 
-                            rows={4}
-                            value={formData.message}
-                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                          <textarea rows={4} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                             className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none"
-                            placeholder={formData.projectType === 'Night Light' ? "Tell us about the photo or any text you want included..." : "Describe dimensions, material preferences, or intended use..."}
-                          />
+                            placeholder={formData.projectType === 'Night Light' ? "Tell us about the photo or any text you want included..." : "Describe dimensions, material preferences, or intended use..."} />
                         </div>
-
                         <div className="space-y-2">
                           <label className="text-xs font-bold uppercase tracking-widest text-gray-400">
                             {formData.projectType === 'Night Light' ? 'Upload Photos' : 'Upload Files (STL, STEP, etc.)'}
                           </label>
                           <div className="relative group">
-                            <input 
-                              type="file" 
-                              multiple
-                              onChange={handleFileChange}
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                            />
+                            <input type="file" multiple onChange={handleUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                             <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-8 text-center transition-colors">
                               <Upload className="w-8 h-8 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
                               <div className="text-sm font-bold text-gray-500">
-                                {files.length > 0 ? `${files.length} files selected` : 'Drag & drop or click to upload'}
+                                {uploading ? 'Uploading...' : uploadedFiles.length > 0 ? `${uploadedFiles.length} file(s) uploaded ✓` : 'Drag & drop or click to upload'}
                               </div>
                               <div className="text-xs text-gray-400 mt-1">Max file size: 10MB</div>
                             </div>
                           </div>
-                          {files.length > 0 && (
+                          {uploadedFiles.length > 0 && (
                             <div className="flex flex-wrap gap-2 mt-2">
-                              {files.map((f, i) => (
-                                <div key={i} className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2">
+                              {uploadedFiles.map((f, i) => (
+                                <a key={i} href={f.url} target="_blank" rel="noopener noreferrer"
+                                  className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200">
                                   <Paperclip className="w-3 h-3" /> {f.name}
-                                </div>
+                                </a>
                               ))}
                             </div>
                           )}
                         </div>
                       </div>
-
                       <div className="flex gap-4 pt-4">
-                        <button 
-                          onClick={() => setStep(1)}
-                          className="flex-1 px-8 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                        >
+                        <button onClick={() => setStep(1)} className="flex-1 px-8 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                           <ChevronLeft className="w-5 h-5" /> Back
                         </button>
-                        <button 
-                          onClick={() => setStep(3)}
-                          disabled={!formData.message}
-                          className="flex-[2] bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                        >
+                        <button onClick={() => setStep(3)} disabled={!formData.message || uploading}
+                          className="flex-[2] bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
                           Next Step <ChevronRight className="w-5 h-5" />
                         </button>
                       </div>
@@ -843,38 +740,21 @@ const Contact = () => {
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Your Name</label>
-                          <input 
-                            type="text"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none"
-                            placeholder="John Doe"
-                          />
+                          <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="John Doe" />
                         </div>
                         <div className="space-y-2">
                           <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Email Address</label>
-                          <input 
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none"
-                            placeholder="john@example.com"
-                          />
+                          <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="john@example.com" />
                         </div>
                       </div>
-
                       <div className="flex gap-4 pt-4">
-                        <button 
-                          onClick={() => setStep(2)}
-                          className="flex-1 px-8 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                        >
+                        <button onClick={() => setStep(2)} className="flex-1 px-8 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                           <ChevronLeft className="w-5 h-5" /> Back
                         </button>
-                        <button 
-                          onClick={handleSubmit}
-                          disabled={!formData.name || !formData.email || status === 'submitting'}
-                          className="flex-[2] bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                        >
+                        <button onClick={handleSubmit} disabled={!formData.name || !formData.email || status === 'submitting'}
+                          className="flex-[2] bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
                           {status === 'submitting' ? 'Sending...' : 'Submit Inquiry'}
                         </button>
                       </div>
@@ -885,8 +765,6 @@ const Contact = () => {
               )}
             </div>
           </div>
-          
-          {/* Decorative Elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/20 blur-[100px] -mr-32 -mt-32" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-primary/10 blur-[100px] -ml-32 -mb-32" />
         </div>
@@ -905,13 +783,11 @@ const Footer = () => {
           </div>
           <span className="font-bold text-lg tracking-tighter">D3V PRINTS</span>
         </div>
-        
         <div className="flex gap-8 text-sm text-gray-500 font-medium">
           <a href="#" className="hover:text-brand-dark transition-colors">Privacy Policy</a>
           <a href="#" className="hover:text-brand-dark transition-colors">Terms of Service</a>
           <Link to="/developer" className="hover:text-brand-dark transition-colors">Developer Access</Link>
         </div>
-        
         <div className="flex gap-4">
           <a href="https://www.instagram.com/d3v.prints/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
             <Instagram className="w-4 h-4" />
@@ -930,28 +806,22 @@ const Footer = () => {
 
 const DeveloperDashboard = () => {
   const [inquiries, setInquiries] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const DEV_PASSWORD = 'admin';
+
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    try {
-      const response = await fetch('/api/verify-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
-      if (response.ok) {
-        setIsAuthenticated(true);
-        sessionStorage.setItem('dev_password', password);
-      } else {
-        setError('Invalid password');
-      }
-    } catch (err) {
-      setError('Connection error');
+    if (password === DEV_PASSWORD) {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('dev_password', password);
+      fetchInquiries();
+    } else {
+      setError('Invalid password');
     }
   };
 
@@ -966,16 +836,11 @@ const DeveloperDashboard = () => {
   const fetchInquiries = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/inquiries', {
-        headers: { 'x-dev-password': password }
+      const response = await fetch('https://api.web3forms.com/submissions?apikey=28aa3f21-d905-4e73-95bb-686ad236eb55', {
+        headers: { 'Accept': 'application/json' }
       });
-      if (response.ok) {
-        const data = await response.json();
-        setInquiries(data);
-      } else {
-        setIsAuthenticated(false);
-        sessionStorage.removeItem('dev_password');
-      }
+      const data = await response.json();
+      setInquiries(data.data || []);
     } catch (error) {
       console.error("Fetch error:", error);
     } finally {
@@ -983,60 +848,15 @@ const DeveloperDashboard = () => {
     }
   };
 
-  const updateStatus = async (id: number, newStatus: string) => {
-    try {
-      const response = await fetch(`/api/inquiries/${id}`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-dev-password': password 
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-      if (response.ok) {
-        setInquiries(inquiries.map(inq => inq.id === id ? { ...inq, status: newStatus } : inq));
-      }
-    } catch (error) {
-      console.error("Update error:", error);
-    }
-  };
-
-  const deleteInquiry = async (id: number) => {
-    console.log('Attempting to delete inquiry:', id);
-    if (!confirm('Are you sure you want to delete this inquiry?')) return;
-    try {
-      const response = await fetch(`/api/inquiries/${id}`, {
-        method: 'DELETE',
-        headers: { 'x-dev-password': password }
-      });
-      if (response.ok) {
-        console.log('Delete successful');
-        setInquiries(prev => prev.filter(inq => inq.id !== id));
-      } else {
-        const errData = await response.json();
-        console.error('Delete failed:', errData);
-        alert('Failed to delete inquiry: ' + (errData.error || 'Unknown error'));
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert('Connection error while deleting');
-    }
-  };
-
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchInquiries();
-    }
-  }, [isAuthenticated, password]);
+    if (isAuthenticated) fetchInquiries();
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 max-w-md w-full"
-        >
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+          className="bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 max-w-md w-full">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-brand-primary/10 text-brand-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
               <ShieldCheck className="w-8 h-8" />
@@ -1044,25 +864,16 @@ const DeveloperDashboard = () => {
             <h1 className="text-2xl font-bold">Developer Access</h1>
             <p className="text-gray-500 text-sm mt-2">Please enter your password to access the dashboard.</p>
           </div>
-          
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Password</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none"
-                placeholder="••••••••"
-                required
-              />
+                placeholder="••••••••" required />
             </div>
             {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-            <button className="w-full bg-brand-dark text-white py-4 rounded-xl font-bold hover:bg-brand-primary transition-colors">
-              Unlock Dashboard
-            </button>
+            <button className="w-full bg-brand-dark text-white py-4 rounded-xl font-bold hover:bg-brand-primary transition-colors">Unlock Dashboard</button>
           </form>
-          
           <div className="mt-8 text-center">
             <Link to="/" className="text-sm font-bold text-gray-400 hover:text-brand-dark transition-colors flex items-center justify-center gap-2">
               <ArrowRight className="w-4 h-4 rotate-180" /> Back to Home
@@ -1078,25 +889,13 @@ const DeveloperDashboard = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Database className="text-brand-primary" />
-              Developer Dashboard
-            </h1>
-            <p className="text-gray-500">Manage and view all incoming project inquiries.</p>
+            <h1 className="text-3xl font-bold flex items-center gap-3"><Database className="text-brand-primary" /> Developer Dashboard</h1>
+            <p className="text-gray-500">View all incoming project inquiries.</p>
           </div>
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => {
-                setIsAuthenticated(false);
-                sessionStorage.removeItem('dev_password');
-              }}
-              className="text-sm font-bold text-gray-400 hover:text-red-500 transition-colors"
-            >
-              Logout
-            </button>
-            <Link to="/" className="text-sm font-bold text-brand-primary hover:underline flex items-center gap-1">
-              <ArrowRight className="w-4 h-4 rotate-180" /> Back to Site
-            </Link>
+            <button onClick={fetchInquiries} className="text-sm font-bold text-brand-primary hover:underline">Refresh</button>
+            <button onClick={() => { setIsAuthenticated(false); sessionStorage.removeItem('dev_password'); }} className="text-sm font-bold text-gray-400 hover:text-red-500 transition-colors">Logout</button>
+            <Link to="/" className="text-sm font-bold text-brand-primary hover:underline flex items-center gap-1"><ArrowRight className="w-4 h-4 rotate-180" /> Back to Site</Link>
           </div>
         </div>
 
@@ -1114,101 +913,53 @@ const DeveloperDashboard = () => {
           </div>
         ) : (
           <div className="grid gap-6">
-            {inquiries.map((inquiry) => (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                key={inquiry.id} 
-                className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-              >
+            {inquiries.map((inquiry, idx) => (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key={idx}
+                className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                   <div className="space-y-4 flex-1">
                     <div className="flex items-center gap-4 flex-wrap">
                       <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm font-medium">
-                        <User className="w-4 h-4 text-gray-400" />
-                        {inquiry.name}
+                        <User className="w-4 h-4 text-gray-400" />{inquiry.name}
                       </div>
                       <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm font-medium">
-                        <Mail className="w-4 h-4 text-gray-400" />
-                        {inquiry.email}
+                        <Mail className="w-4 h-4 text-gray-400" />{inquiry.email}
                       </div>
-                      <div className="flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-sm font-bold">
-                        <Box className="w-4 h-4" />
-                        {inquiry.projectType}
-                      </div>
-                      <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-bold ${
-                        inquiry.status === 'Done' ? 'bg-emerald-100 text-emerald-600' :
-                        inquiry.status === 'In Progress' ? 'bg-blue-100 text-blue-600' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        {inquiry.status === 'Done' ? <CheckCircle className="w-4 h-4" /> :
-                         inquiry.status === 'In Progress' ? <PlayCircle className="w-4 h-4" /> :
-                         <Circle className="w-4 h-4" />}
-                        {inquiry.status || 'Not Started'}
-                      </div>
+                      {inquiry.projectType && (
+                        <div className="flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-sm font-bold">
+                          <Box className="w-4 h-4" />{inquiry.projectType}
+                        </div>
+                      )}
                     </div>
                     <div>
                       <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Message</h3>
                       <p className="text-gray-700 leading-relaxed">{inquiry.message}</p>
                     </div>
-
-                    {inquiry.files && (
+                    {inquiry.files && inquiry.files !== 'No files uploaded' && (
                       <div>
                         <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Attached Files</h3>
                         <div className="flex flex-wrap gap-2">
-                          {JSON.parse(inquiry.files).map((file: string, idx: number) => (
-                            <a 
-                              key={idx}
-                              href={`/uploads/${file}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl text-xs font-bold transition-colors"
-                            >
-                              <Paperclip className="w-3 h-3" />
-                              {file.split('-').slice(2).join('-')}
-                            </a>
-                          ))}
+                          {inquiry.files.split('\n').map((line: string, i: number) => {
+                            const [name, url] = line.split(': ');
+                            return url ? (
+                              <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                                className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl text-xs font-bold transition-colors">
+                                <Paperclip className="w-3 h-3" />{name}
+                              </a>
+                            ) : null;
+                          })}
                         </div>
                       </div>
                     )}
-                    
-                    <div className="flex items-center gap-2 pt-2">
-                      <span className="text-xs font-bold uppercase tracking-widest text-gray-400 mr-2">Set Status:</span>
-                      {['Not Started', 'In Progress', 'Done'].map((s) => (
-                        <button
-                          key={s}
-                          onClick={() => updateStatus(inquiry.id, s)}
-                          className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
-                            inquiry.status === s 
-                              ? 'bg-brand-dark text-white' 
-                              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                          }`}
-                        >
-                          {s}
-                        </button>
-                      ))}
-                    </div>
                   </div>
                   <div className="text-right shrink-0 flex flex-col items-end gap-4">
                     <div className="flex items-center gap-2 text-gray-400 text-xs font-mono uppercase">
-                      <Clock className="w-3 h-3" />
-                      {new Date(inquiry.createdAt).toLocaleString()}
+                      <Clock className="w-3 h-3" />{new Date(inquiry.created_at).toLocaleString()}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => deleteInquiry(inquiry.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all rounded-xl"
-                        title="Delete Inquiry"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                      <a 
-                        href={`mailto:${inquiry.email}`}
-                        className="inline-flex items-center gap-2 bg-brand-dark text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brand-primary transition-colors"
-                      >
-                        Reply <ExternalLink className="w-4 h-4" />
-                      </a>
-                    </div>
+                    <a href={`mailto:${inquiry.email}`}
+                      className="inline-flex items-center gap-2 bg-brand-dark text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brand-primary transition-colors">
+                      Reply <ExternalLink className="w-4 h-4" />
+                    </a>
                   </div>
                 </div>
               </motion.div>
@@ -1220,27 +971,21 @@ const DeveloperDashboard = () => {
   );
 };
 
-const Home = () => {
-  return (
-    <main>
-      <Hero />
-      <Services />
-      <LithophaneSection />
-      <CustomPrints />
-      <CurrentProducts />
-      <Gallery />
-      <Contact />
-    </main>
-  );
-};
+const Home = () => (
+  <main>
+    <Hero />
+    <Services />
+    <LithophaneSection />
+    <CustomPrints />
+    <CurrentProducts />
+    <Gallery />
+    <Contact />
+  </main>
+);
 
 export default function App() {
   const location = useLocation();
-
-  // Scroll to top on route change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+  useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
 
   return (
     <div className="min-h-screen selection:bg-brand-primary selection:text-white">
