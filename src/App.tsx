@@ -573,33 +573,40 @@ const Contact = () => {
     { id: 'custom', title: 'Custom Project', description: 'Something unique or specific', icon: <FileText className="w-6 h-6" /> }
   ];
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const files = Array.from(e.target.files);
-    setUploading(true);
+ const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (!e.target.files) return;
+  const files = Array.from(e.target.files);
+  setUploading(true);
 
-    const uploaded: {name: string, url: string}[] = [];
-    for (const file of files) {
-      const data = new FormData();
-      data.append('UPLOADCARE_PUB_KEY', 'bc495550492636fc4db6');
-      data.append('UPLOADCARE_STORE', '1');
-      data.append('file', file);
+  const uploaded: {name: string, url: string}[] = [];
+  for (const file of files) {
+    const data = new FormData();
+    data.append('UPLOADCARE_PUB_KEY', 'bc495550492636fc4db6');
+    data.append('UPLOADCARE_STORE', '1');
+    data.append('file', file);
 
-      try {
-        const res = await fetch('https://upload.uploadcare.com/base/', {
-          method: 'POST',
-          body: data
-        });
-        const json = await res.json();
+    try {
+      const res = await fetch('https://upload.uploadcare.com/base/', {
+        method: 'POST',
+        body: data
+      });
+      const json = await res.json();
+      console.log('Uploadcare response:', json);
+      if (json.file) {
         uploaded.push({ name: file.name, url: `https://ucarecdn.com/${json.file}/` });
-      } catch (err) {
-        console.error('Upload error:', err);
+      } else {
+        console.error('Uploadcare error:', json);
+        alert(`File upload failed: ${JSON.stringify(json)}`);
       }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert(`Upload error: ${err}`);
     }
+  }
 
-    setUploadedFiles(prev => [...prev, ...uploaded]);
-    setUploading(false);
-  };
+  setUploadedFiles(prev => [...prev, ...uploaded]);
+  setUploading(false);
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
