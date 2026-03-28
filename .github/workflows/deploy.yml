@@ -14,7 +14,14 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install --legacy-peer-deps
-      - run: npm run build
+      - name: Build
+        run: npm run build
+      - name: Add SPA redirect script
+        run: |
+          # Add routing script to built index.html
+          sed -i 's|<head>|<head><script type="text/javascript">(function(l){if(l.search[1]==="\/"){var decoded=l.search.slice(1).split("\&").map(function(s){return s.replace(/~and~/g,"\&")}).join("?");window.history.replaceState(null,null,l.pathname.slice(0,-1)+decoded+l.hash)}}(window.location))</script>|' dist/index.html
+          # Copy 404.html
+          cp public/404.html dist/404.html || true
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
