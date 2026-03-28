@@ -97,7 +97,7 @@ const Hero = () => (
           <div className="text-xs font-mono uppercase tracking-tighter text-gray-500">Layer Detail</div>
         </div>
         <div className="absolute -bottom-6 -left-6 glass p-6 rounded-2xl shadow-lg hidden sm:block">
-          <div className="text-3xl font-bold">48h</div>
+          <div className="text-3xl font-bold">Quick</div>
           <div className="text-xs font-mono uppercase tracking-tighter text-gray-500">Turnaround</div>
         </div>
       </motion.div>
@@ -140,7 +140,7 @@ const LithophaneSection = () => (
           <div className="space-y-6">
             {[
               { name: "Flat Panel", desc: "Classic rectangular panel, perfect for portraits. Comes with a warm LED base.", price: "From $25" },
-              { name: "Curved Lamp", desc: "Wrap-around cylindrical design for a softer 360° glow. Great for panoramic shots.", price: "From $35" },
+              { name: "Night Light", desc: "Wrap-around cylindrical design for a softer 120° glow. Great for panoramic shots.", price: "From $35" },
               { name: "Heart Shape", desc: "Romantic heart-shaped lithophane. Most popular for couples and Valentine's Day.", price: "From $30" },
               { name: "Custom Shape", desc: "Any shape you want — names, logos, silhouettes. Contact us for a quote.", price: "Custom" },
             ].map((style, i) => (
@@ -169,7 +169,7 @@ const LithophaneSection = () => (
       <div className="text-center bg-brand-primary/10 border border-brand-primary/20 rounded-3xl p-16">
         <Heart className="w-12 h-12 text-brand-primary mx-auto mb-6" />
         <h3 className="text-4xl font-bold mb-4">Ready to Create Yours?</h3>
-        <p className="text-gray-400 text-xl mb-10 max-w-lg mx-auto">Upload your photo, pick a style, and we'll ship your finished night light within 48 hours.</p>
+        <p className="text-gray-400 text-xl mb-10 max-w-lg mx-auto">Upload your photo, pick a style, and we'll ship your finished night light asap.</p>
         <a href="#contact" className="inline-flex items-center gap-3 bg-brand-primary text-brand-dark px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition-transform">
           Order Your Lithophane <ArrowRight className="w-5 h-5" />
         </a>
@@ -189,7 +189,7 @@ const HowItWorks = () => (
         {[
           { step: "01", icon: <Camera className="w-7 h-7" />, title: "Pick Your Style", desc: "Choose flat panel, curved lamp, heart, or a custom shape from the order form." },
           { step: "02", icon: <Upload className="w-7 h-7" />, title: "Upload Your Photo", desc: "Send us your image directly through the form. Higher resolution = sharper result." },
-          { step: "03", icon: <Printer className="w-7 h-7" />, title: "We Print It", desc: "We process and print your lithophane with 0.1mm precision over 24–48 hours." },
+          { step: "03", icon: <Printer className="w-7 h-7" />, title: "We Print It", desc: "We process and print your lithophane with precision over 24+ hours." },
           { step: "04", icon: <Package className="w-7 h-7" />, title: "Shipped to You", desc: "Carefully packaged with the LED base included and sent directly to your door." },
         ].map((s, i) => (
           <motion.div key={i} whileHover={{ y: -8 }} className="relative p-8 rounded-3xl bg-brand-light border border-gray-100 hover:shadow-xl transition-all">
@@ -408,7 +408,7 @@ const Contact = () => {
           <div className="relative z-10 grid lg:grid-cols-5 gap-16">
             <div className="lg:col-span-2">
               <h2 className="text-5xl font-bold mb-4 leading-tight">Order Your <br /><span className="text-brand-primary">Night Light</span></h2>
-              <p className="text-gray-400 mb-4 leading-relaxed">Upload your photo and we'll have your lithophane printed and shipped within 48 hours.</p>
+              <p className="text-gray-400 mb-4 leading-relaxed">Upload your photo and we'll have your lithophane printed and shipped asap.</p>
               <div className="flex items-center gap-2 text-brand-primary text-sm font-bold mb-12">
                 <CheckCircle2 className="w-4 h-4" /> Includes LED base
               </div>
