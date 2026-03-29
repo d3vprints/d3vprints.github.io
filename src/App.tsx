@@ -14,7 +14,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between glass rounded-2xl px-6 py-3 shadow-sm">
         <div className="flex items-center gap-2">
-          <img src="/your-logo.png" alt="D3V Prints" className="h-8 w-auto" />
+          <img src="/logo.png" alt="D3V Prints" className="h-8 w-auto" />
         </div>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#lithophanes" className="hover:text-brand-primary transition-colors font-semibold text-brand-primary">Lithophanes ✦</a>
