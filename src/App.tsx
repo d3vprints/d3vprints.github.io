@@ -58,7 +58,7 @@ const Hero = () => (
           <span className="text-brand-primary italic">Glowing Forever.</span>
         </h1>
         <p className="text-lg text-gray-600 max-w-md mb-8 leading-relaxed">
-          D3V Prints transforms your favorite photos into stunning lithophane night lights. Upload a photo — we do the rest.
+          D3V Prints transforms your favorite photos into stunning lithophane night lights. Upload a photo we do the rest.
         </p>
         <div className="flex flex-wrap gap-4">
           <a href="#contact" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
@@ -116,13 +116,13 @@ const LithophaneSection = () => (
           Lithophane <br /><span className="text-brand-primary italic">Night Lights</span>
         </h2>
         <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-          A lithophane is a 3D-printed panel that reveals a photographic image when backlit. We turn your cherished photos into glowing works of art — perfect for gifts, memorials, and home decor.
+          A lithophane is a 3D-printed panel that reveals a photographic image when backlit. We turn your cherished photos into glowing works of art: perfect for gifts, memorials, and home decor.
         </p>
       </div>
  
       <div className="grid lg:grid-cols-3 gap-8 mb-20">
         {[
-          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works — portraits, landscapes, pets, couples. The higher the resolution the better the detail." },
+          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works: portraits, landscapes, pets, couples. The higher the resolution the better the detail." },
           { icon: <Printer className="w-8 h-8" />, title: "We Print It", desc: "Using 0.1mm layer resolution and premium PLA+ white filament for the sharpest possible image clarity." },
           { icon: <Lightbulb className="w-8 h-8" />, title: "It Glows", desc: "Plug in the included LED base and watch your photo appear in stunning backlit detail. Magic." }
         ].map((f, i) => (
@@ -142,7 +142,7 @@ const LithophaneSection = () => (
               { name: "Flat Panel", desc: "Classic rectangular panel, perfect for portraits. Comes with a warm LED base.", price: "From $25" },
               { name: "Night Light", desc: "Wrap-around cylindrical design for a softer 120° glow. Great for panoramic shots.", price: "From $35" },
               { name: "Heart Shape", desc: "Romantic heart-shaped lithophane. Most popular for couples and Valentine's Day.", price: "From $30" },
-              { name: "Custom Shape", desc: "Any shape you want — names, logos, silhouettes. Contact us for a quote.", price: "Custom" },
+              { name: "Custom Shape", desc: "Any shape you want: names, logos, silhouettes. Contact us for a quote.", price: "Custom" },
             ].map((style, i) => (
               <div key={i} className="flex items-center justify-between p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brand-primary/50 transition-colors">
                 <div>
@@ -160,8 +160,8 @@ const LithophaneSection = () => (
             <img src="/nightlightlitho.png" alt="Lithophane example 2" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
           </div>
           <div className="space-y-4 pt-12">
-            <img src="/flatlitho" alt="Lithophane example 3" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
-            <img src="/nightlight2litho.png" alt="Lithophane example 4" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
+            <img src="/nightlight2litho.png" alt="Lithophane example 3" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
+            <img src="/flatlitho.png" alt="Lithophane example 4" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
           </div>
         </div>
       </div>
@@ -226,7 +226,7 @@ const DetailModal = ({ item, onClose }: { item: any; onClose: () => void }) => {
             <div className="text-sm font-medium text-brand-dark">{item.specs || `Price: ${item.price} | Availability: In Stock`}</div>
           </div>
           {item.credit && (
-            <p className="text-[5px] text-gray-300 mb-4 leading-relaxed">{item.credit}</p>
+            <p className="text-[7px] text-gray-300 mb-4 leading-relaxed">{item.credit}</p>
           )}
           <a href="#contact" onClick={onClose} className="bg-brand-dark text-white text-center py-4 rounded-xl font-bold hover:bg-brand-primary transition-colors">
             {item.price ? "Order Now" : "Inquire About This"}
@@ -470,7 +470,7 @@ const Contact = () => {
                               <div className="text-sm font-bold text-gray-500">
                                 {uploading ? 'Uploading...' : uploadedFiles.length > 0 ? `${uploadedFiles.length} file(s) uploaded ✓` : 'Drag & drop or click to upload'}
                               </div>
-                              <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB</div>
+                              <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL: Max 10MB</div>
                             </div>
                           </div>
                           {uploadedFiles.length > 0 && (
