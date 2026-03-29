@@ -82,7 +82,7 @@ const Hero = () => (
       </motion.div>
       <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }} className="relative">
         <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl relative group">
-          <img src="/front1.png" alt="Lithophane Night Light" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+          <img src="/all litho.png" alt="Lithophane Night Light" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/60 to-transparent" />
           <div className="absolute bottom-8 left-8 right-8 text-white">
             <div className="flex items-center gap-4 mb-2">
@@ -156,12 +156,12 @@ const LithophaneSection = () => (
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-4">
-            <img src="https://picsum.photos/seed/litho1/400/600" alt="Lithophane example 1" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
-            <img src="https://picsum.photos/seed/litho2/400/400" alt="Lithophane example 2" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
+            <img src="/heartlitho.png" alt="Lithophane example 1" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
+            <img src="/nightlightlitho.png" alt="Lithophane example 2" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
           </div>
           <div className="space-y-4 pt-12">
-            <img src="https://picsum.photos/seed/litho3/400/400" alt="Lithophane example 3" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
-            <img src="https://picsum.photos/seed/litho4/400/600" alt="Lithophane example 4" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
+            <img src="/flatlitho" alt="Lithophane example 3" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
+            <img src="/nightlight2litho.png" alt="Lithophane example 4" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
           </div>
         </div>
       </div>
@@ -226,7 +226,7 @@ const DetailModal = ({ item, onClose }: { item: any; onClose: () => void }) => {
             <div className="text-sm font-medium text-brand-dark">{item.specs || `Price: ${item.price} | Availability: In Stock`}</div>
           </div>
           {item.credit && (
-            <p className="text-[9px] text-gray-300 mb-4 leading-relaxed">{item.credit}</p>
+            <p className="text-[5px] text-gray-300 mb-4 leading-relaxed">{item.credit}</p>
           )}
           <a href="#contact" onClick={onClose} className="bg-brand-dark text-white text-center py-4 rounded-xl font-bold hover:bg-brand-primary transition-colors">
             {item.price ? "Order Now" : "Inquire About This"}
@@ -240,10 +240,10 @@ const DetailModal = ({ item, onClose }: { item: any; onClose: () => void }) => {
 const CurrentProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const products = [
-    { id: 1, name: "Mini Flexi Octopus", price: "$5.00", tag: "Best Seller", image: "https://picsum.photos/seed/dragon/600/600", description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.", credit: "Design: Flexi Octopus by McGybeer, Thingiverse, CC BY 4.0. Printed by D3V Prints." },
-    { id: 2, name: "Geometric Planter", price: "$18.50", tag: "Eco-Friendly", image: "https://picsum.photos/seed/planter/600/600", description: "A modern geometric planter with a dual-chamber self-watering design.", credit: "Design: Geometric Planter, Printables community, CC BY 4.0. Printed by D3V Prints." },
-    { id: 3, name: "Modular Desk Organizer", price: "$32.00", tag: "New Arrival", image: "https://picsum.photos/seed/desk/600/600", description: "Keep your workspace tidy with this customizable modular organizer.", credit: "Design: Modular Desk Organizer, Thingiverse, CC BY 4.0. Printed by D3V Prints." },
-    { id: 4, name: "Low-Poly Wolf Sculpture", price: "$15.00", tag: "Artistic", image: "https://picsum.photos/seed/sculpture/600/600", description: "A minimalist low-poly wolf printed with a matte finish.", credit: "Design: Low-Poly Wolf, Thingiverse, CC BY 4.0. Printed by D3V Prints." }
+    { id: 1, name: "Mini Flexi Octopus", price: "$5.00", tag: "Best Seller", image: "/octopus.png", description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.", credit:"Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints."  },
+    { id: 2, name: "Credit Card Sized Phone Stand", price: "$18.50", tag: "New Arrival", image: "/phonestand.png", description: "A slim, wallet friendly phone stand that folds flat, thinner than a quarter, and sets up in seconds.", credit: "Design: 0.8mm thin adjustable credit card phone stand by jq910, Thingiverse, CC BY 4.0. Printed by D3V Prints."},
+    { id: 3, name: "Keychain", price: "$32.00", tag: "New Arrival", image: "/keychain.png", description: "Many different types of keychains avaiable upon request like, name keychain, Formula 1 keychains and much more!", credit: "Design: Dependent on keychain, credits available upon request. Printed by D3V Prints." },
+    { id: 4, name: "118 db Whistle", price: "$15.00", tag: "Artistic", image: "https://picsum.photos/seed/sculpture/600/600", description: "A loud, pealess 118dB emergency whistle perfect for hiking, camping, or everyday carry.", credit: "Design: V29 by jzisa, Thingiverse, CC BY 4.0. Printed by D3V Prints." }
   ];
  
   return (
