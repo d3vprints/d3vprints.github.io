@@ -14,10 +14,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between glass rounded-2xl px-6 py-3 shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="bg-brand-dark p-1.5 rounded-lg">
-            <Printer className="w-5 h-5 text-brand-primary" />
-          </div>
-          <span className="font-bold text-xl tracking-tighter">D3V PRINTS</span>
+          <img src="/your-logo.png" alt="D3V Prints" className="h-8 w-auto" />
         </div>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#lithophanes" className="hover:text-brand-primary transition-colors font-semibold text-brand-primary">Lithophanes ✦</a>
@@ -156,12 +153,12 @@ const LithophaneSection = () => (
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-4">
-            <img src="/heartlitho.png" alt="Lithophane example 1" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
-            <img src="/nightlightlitho.png" alt="Lithophane example 2" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
+            <img src="/heartlitho.png" alt="Lithophane example 1" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
+            <img src="/nightlightlitho.png" alt="Lithophane example 2" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
           </div>
           <div className="space-y-4 pt-12">
-            <img src="/nightlight2litho.png" alt="Lithophane example 3" className="rounded-2xl w-full aspect-square object-cover opacity-90" />
-            <img src="/flatlitho.png" alt="Lithophane example 4" className="rounded-2xl w-full aspect-[3/4] object-cover opacity-90" />
+            <img src="/nightlight2litho.png" alt="Lithophane example 3" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
+            <img src="/flatlitho.png" alt="Lithophane example 4" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
           </div>
         </div>
       </div>
@@ -243,7 +240,7 @@ const CurrentProducts = () => {
     { id: 1, name: "Mini Flexi Octopus", price: "$5.00", tag: "Best Seller", image: "/octopus.png", description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.", credit:"Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints."  },
     { id: 2, name: "Credit Card Sized Phone Stand", price: "$18.50", tag: "New Arrival", image: "/phonestand.png", description: "A slim, wallet friendly phone stand that folds flat, thinner than a quarter, and sets up in seconds.", credit: "Design: 0.8mm thin adjustable credit card phone stand by jq910, Thingiverse, CC BY 4.0. Printed by D3V Prints."},
     { id: 3, name: "Keychain", price: "$32.00", tag: "New Arrival", image: "/keychain.png", description: "Many different types of keychains avaiable upon request like, name keychain, Formula 1 keychains and much more!", credit: "Design: Dependent on keychain, credits available upon request. Printed by D3V Prints." },
-    { id: 4, name: "118 db Whistle", price: "$15.00", tag: "Artistic", image: "https://picsum.photos/seed/sculpture/600/600", description: "A loud, pealess 118dB emergency whistle perfect for hiking, camping, or everyday carry.", credit: "Design: V29 by jzisa, Thingiverse, CC BY 4.0. Printed by D3V Prints." }
+    { id: 4, name: "118 db Whistle", price: "$15.00", tag: "Artistic", image: "/whistle.png", description: "A loud, pealess 118dB emergency whistle perfect for hiking, camping, or everyday carry.", credit: "Design: V29 by jzisa, Thingiverse, CC BY 4.0. Printed by D3V Prints." }
   ];
  
   return (
