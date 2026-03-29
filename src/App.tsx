@@ -223,7 +223,7 @@ const DetailModal = ({ item, onClose }: { item: any; onClose: () => void }) => {
             <div className="text-sm font-medium text-brand-dark">{item.specs || `Price: ${item.price} | Availability: In Stock`}</div>
           </div>
           {item.credit && (
-            <p className="text-[7px] text-gray-300 mb-4 leading-relaxed">{item.credit}</p>
+            <p className="text-[9px] text-gray-300 mb-4 leading-relaxed">{item.credit}</p>
           )}
           <a href="#contact" onClick={onClose} className="bg-brand-dark text-white text-center py-4 rounded-xl font-bold hover:bg-brand-primary transition-colors">
             {item.price ? "Order Now" : "Inquire About This"}
