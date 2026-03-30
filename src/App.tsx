@@ -23,7 +23,7 @@ const Navbar = () => {
           <a href="#lithophanes" className="hover:text-brand-primary transition-colors font-semibold text-brand-primary">Lithophanes ✦</a>
           <a href="#how-it-works" className="hover:text-brand-primary transition-colors">How It Works</a>
           <a href="#products" className="hover:text-brand-primary transition-colors">Other Prints</a>
-          {/* <a href="#gallery" className="hover:text-brand-primary transition-colors">Gallery</a> */}
+          <a href="#gallery" className="hover:text-brand-primary transition-colors">Gallery</a>
           <a href="#contact" className="bg-brand-dark text-white px-5 py-2 rounded-xl hover:bg-brand-dark/90 transition-all">Order Now</a>
         </div>
         <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
@@ -37,7 +37,7 @@ const Navbar = () => {
             <a href="#lithophanes" onClick={() => setIsOpen(false)} className="text-lg font-semibold text-brand-primary">Lithophanes ✦</a>
             <a href="#how-it-works" onClick={() => setIsOpen(false)} className="text-lg font-medium">How It Works</a>
             <a href="#products" onClick={() => setIsOpen(false)} className="text-lg font-medium">Other Prints</a>
-            {/* <a href="#gallery" onClick={() => setIsOpen(false)} className="text-lg font-medium">Gallery</a> */}
+            <a href="#gallery" onClick={() => setIsOpen(false)} className="text-lg font-medium">Gallery</a>
             <a href="#contact" onClick={() => setIsOpen(false)} className="bg-brand-dark text-white px-5 py-3 rounded-xl text-center">Order Now</a>
           </motion.div>
         )}
@@ -255,7 +255,7 @@ const CurrentProducts = () => {
             <h2 className="text-4xl font-bold mb-4 italic">Popular Products</h2>
             <p className="text-gray-500 max-w-md">Fun and functional prints available to order anytime.</p>
           </div>
-          {/* <a href="#gallery" className="flex items-center gap-2 text-brand-primary font-bold hover:underline">Browse Gallery <ArrowRight className="w-4 h-4" /></a> */}
+          <a href="#gallery" className="flex items-center gap-2 text-brand-primary font-bold hover:underline">Browse Gallery <ArrowRight className="w-4 h-4" /></a>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
@@ -290,58 +290,58 @@ const CurrentProducts = () => {
   );
 };
  
-// const Gallery = () => {
-//   const [selectedItem, setSelectedItem] = useState<any>(null);
-//   const [activeCategory, setActiveCategory] = useState('All');
-//   const galleryItems = [
-//     { id: 1, title: "Family Portrait Night Light", category: "Lithophanes", description: "A high-detail lithophane from a family portrait on a custom LED base.", specs: "Material: PLA+ White | Resolution: 0.1mm | Style: Flat Panel", image: "https://picsum.photos/seed/print1/800/800" },
-//     { id: 2, title: "Curved Landscape Lamp", category: "Lithophanes", description: "A 360° cylindrical lithophane of a mountain panorama.", specs: "Material: PLA | Diameter: 150mm | Style: Curved", image: "https://picsum.photos/seed/print6/800/800" },
-//     { id: 3, title: "Heart Couple Photo", category: "Lithophanes", description: "Heart-shaped lithophane from a couple's photo. Popular Valentine's gift.", specs: "Material: PLA+ White | Style: Heart Shape", image: "https://picsum.photos/seed/litho2/800/800" },
-//     { id: 4, title: "Pet Portrait Light", category: "Lithophanes", description: "A beloved dog immortalized in a glowing lithophane panel.", specs: "Material: PLA+ White | Resolution: 0.1mm", image: "https://picsum.photos/seed/litho3/800/800" },
-//     { id: 5, title: "Industrial Gear Prototype", category: "Custom", description: "A functional replacement gear for a vintage lathe in Carbon Fiber Nylon.", specs: "Material: CF-Nylon | Infill: 100% | Tolerance: ±0.1mm", image: "https://picsum.photos/seed/print2/800/800" },
-//     { id: 6, title: "Articulated Dragon", category: "Custom", description: "A fully articulated dragon printed in one piece with 42 moving joints.", specs: "Material: Silk PLA | Print Time: 22h | Size: 45cm", image: "https://picsum.photos/seed/print3/800/800" },
-//     { id: 7, title: "Architectural Scale Model", category: "Custom", description: "A 1:50 scale model of a residential complex for client presentations.", specs: "Material: Matte PLA | Parts: 12 | Scale: 1:50", image: "https://picsum.photos/seed/print4/800/800" },
-//     { id: 8, title: "Low-Poly Planter Set", category: "Custom", description: "A set of three geometric planters with integrated drainage.", specs: "Material: Marble PLA | Finish: Matte", image: "https://picsum.photos/seed/print7/800/800" }
-//   ];
-//   const filteredItems = activeCategory === 'All' ? galleryItems : galleryItems.filter(i => i.category === activeCategory);
+const Gallery = () => {
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [activeCategory, setActiveCategory] = useState('All');
+  const galleryItems = [
+    { id: 1, title: "Family Portrait Night Light", category: "Lithophanes", description: "A high-detail lithophane from a family portrait on a custom LED base.", specs: "Material: PLA+ White | Resolution: 0.1mm | Style: Flat Panel", image: "https://picsum.photos/seed/print1/800/800" },
+    { id: 2, title: "Curved Landscape Lamp", category: "Lithophanes", description: "A 360° cylindrical lithophane of a mountain panorama.", specs: "Material: PLA | Diameter: 150mm | Style: Curved", image: "https://picsum.photos/seed/print6/800/800" },
+    { id: 3, title: "Heart Couple Photo", category: "Lithophanes", description: "Heart-shaped lithophane from a couple's photo. Popular Valentine's gift.", specs: "Material: PLA+ White | Style: Heart Shape", image: "https://picsum.photos/seed/litho2/800/800" },
+    { id: 4, title: "Pet Portrait Light", category: "Lithophanes", description: "A beloved dog immortalized in a glowing lithophane panel.", specs: "Material: PLA+ White | Resolution: 0.1mm", image: "https://picsum.photos/seed/litho3/800/800" },
+    { id: 5, title: "Industrial Gear Prototype", category: "Custom", description: "A functional replacement gear for a vintage lathe in Carbon Fiber Nylon.", specs: "Material: CF-Nylon | Infill: 100% | Tolerance: ±0.1mm", image: "https://picsum.photos/seed/print2/800/800" },
+    { id: 6, title: "Articulated Dragon", category: "Custom", description: "A fully articulated dragon printed in one piece with 42 moving joints.", specs: "Material: Silk PLA | Print Time: 22h | Size: 45cm", image: "https://picsum.photos/seed/print3/800/800" },
+    { id: 7, title: "Architectural Scale Model", category: "Custom", description: "A 1:50 scale model of a residential complex for client presentations.", specs: "Material: Matte PLA | Parts: 12 | Scale: 1:50", image: "https://picsum.photos/seed/print4/800/800" },
+    { id: 8, title: "Low-Poly Planter Set", category: "Custom", description: "A set of three geometric planters with integrated drainage.", specs: "Material: Marble PLA | Finish: Matte", image: "https://picsum.photos/seed/print7/800/800" }
+  ];
+  const filteredItems = activeCategory === 'All' ? galleryItems : galleryItems.filter(i => i.category === activeCategory);
  
-//   return (
-//     <section id="gallery" className="py-24 px-6 bg-gray-50">
-//       <div className="max-w-7xl mx-auto">
-//         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-//           <div>
-//             <h2 className="text-4xl font-bold mb-4">Our Work</h2>
-//             <p className="text-gray-500">A showcase of lithophanes and custom prints we've made.</p>
-//           </div>
-//           <div className="flex gap-2 flex-wrap">
-//             {['All', 'Lithophanes', 'Custom'].map((cat) => (
-//               <button key={cat} onClick={() => setActiveCategory(cat)}
-//                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat ? 'bg-brand-dark text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
-//                 {cat}
-//               </button>
-//             ))}
-//           </div>
-//         </div>
-//         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-//           <AnimatePresence mode="popLayout">
-//             {filteredItems.map((item) => (
-//               <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} key={item.id}
-//                 className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm">
-//                 <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-//                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-//                   <button onClick={() => setSelectedItem(item)} className="bg-white text-brand-dark px-4 py-2 rounded-xl text-sm font-bold hover:scale-105 transition-transform">View Details</button>
-//                 </div>
-//               </motion.div>
-//             ))}
-//           </AnimatePresence>
-//         </div>
-//       </div>
-//       <AnimatePresence>
-//         {selectedItem && <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
-//       </AnimatePresence>
-//     </section>
-//   );
-// };
+  return (
+    <section id="gallery" className="py-24 px-6 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <h2 className="text-4xl font-bold mb-4">Our Work</h2>
+            <p className="text-gray-500">A showcase of lithophanes and custom prints we've made.</p>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {['All', 'Lithophanes', 'Custom'].map((cat) => (
+              <button key={cat} onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat ? 'bg-brand-dark text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <AnimatePresence mode="popLayout">
+            {filteredItems.map((item) => (
+              <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} key={item.id}
+                className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm">
+                <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <button onClick={() => setSelectedItem(item)} className="bg-white text-brand-dark px-4 py-2 rounded-xl text-sm font-bold hover:scale-105 transition-transform">View Details</button>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
+      <AnimatePresence>
+        {selectedItem && <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
+      </AnimatePresence>
+    </section>
+  );
+};
  
 const Contact = () => {
   const [step, setStep] = useState(1);
