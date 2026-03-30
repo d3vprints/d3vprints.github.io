@@ -23,7 +23,7 @@ const Navbar = () => {
           <a href="#lithophanes" className="hover:text-brand-primary transition-colors font-semibold text-brand-primary">Lithophanes ✦</a>
           <a href="#how-it-works" className="hover:text-brand-primary transition-colors">How It Works</a>
           <a href="#products" className="hover:text-brand-primary transition-colors">Other Prints</a>
-          <a href="#gallery" className="hover:text-brand-primary transition-colors">Gallery</a>
+          {/* <a href="#gallery" className="hover:text-brand-primary transition-colors">Gallery</a> */}
           <a href="#contact" className="bg-brand-dark text-white px-5 py-2 rounded-xl hover:bg-brand-dark/90 transition-all">Order Now</a>
         </div>
         <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
@@ -37,7 +37,7 @@ const Navbar = () => {
             <a href="#lithophanes" onClick={() => setIsOpen(false)} className="text-lg font-semibold text-brand-primary">Lithophanes ✦</a>
             <a href="#how-it-works" onClick={() => setIsOpen(false)} className="text-lg font-medium">How It Works</a>
             <a href="#products" onClick={() => setIsOpen(false)} className="text-lg font-medium">Other Prints</a>
-            <a href="#gallery" onClick={() => setIsOpen(false)} className="text-lg font-medium">Gallery</a>
+            {/* <a href="#gallery" onClick={() => setIsOpen(false)} className="text-lg font-medium">Gallery</a> */}
             <a href="#contact" onClick={() => setIsOpen(false)} className="bg-brand-dark text-white px-5 py-3 rounded-xl text-center">Order Now</a>
           </motion.div>
         )}
@@ -255,7 +255,7 @@ const CurrentProducts = () => {
             <h2 className="text-4xl font-bold mb-4 italic">Popular Products</h2>
             <p className="text-gray-500 max-w-md">Fun and functional prints available to order anytime.</p>
           </div>
-          <a href="#gallery" className="flex items-center gap-2 text-brand-primary font-bold hover:underline">Browse Gallery <ArrowRight className="w-4 h-4" /></a>
+          {/* <a href="#gallery" className="flex items-center gap-2 text-brand-primary font-bold hover:underline">Browse Gallery <ArrowRight className="w-4 h-4" /></a> */}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
@@ -697,7 +697,7 @@ const Home = () => (
     <LithophaneSection />
     <HowItWorks />
     <CurrentProducts />
-    <Gallery />
+    {/* <Gallery /> */}
     <Contact />
   </main>
 );
