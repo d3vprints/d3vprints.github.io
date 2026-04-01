@@ -378,28 +378,53 @@ const Contact = () => {
   };
  
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('submitting');
-    const fileLinks = uploadedFiles.length > 0 ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n') : 'No files uploaded';
-    try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
-          subject: `New D3V Prints Order: ${formData.projectType}`,
-          name: formData.name, email: formData.email,
-          projectType: formData.projectType, message: formData.message,
-          'Attached Files': fileLinks
-        })
-      });
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', projectType: '', message: '' });
-        setUploadedFiles([]); setStep(1);
-      } else { setStatus('error'); }
-    } catch { setStatus('error'); }
+  e.preventDefault();
+  setStatus('submitting');
+  const fileLinks = uploadedFiles.length > 0 ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n') : 'No files uploaded';
+
+  const payload = {
+    name: formData.name,
+    email: formData.email,
+    projectType: formData.projectType,
+    message: formData.message,
+    files: fileLinks,
+    date: new Date().toLocaleString()
   };
+
+  try {
+    
+    const emailResponse = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
+        subject: `New D3V Prints Order: ${formData.projectType}`,
+        ...payload,
+        'Attached Files': fileLinks
+      })
+    });
+
+    
+    await fetch('https://script.google.com/macros/s/AKfycbx4VDX9kxQYqkGRg5cLoTvrt6R3To4QMG4U6qXAzevWAfm93Oqd-CQwUrfwboNy-_n9LA/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (emailResponse.ok) {
+      setStatus('success');
+      setFormData({ name: '', email: '', projectType: '', message: '' });
+      setUploadedFiles([]);
+      setStep(1);
+    } else {
+      setStatus('error');
+    }
+  } catch (error) {
+    console.error('Submit error:', error);
+    setStatus('error');
+  }
+};
  
   return (
     <section id="contact" className="py-24 px-6">
