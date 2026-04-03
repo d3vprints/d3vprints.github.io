@@ -814,9 +814,6 @@ const Footer = () => (
         <a href="https://www.instagram.com/d3v.prints/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
           <Instagram className="w-4 h-4" />
         </a>
-        <a href="#" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
-          <Twitter className="w-4 h-4" />
-        </a>
       </div>
     </div>
     <div className="max-w-7xl mx-auto text-center mt-8 text-xs text-gray-400 font-mono uppercase tracking-widest">
