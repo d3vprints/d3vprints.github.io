@@ -5,25 +5,35 @@ import {
   ShoppingCart, Upload, Settings2, Package, Printer, Lightbulb, Layers,
   ChevronRight, Mail, Instagram, Twitter, CheckCircle2, ArrowRight, Menu, X,
   Box, Zap, ShieldCheck, Database, Clock, User, ExternalLink, Circle,
-  CheckCircle, PlayCircle, FileText, Image as ImageIcon, ChevronLeft, Paperclip, Star, Heart, Camera
+  CheckCircle, PlayCircle, FileText, Image as ImageIcon, ChevronLeft, Paperclip, Star, Heart, Camera, Palette
 } from 'lucide-react';
- 
+
+const STANDARD_COLORS = ['Black', 'White', 'Blue'];
+const PREMIUM_COLORS = ['Red', 'Green', 'Yellow', 'Orange', 'Purple', 'Pink', 'Gray', 'Teal', 'Gold', 'Silver'];
+const PREMIUM_SURCHARGE = 3;
+
+const BASE_PRICES: Record<string, number> = {
+  'Flat Panel Night Light': 25,
+  'Curved Lamp': 35,
+  'Heart Shape': 30,
+  'Custom / Other Print': 0,
+};
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between glass rounded-2xl px-6 py-3 shadow-sm">
         <div className="flex items-center gap-2">
-        <div className="bg-brand-dark p-1.5 rounded-lg">
-          <Printer className="w-5 h-5 text-brand-primary" />
-        </div>
-        <span className="font-bold text-xl tracking-tighter">D3V PRINTS</span>
+          <div className="bg-brand-dark p-1.5 rounded-lg">
+            <Printer className="w-5 h-5 text-brand-primary" />
+          </div>
+          <span className="font-bold text-xl tracking-tighter">D3V PRINTS</span>
         </div>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#lithophanes" className="hover:text-brand-primary transition-colors font-semibold text-brand-primary">Lithophanes ✦</a>
           <a href="#how-it-works" className="hover:text-brand-primary transition-colors">How It Works</a>
           <a href="#products" className="hover:text-brand-primary transition-colors">Other Prints</a>
-          {/* <a href="#gallery" className="hover:text-brand-primary transition-colors">Gallery</a> */}
           <a href="#contact" className="bg-brand-dark text-white px-5 py-2 rounded-xl hover:bg-brand-dark/90 transition-all">Order Now</a>
         </div>
         <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
@@ -37,7 +47,6 @@ const Navbar = () => {
             <a href="#lithophanes" onClick={() => setIsOpen(false)} className="text-lg font-semibold text-brand-primary">Lithophanes ✦</a>
             <a href="#how-it-works" onClick={() => setIsOpen(false)} className="text-lg font-medium">How It Works</a>
             <a href="#products" onClick={() => setIsOpen(false)} className="text-lg font-medium">Other Prints</a>
-            {/* <a href="#gallery" onClick={() => setIsOpen(false)} className="text-lg font-medium">Gallery</a> */}
             <a href="#contact" onClick={() => setIsOpen(false)} className="bg-brand-dark text-white px-5 py-3 rounded-xl text-center">Order Now</a>
           </motion.div>
         )}
@@ -45,7 +54,7 @@ const Navbar = () => {
     </nav>
   );
 };
- 
+
 const Hero = () => (
   <section className="relative pt-32 pb-20 px-6 overflow-hidden">
     <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
@@ -104,7 +113,7 @@ const Hero = () => (
     </div>
   </section>
 );
- 
+
 const LithophaneSection = () => (
   <section id="lithophanes" className="py-24 px-6 bg-brand-dark text-white">
     <div className="max-w-7xl mx-auto">
@@ -116,13 +125,13 @@ const LithophaneSection = () => (
           Lithophane <br /><span className="text-brand-primary italic">Night Lights</span>
         </h2>
         <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-          A lithophane is a 3D-printed panel that reveals a photographic image when backlit. We turn your cherished photos into glowing works of art: perfect for gifts, memorials, and home decor.
+          A lithophane is a 3D-printed panel that reveals a photographic image when backlit. We turn your cherished photos into glowing works of art, perfect for gifts, memorials, and home decor.
         </p>
       </div>
- 
+
       <div className="grid lg:grid-cols-3 gap-8 mb-20">
         {[
-          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works: portraits, landscapes, pets, couples. The higher the resolution the better the detail." },
+          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works, portraits, landscapes, pets, couples. The higher the resolution the better the detail." },
           { icon: <Printer className="w-8 h-8" />, title: "We Print It", desc: "Using 0.1mm layer resolution and premium PLA+ white filament for the sharpest possible image clarity." },
           { icon: <Lightbulb className="w-8 h-8" />, title: "It Glows", desc: "Plug in the included LED base and watch your photo appear in stunning backlit detail. Magic." }
         ].map((f, i) => (
@@ -133,7 +142,7 @@ const LithophaneSection = () => (
           </motion.div>
         ))}
       </div>
- 
+
       <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
         <div>
           <h3 className="text-4xl font-bold mb-8">Available Styles</h3>
@@ -142,7 +151,7 @@ const LithophaneSection = () => (
               { name: "Flat Panel", desc: "Classic rectangular panel, perfect for portraits. Comes with a warm LED base.", price: "From $25" },
               { name: "Night Light", desc: "Wrap-around cylindrical design for a softer 120° glow. Great for panoramic shots.", price: "From $35" },
               { name: "Heart Shape", desc: "Romantic heart-shaped lithophane. Most popular for couples and Valentine's Day.", price: "From $30" },
-              { name: "Custom Shape", desc: "Any shape you want: names, logos, silhouettes. Contact us for a quote.", price: "Custom" },
+              { name: "Custom Shape", desc: "Any shape you want, names, logos, silhouettes. Contact us for a quote.", price: "Custom" },
             ].map((style, i) => (
               <div key={i} className="flex items-center justify-between p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brand-primary/50 transition-colors">
                 <div>
@@ -165,7 +174,7 @@ const LithophaneSection = () => (
           </div>
         </div>
       </div>
- 
+
       <div className="text-center bg-brand-primary/10 border border-brand-primary/20 rounded-3xl p-16">
         <Heart className="w-12 h-12 text-brand-primary mx-auto mb-6" />
         <h3 className="text-4xl font-bold mb-4">Ready to Create Yours?</h3>
@@ -177,7 +186,7 @@ const LithophaneSection = () => (
     </div>
   </section>
 );
- 
+
 const HowItWorks = () => (
   <section id="how-it-works" className="py-24 px-6 bg-white">
     <div className="max-w-7xl mx-auto">
@@ -203,49 +212,97 @@ const HowItWorks = () => (
     </div>
   </section>
 );
- 
-const DetailModal = ({ item, onClose }: { item: any; onClose: () => void }) => {
-  if (!item) return null;
+
+// --- Product Slideshow Card ---
+const ProductCard = ({ product, onOrder }: { product: any, onOrder: (p: any) => void }) => {
+  const [currentImg, setCurrentImg] = useState(0);
+  const images = product.images || [product.image];
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-      <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative w-full max-w-4xl bg-white rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row">
-        <button onClick={onClose} className="absolute top-6 right-6 z-10 w-10 h-10 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20 transition-colors">
-          <X className="w-5 h-5" />
-        </button>
-        <div className="w-full md:w-1/2 aspect-square md:aspect-auto">
-          <img src={item.image} alt={item.title || item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+    <motion.div whileHover={{ y: -10 }} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
+      <div className="relative aspect-square overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentImg}
+            src={images[currentImg]}
+            alt={product.name}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="w-full h-full object-cover"
+          />
+        </AnimatePresence>
+        <div className="absolute top-4 left-4 bg-brand-primary text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md">{product.tag}</div>
+
+        {images.length > 1 && (
+          <>
+            <button onClick={() => setCurrentImg(i => (i - 1 + images.length) % images.length)}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition-colors z-10">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button onClick={() => setCurrentImg(i => (i + 1) % images.length)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition-colors z-10">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+              {images.map((_: any, i: number) => (
+                <button key={i} onClick={() => setCurrentImg(i)}
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${i === currentImg ? 'bg-white w-3' : 'bg-white/50'}`} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      <div className="p-6">
+        <h3 className="font-bold text-lg mb-1 group-hover:text-brand-primary transition-colors">{product.name}</h3>
+        <p className="text-gray-500 text-sm mb-4">{product.description}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-xl font-bold font-mono">{product.price}</span>
+          <button onClick={() => onOrder(product)} className="bg-brand-dark text-white p-3 rounded-xl hover:bg-brand-primary transition-colors">
+            <ShoppingCart className="w-5 h-5" />
+          </button>
         </div>
-        <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
-          <div className="text-xs font-mono font-bold text-brand-primary uppercase tracking-widest mb-2">{item.category || item.tag}</div>
-          <h3 className="text-3xl font-bold mb-4">{item.title || item.name}</h3>
-          <p className="text-gray-600 mb-6 leading-relaxed">{item.description || "High-quality 3D printed product crafted with precision and care."}</p>
-          <div className="bg-brand-light p-6 rounded-2xl mb-4">
-            <div className="text-xs font-mono font-bold uppercase tracking-widest text-gray-400 mb-2">{item.specs ? "Technical Specs" : "Product Details"}</div>
-            <div className="text-sm font-medium text-brand-dark">{item.specs || `Price: ${item.price} | Availability: In Stock`}</div>
-          </div>
-          {item.credit && (
-            <p className="text-[9px] text-gray-300 mb-4 leading-relaxed">{item.credit}</p>
-          )}
-          <a href="#contact" onClick={onClose} className="bg-brand-dark text-white text-center py-4 rounded-xl font-bold hover:bg-brand-primary transition-colors">
-            {item.price ? "Order Now" : "Inquire About This"}
-          </a>
-        </div>
-      </motion.div>
-    </div>
+        {product.credit && <p className="text-[9px] text-gray-300 mt-3 leading-relaxed">{product.credit}</p>}
+      </div>
+    </motion.div>
   );
 };
- 
+
 const CurrentProducts = () => {
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [orderProduct, setOrderProduct] = useState<any>(null);
+
   const products = [
-    { id: 1, name: "Mini Flexi Octopus", price: "$5.00", tag: "Best Seller", image: "/octopus.png", description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.", credit:"Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints."  },
-    { id: 2, name: "Credit Card Sized Phone Stand", price: "$18.50", tag: "New Arrival", image: "/phonestand.png", description: "A slim, wallet friendly phone stand that folds flat, thinner than a quarter, and sets up in seconds.", credit: "Design: 0.8mm thin adjustable credit card phone stand by jq910, Thingiverse, CC BY 4.0. Printed by D3V Prints."},
-    { id: 3, name: "Keychain", price: "$32.00", tag: "New Arrival", image: "/keychain.png", description: "Many different types of keychains avaiable upon request like, name keychain, Formula 1 keychains and much more!", credit: "Design: Dependent on keychain, credits available upon request. Printed by D3V Prints." },
-    { id: 4, name: "118 db Whistle", price: "$15.00", tag: "Artistic", image: "/whistle.png", description: "A loud, pealess 118dB emergency whistle perfect for hiking, camping, or everyday carry.", credit: "Design: V29 by jzisa, Thingiverse, CC BY 4.0. Printed by D3V Prints." }
+    {
+      id: 1, name: "Mini Flexi Octopus", price: "From $5.00", tag: "Best Seller",
+      images: ["/octopus.png"],
+      description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.",
+      basePrice: 5,
+      credit: "Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints."
+    },
+    {
+      id: 2, name: "Credit Card Sized Phone Stand", price: "From $4.00", tag: "New Arrival",
+      images: ["/phonestand.png"],
+      description: "A slim, wallet friendly phone stand that folds flat and sets up in seconds.",
+      basePrice: 4,
+      credit: "Design: 0.8mm thin adjustable credit card phone stand by jq910, Thingiverse, CC BY 4.0. Printed by D3V Prints."
+    },
+    {
+      id: 3, name: "Keychain", price: "From $3.00", tag: "New Arrival",
+      images: ["/keychain.png"],
+      description: "Many different types of keychains available upon request, name keychains, Formula 1 keychains and much more!",
+      basePrice: 3,
+      credit: "Design: Dependent on keychain, credits available upon request. Printed by D3V Prints."
+    },
+    {
+      id: 4, name: "118dB Emergency Whistle", price: "From $4.00", tag: "Popular",
+      images: ["/whistle.png"],
+      description: "A loud, pea-less 118dB emergency whistle perfect for hiking, camping, or everyday carry.",
+      basePrice: 4,
+      credit: "Design: V29 by jzisa, Thingiverse, CC BY 4.0. Printed by D3V Prints."
+    }
   ];
- 
+
   return (
     <section id="products" className="py-24 px-6 bg-brand-light">
       <div className="max-w-7xl mx-auto">
@@ -255,108 +312,207 @@ const CurrentProducts = () => {
             <h2 className="text-4xl font-bold mb-4 italic">Popular Products</h2>
             <p className="text-gray-500 max-w-md">Fun and functional prints available to order anytime.</p>
           </div>
-          {/* <a href="#gallery" className="flex items-center gap-2 text-brand-primary font-bold hover:underline">Browse Gallery <ArrowRight className="w-4 h-4" /></a> */}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
-            <motion.div key={product.id} whileHover={{ y: -10 }} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
-              <div className="relative aspect-square overflow-hidden">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-                <div className="absolute top-4 left-4 bg-brand-primary text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md">{product.tag}</div>
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button onClick={() => setSelectedProduct(product)} className="bg-white text-brand-dark px-4 py-2 rounded-xl text-sm font-bold hover:scale-105 transition-transform">View Details</button>
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="font-bold text-lg mb-1 group-hover:text-brand-primary transition-colors">{product.name}</h3>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="text-xl font-bold font-mono">{product.price}</span>
-                  <button onClick={() => setSelectedProduct(product)} className="bg-brand-dark text-white p-3 rounded-xl hover:bg-brand-primary transition-colors">
-                    <ShoppingCart className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+            <ProductCard key={product.id} product={product} onOrder={setOrderProduct} />
           ))}
         </div>
         <p className="text-[9px] text-gray-300 text-center mt-12 max-w-2xl mx-auto leading-relaxed">
           Some products feature third-party designs licensed under Creative Commons Attribution 4.0 International (CC BY 4.0) or similar open licenses. Original designers retain copyright of their respective works. D3V Prints provides physical printing services only and is not affiliated with original designers. Credits available upon request.
         </p>
       </div>
+
+      {/* Quick Order Modal for products */}
       <AnimatePresence>
-        {selectedProduct && <DetailModal item={selectedProduct} onClose={() => setSelectedProduct(null)} />}
+        {orderProduct && (
+          <ProductOrderModal product={orderProduct} onClose={() => setOrderProduct(null)} />
+        )}
       </AnimatePresence>
     </section>
   );
 };
- 
-const Gallery = () => {
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [activeCategory, setActiveCategory] = useState('All');
-  const galleryItems = [
-    { id: 1, title: "Family Portrait Night Light", category: "Lithophanes", description: "A high-detail lithophane from a family portrait on a custom LED base.", specs: "Material: PLA+ White | Resolution: 0.1mm | Style: Flat Panel", image: "https://picsum.photos/seed/print1/800/800" },
-    { id: 2, title: "Curved Landscape Lamp", category: "Lithophanes", description: "A 360° cylindrical lithophane of a mountain panorama.", specs: "Material: PLA | Diameter: 150mm | Style: Curved", image: "https://picsum.photos/seed/print6/800/800" },
-    { id: 3, title: "Heart Couple Photo", category: "Lithophanes", description: "Heart-shaped lithophane from a couple's photo. Popular Valentine's gift.", specs: "Material: PLA+ White | Style: Heart Shape", image: "https://picsum.photos/seed/litho2/800/800" },
-    { id: 4, title: "Pet Portrait Light", category: "Lithophanes", description: "A beloved dog immortalized in a glowing lithophane panel.", specs: "Material: PLA+ White | Resolution: 0.1mm", image: "https://picsum.photos/seed/litho3/800/800" },
-    { id: 5, title: "Industrial Gear Prototype", category: "Custom", description: "A functional replacement gear for a vintage lathe in Carbon Fiber Nylon.", specs: "Material: CF-Nylon | Infill: 100% | Tolerance: ±0.1mm", image: "https://picsum.photos/seed/print2/800/800" },
-    { id: 6, title: "Articulated Dragon", category: "Custom", description: "A fully articulated dragon printed in one piece with 42 moving joints.", specs: "Material: Silk PLA | Print Time: 22h | Size: 45cm", image: "https://picsum.photos/seed/print3/800/800" },
-    { id: 7, title: "Architectural Scale Model", category: "Custom", description: "A 1:50 scale model of a residential complex for client presentations.", specs: "Material: Matte PLA | Parts: 12 | Scale: 1:50", image: "https://picsum.photos/seed/print4/800/800" },
-    { id: 8, title: "Low-Poly Planter Set", category: "Custom", description: "A set of three geometric planters with integrated drainage.", specs: "Material: Marble PLA | Finish: Matte", image: "https://picsum.photos/seed/print7/800/800" }
-  ];
-  const filteredItems = activeCategory === 'All' ? galleryItems : galleryItems.filter(i => i.category === activeCategory);
- 
+
+// --- Product Quick Order Modal ---
+const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => void }) => {
+  const [color, setColor] = useState('');
+  const [qty, setQty] = useState(1);
+  const [notes, setNotes] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [step, setStep] = useState(1);
+
+  const isPremium = PREMIUM_COLORS.includes(color);
+  const estimated = color ? (product.basePrice + (isPremium ? PREMIUM_SURCHARGE : 0)) * qty : null;
+
+  const handleSubmit = async () => {
+    setStatus('submitting');
+    const payload = {
+      name, email,
+      projectType: product.name,
+      message: `Color: ${color} | Qty: ${qty} | Notes: ${notes || 'None'}`,
+      files: 'No files uploaded',
+      date: new Date().toLocaleString()
+    };
+    try {
+      const emailRes = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
+          subject: `New D3V Prints Order: ${product.name}`,
+          ...payload,
+          'Attached Files': 'No files uploaded'
+        })
+      });
+      await fetch('https://script.google.com/macros/s/AKfycbx4VDX9kxQYqkGRg5cLoTvrt6R3To4QMG4U6qXAzevWAfm93Oqd-CQwUrfwboNy-_n9LA/exec', {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (emailRes.ok) setStatus('success');
+      else setStatus('error');
+    } catch { setStatus('error'); }
+  };
+
   return (
-    <section id="gallery" className="py-24 px-6 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div>
-            <h2 className="text-4xl font-bold mb-4">Our Work</h2>
-            <p className="text-gray-500">A showcase of lithophanes and custom prints we've made.</p>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        className="relative w-full max-w-lg bg-white rounded-[2.5rem] overflow-hidden shadow-2xl p-10">
+        <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20 transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+
+        {status === 'success' ? (
+          <div className="text-center py-8">
+            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6"><CheckCircle className="w-10 h-10" /></div>
+            <h3 className="text-2xl font-bold mb-3">Order Received! 🎉</h3>
+            <p className="text-gray-500 leading-relaxed">Thanks for your order! You will receive an email back within 12 hours with your order update and payment instructions.</p>
+            <button onClick={onClose} className="mt-8 bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Done</button>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            {['All', 'Lithophanes', 'Custom'].map((cat) => (
-              <button key={cat} onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat ? 'bg-brand-dark text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-100'}`}>
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <AnimatePresence mode="popLayout">
-            {filteredItems.map((item) => (
-              <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} key={item.id}
-                className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm">
-                <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button onClick={() => setSelectedItem(item)} className="bg-white text-brand-dark px-4 py-2 rounded-xl text-sm font-bold hover:scale-105 transition-transform">View Details</button>
+        ) : (
+          <>
+            <h3 className="text-2xl font-bold mb-1">{product.name}</h3>
+            <p className="text-gray-500 text-sm mb-6">{product.description}</p>
+
+            {step === 1 && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">
+                    <Palette className="w-3 h-3 inline mr-1" /> Choose Color
+                  </label>
+                  <div className="mb-2">
+                    <p className="text-xs font-semibold text-gray-500 mb-2">Standard Colors (no extra charge)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {STANDARD_COLORS.map(c => (
+                        <button key={c} onClick={() => setColor(c)}
+                          className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-xs font-semibold text-gray-500 mb-2">Premium Colors (+${PREMIUM_SURCHARGE}.00)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {PREMIUM_COLORS.map(c => (
+                        <button key={c} onClick={() => setColor(c)}
+                          className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Quantity</label>
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center font-bold hover:border-brand-primary transition-colors">-</button>
+                    <span className="text-2xl font-bold w-8 text-center">{qty}</span>
+                    <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center font-bold hover:border-brand-primary transition-colors">+</button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Notes (optional)</label>
+                  <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
+                    placeholder="Any special requests..." />
+                </div>
+
+                <button onClick={() => setStep(2)} disabled={!color}
+                  className="w-full bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors disabled:opacity-50">
+                  Continue <ChevronRight className="w-4 h-4 inline ml-1" />
+                </button>
               </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      </div>
-      <AnimatePresence>
-        {selectedItem && <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
-      </AnimatePresence>
-    </section>
+            )}
+
+            {step === 2 && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                <h4 className="text-lg font-bold">Your Details</h4>
+                <input type="text" value={name} onChange={e => setName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="Your Name" />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="Email Address" />
+
+                {/* Order Summary */}
+                <div className="bg-brand-light rounded-2xl p-5 space-y-3">
+                  <h5 className="font-bold text-sm uppercase tracking-widest text-gray-500">Order Summary</h5>
+                  <div className="flex justify-between text-sm"><span className="text-gray-500">Product</span><span className="font-bold">{product.name}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-gray-500">Color</span>
+                    <span className="font-bold flex items-center gap-1">{color} {isPremium && <span className="text-[10px] text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded-full">Premium</span>}</span>
+                  </div>
+                  <div className="flex justify-between text-sm"><span className="text-gray-500">Quantity</span><span className="font-bold">{qty}</span></div>
+                  {notes && <div className="flex justify-between text-sm"><span className="text-gray-500">Notes</span><span className="font-bold text-right max-w-[60%]">{notes}</span></div>}
+                  <div className="border-t border-gray-200 pt-3 flex justify-between">
+                    <span className="font-bold">Estimated Total</span>
+                    <span className="font-black text-brand-primary text-lg">${estimated?.toFixed(2)}</span>
+                  </div>
+                  <p className="text-[10px] text-gray-400">Final price confirmed via email after order review.</p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button onClick={() => setStep(1)} className="flex-1 py-4 rounded-2xl font-bold border-2 border-gray-200 hover:bg-gray-50 transition-colors">
+                    <ChevronLeft className="w-4 h-4 inline mr-1" /> Back
+                  </button>
+                  <button onClick={handleSubmit} disabled={!name || !email || status === 'submitting'}
+                    className="flex-[2] bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors disabled:opacity-50">
+                    {status === 'submitting' ? 'Placing Order...' : 'Place Order'}
+                  </button>
+                </div>
+                {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
+              </motion.div>
+            )}
+          </>
+        )}
+      </motion.div>
+    </div>
   );
 };
- 
+
 const Contact = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({ name: '', email: '', projectType: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', projectType: '', message: '', color: '' });
   const [uploadedFiles, setUploadedFiles] = useState<{name: string, url: string}[]>([]);
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
- 
+
   const projectTypes = [
-    { id: 'flat', title: 'Flat Panel Night Light', description: 'Classic lithophane from your photo', icon: <ImageIcon className="w-6 h-6" /> },
-    { id: 'curved', title: 'Curved Lamp', description: '360° cylindrical lithophane', icon: <Lightbulb className="w-6 h-6" /> },
-    { id: 'heart', title: 'Heart Shape', description: 'Romantic heart lithophane', icon: <Heart className="w-6 h-6" /> },
-    { id: 'custom', title: 'Custom / Other Print', description: 'STL files or special requests', icon: <FileText className="w-6 h-6" /> }
+    { id: 'flat', title: 'Flat Panel Night Light', description: 'Classic lithophane from your photo', icon: <ImageIcon className="w-6 h-6" />, price: 25 },
+    { id: 'curved', title: 'Curved Lamp', description: '360° cylindrical lithophane', icon: <Lightbulb className="w-6 h-6" />, price: 35 },
+    { id: 'heart', title: 'Heart Shape', description: 'Romantic heart lithophane', icon: <Heart className="w-6 h-6" />, price: 30 },
+    { id: 'custom', title: 'Custom / Other Print', description: 'STL files or special requests', icon: <FileText className="w-6 h-6" />, price: 0 },
   ];
- 
+
+  const selectedType = projectTypes.find(p => p.title === formData.projectType);
+  const isPremiumColor = PREMIUM_COLORS.includes(formData.color);
+  const estimatedPrice = selectedType && selectedType.price > 0
+    ? selectedType.price + (isPremiumColor ? PREMIUM_SURCHARGE : 0)
+    : null;
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const files = Array.from(e.target.files);
@@ -376,56 +532,47 @@ const Contact = () => {
     setUploadedFiles(prev => [...prev, ...uploaded]);
     setUploading(false);
   };
- 
+
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setStatus('submitting');
-  const fileLinks = uploadedFiles.length > 0 ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n') : 'No files uploaded';
-
-  const payload = {
-    name: formData.name,
-    email: formData.email,
-    projectType: formData.projectType,
-    message: formData.message,
-    files: fileLinks,
-    date: new Date().toLocaleString()
-  };
-
-  try {
-    
-    const emailResponse = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
-        subject: `New D3V Prints Order: ${formData.projectType}`,
-        ...payload,
-        'Attached Files': fileLinks
-      })
-    });
-
-    
-    await fetch('https://script.google.com/macros/s/AKfycbx4VDX9kxQYqkGRg5cLoTvrt6R3To4QMG4U6qXAzevWAfm93Oqd-CQwUrfwboNy-_n9LA/exec', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (emailResponse.ok) {
-      setStatus('success');
-      setFormData({ name: '', email: '', projectType: '', message: '' });
-      setUploadedFiles([]);
-      setStep(1);
-    } else {
+    e.preventDefault();
+    setStatus('submitting');
+    const fileLinks = uploadedFiles.length > 0 ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n') : 'No files uploaded';
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      projectType: formData.projectType,
+      message: `Color: ${formData.color || 'Not specified'} | Notes: ${formData.message || 'None'}`,
+      files: fileLinks,
+      date: new Date().toLocaleString()
+    };
+    try {
+      const emailResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
+          subject: `New D3V Prints Order: ${formData.projectType}`,
+          ...payload,
+          'Attached Files': fileLinks
+        })
+      });
+      await fetch('https://script.google.com/macros/s/AKfycbx4VDX9kxQYqkGRg5cLoTvrt6R3To4QMG4U6qXAzevWAfm93Oqd-CQwUrfwboNy-_n9LA/exec', {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (emailResponse.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', projectType: '', message: '', color: '' });
+        setUploadedFiles([]);
+        setStep(1);
+      } else { setStatus('error'); }
+    } catch (error) {
+      console.error('Submit error:', error);
       setStatus('error');
     }
-  } catch (error) {
-    console.error('Submit error:', error);
-    setStatus('error');
-  }
-};
- 
+  };
+
   return (
     <section id="contact" className="py-24 px-6">
       <div className="max-w-7xl mx-auto">
@@ -438,24 +585,29 @@ const Contact = () => {
                 <CheckCircle2 className="w-4 h-4" /> Includes LED base
               </div>
               <div className="hidden lg:block space-y-8">
-                {[1, 2, 3].map((s) => (
+                {[1, 2, 3, 4].map((s) => (
                   <div key={s} className={`flex items-center gap-4 transition-opacity ${step >= s ? 'opacity-100' : 'opacity-30'}`}>
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 ${step >= s ? 'bg-brand-primary border-brand-primary text-brand-dark' : 'border-white/20'}`}>{s}</div>
-                    <div className="text-sm font-bold uppercase tracking-widest">{s === 1 ? 'Select Style' : s === 2 ? 'Upload Photo' : 'Your Details'}</div>
+                    <div className="text-sm font-bold uppercase tracking-widest">
+                      {s === 1 ? 'Select Style' : s === 2 ? 'Upload Photo' : s === 3 ? 'Your Details' : 'Review Order'}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
+
             <div className="lg:col-span-3 bg-white rounded-[2.5rem] p-8 lg:p-12 text-brand-dark">
               {status === 'success' ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12">
                   <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6"><CheckCircle className="w-10 h-10" /></div>
-                  <h3 className="text-2xl font-bold mb-2">Order Received! 🎉</h3>
-                  <p className="text-gray-500 mb-8">We'll confirm your order and estimated delivery within 24 hours.</p>
+                  <h3 className="text-2xl font-bold mb-3">Order Received! 🎉</h3>
+                  <p className="text-gray-500 mb-8 leading-relaxed">Thanks for your order! You will receive an email back within 12 hours with your order update and payment instructions.</p>
                   <button onClick={() => setStatus('idle')} className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Place Another Order</button>
                 </div>
               ) : (
                 <div className="h-full flex flex-col">
+
+                  {/* Step 1: Select Style */}
                   {step === 1 && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                       <h3 className="text-2xl font-bold mb-6">What style would you like?</h3>
@@ -466,87 +618,172 @@ const Contact = () => {
                             <div className="w-12 h-12 rounded-2xl bg-gray-100 group-hover:bg-brand-primary/20 flex items-center justify-center mb-4 transition-colors">{type.icon}</div>
                             <div className="font-bold text-lg">{type.title}</div>
                             <div className="text-sm text-gray-500 mt-1">{type.description}</div>
+                            {type.price > 0 && <div className="text-brand-primary font-bold text-sm mt-2">From ${type.price}</div>}
                           </button>
                         ))}
                       </div>
                     </motion.div>
                   )}
+
+                  {/* Step 2: Upload + Color + Notes */}
                   {step === 2 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-2xl font-bold">Upload Your Photo</h3>
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-2xl font-bold">Photo & Details</h3>
                         <span className="text-sm font-bold text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">{formData.projectType}</span>
                       </div>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Any notes or requests?</label>
-                          <textarea rows={3} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                            className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none"
-                            placeholder="e.g. crop to just the face, warm LED preferred, gift wrapping requested..." />
+
+                      {/* Color picker */}
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Choose Color</label>
+                        <p className="text-xs text-gray-400 mb-2">Standard (no extra charge)</p>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {STANDARD_COLORS.map(c => (
+                            <button key={c} onClick={() => setFormData({ ...formData, color: c })}
+                              className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                              {c}
+                            </button>
+                          ))}
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                            {formData.projectType === 'Custom / Other Print' ? 'Upload Files (STL, photo, etc.)' : 'Upload Your Photo'}
-                          </label>
-                          <div className="relative group">
-                            <input type="file" multiple onChange={handleUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                            <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-8 text-center transition-colors">
-                              <Upload className="w-8 h-8 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
-                              <div className="text-sm font-bold text-gray-500">
-                                {uploading ? 'Uploading...' : uploadedFiles.length > 0 ? `${uploadedFiles.length} file(s) uploaded ✓` : 'Drag & drop or click to upload'}
-                              </div>
-                              <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL: Max 10MB</div>
-                            </div>
-                          </div>
-                          {uploadedFiles.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {uploadedFiles.map((f, i) => (
-                                <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200">
-                                  <Paperclip className="w-3 h-3" /> {f.name}
-                                </a>
-                              ))}
-                            </div>
-                          )}
+                        <p className="text-xs text-gray-400 mb-2">Premium (+${PREMIUM_SURCHARGE}.00)</p>
+                        <div className="flex flex-wrap gap-2">
+                          {PREMIUM_COLORS.map(c => (
+                            <button key={c} onClick={() => setFormData({ ...formData, color: c })}
+                              className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                              {c}
+                            </button>
+                          ))}
                         </div>
                       </div>
-                      <div className="flex gap-4 pt-4">
-                        <button onClick={() => setStep(1)} className="flex-1 px-8 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Any notes or requests?</label>
+                        <textarea rows={2} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                          className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none"
+                          placeholder="e.g. crop to just the face, warm LED preferred..." />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">
+                          {formData.projectType === 'Custom / Other Print' ? 'Upload Files (STL, photo, etc.)' : 'Upload Your Photo'}
+                        </label>
+                        <div className="relative group">
+                          <input type="file" multiple onChange={handleUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                          <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-6 text-center transition-colors">
+                            <Upload className="w-7 h-7 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
+                            <div className="text-sm font-bold text-gray-500">
+                              {uploading ? 'Uploading...' : uploadedFiles.length > 0 ? `${uploadedFiles.length} file(s) uploaded ✓` : 'Drag & drop or click to upload'}
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB</div>
+                          </div>
+                        </div>
+                        {uploadedFiles.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {uploadedFiles.map((f, i) => (
+                              <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200">
+                                <Paperclip className="w-3 h-3" /> {f.name}
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-4 pt-2">
+                        <button onClick={() => setStep(1)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                           <ChevronLeft className="w-5 h-5" /> Back
                         </button>
                         <button onClick={() => setStep(3)} disabled={uploading}
-                          className="flex-[2] bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
                           Next Step <ChevronRight className="w-5 h-5" />
                         </button>
                       </div>
                     </motion.div>
                   )}
+
+                  {/* Step 3: Contact Info */}
                   {step === 3 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                      <h3 className="text-2xl font-bold mb-6">Your Details</h3>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Your Name</label>
-                          <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="John Doe" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Email Address</label>
-                          <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="john@example.com" />
-                        </div>
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                      <h3 className="text-2xl font-bold">Your Details</h3>
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
+                        <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="John Doe" />
                       </div>
-                      <div className="flex gap-4 pt-4">
-                        <button onClick={() => setStep(2)} className="flex-1 px-8 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
+                        <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="john@example.com" />
+                      </div>
+                      <div className="flex gap-4 pt-2">
+                        <button onClick={() => setStep(2)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                           <ChevronLeft className="w-5 h-5" /> Back
                         </button>
-                        <button onClick={handleSubmit} disabled={!formData.name || !formData.email || status === 'submitting'}
-                          className="flex-[2] bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          {status === 'submitting' ? 'Sending...' : 'Place Order'}
+                        <button onClick={() => setStep(4)} disabled={!formData.name || !formData.email}
+                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+                          Review Order <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Step 4: Order Summary */}
+                  {step === 4 && (
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                      <h3 className="text-2xl font-bold">Review Your Order</h3>
+                      <div className="bg-brand-light rounded-2xl p-6 space-y-4">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500 font-medium">Name</span>
+                          <span className="font-bold">{formData.name}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500 font-medium">Email</span>
+                          <span className="font-bold">{formData.email}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500 font-medium">Style</span>
+                          <span className="font-bold">{formData.projectType}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500 font-medium">Color</span>
+                          <span className="font-bold flex items-center gap-2">
+                            {formData.color || 'Not selected'}
+                            {isPremiumColor && <span className="text-[10px] text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded-full">Premium +${PREMIUM_SURCHARGE}</span>}
+                          </span>
+                        </div>
+                        {uploadedFiles.length > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-500 font-medium">Files</span>
+                            <span className="font-bold">{uploadedFiles.length} file(s) uploaded</span>
+                          </div>
+                        )}
+                        {formData.message && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-500 font-medium">Notes</span>
+                            <span className="font-bold text-right max-w-[60%]">{formData.message}</span>
+                          </div>
+                        )}
+                        <div className="border-t border-gray-300 pt-4 flex justify-between items-center">
+                          <span className="font-bold">Estimated Total</span>
+                          <span className="font-black text-brand-primary text-xl">
+                            {estimatedPrice ? `From $${estimatedPrice.toFixed(2)}` : 'Quote on request'}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-gray-400">Final price confirmed via email after order review.</p>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <button onClick={() => setStep(3)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                          <ChevronLeft className="w-5 h-5" /> Back
+                        </button>
+                        <button onClick={handleSubmit} disabled={status === 'submitting'}
+                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+                          {status === 'submitting' ? 'Placing Order...' : 'Place Order'}
                         </button>
                       </div>
                       {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
                     </motion.div>
                   )}
+
                 </div>
               )}
             </div>
@@ -558,7 +795,7 @@ const Contact = () => {
     </section>
   );
 };
- 
+
 const Footer = () => (
   <footer className="py-12 px-6 border-t border-gray-100">
     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
@@ -569,7 +806,6 @@ const Footer = () => (
       <div className="flex gap-8 text-sm text-gray-500 font-medium">
         <a href="#" className="hover:text-brand-dark transition-colors">Privacy Policy</a>
         <a href="#" className="hover:text-brand-dark transition-colors">Terms of Service</a>
-        <Link to="/developer" className="hover:text-brand-dark transition-colors">Developer Access</Link>
       </div>
       <div className="flex gap-4">
         <a href="https://www.instagram.com/d3v.prints/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
@@ -590,143 +826,17 @@ const Footer = () => (
     </div>
   </footer>
 );
- 
-const DeveloperDashboard = () => {
-  const [inquiries, setInquiries] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState('');
-  const DEV_PASSWORD = 'admin';
- 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    if (password === DEV_PASSWORD) { setIsAuthenticated(true); sessionStorage.setItem('dev_password', password); fetchInquiries(); }
-    else { setError('Invalid password'); }
-  };
- 
-  useEffect(() => {
-    const savedPassword = sessionStorage.getItem('dev_password');
-    if (savedPassword) { setPassword(savedPassword); setIsAuthenticated(true); }
-  }, []);
- 
-  const fetchInquiries = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://api.web3forms.com/submissions?apikey=28aa3f21-d905-4e73-95bb-686ad236eb55', { headers: { 'Accept': 'application/json' } });
-      const data = await response.json();
-      setInquiries(data.data || []);
-    } catch (error) { console.error("Fetch error:", error); }
-    finally { setLoading(false); }
-  };
- 
-  useEffect(() => { if (isAuthenticated) fetchInquiries(); }, [isAuthenticated]);
- 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 max-w-md w-full">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-brand-primary/10 text-brand-primary rounded-2xl flex items-center justify-center mx-auto mb-4"><ShieldCheck className="w-8 h-8" /></div>
-            <h1 className="text-2xl font-bold">Developer Access</h1>
-            <p className="text-gray-500 text-sm mt-2">Enter your password to view orders.</p>
-          </div>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="••••••••" required />
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-            <button className="w-full bg-brand-dark text-white py-4 rounded-xl font-bold hover:bg-brand-primary transition-colors">Unlock Dashboard</button>
-          </form>
-          <div className="mt-6 text-center">
-            <Link to="/" className="text-sm font-bold text-gray-400 hover:text-brand-dark transition-colors flex items-center justify-center gap-2">
-              <ArrowRight className="w-4 h-4 rotate-180" /> Back to Home
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
- 
-  return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3"><Database className="text-brand-primary" /> Orders Dashboard</h1>
-            <p className="text-gray-500">View all incoming orders and inquiries.</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button onClick={fetchInquiries} className="text-sm font-bold text-brand-primary hover:underline">Refresh</button>
-            <button onClick={() => { setIsAuthenticated(false); sessionStorage.removeItem('dev_password'); }} className="text-sm font-bold text-gray-400 hover:text-red-500 transition-colors">Logout</button>
-            <Link to="/" className="text-sm font-bold text-brand-primary hover:underline flex items-center gap-1"><ArrowRight className="w-4 h-4 rotate-180" /> Back to Site</Link>
-          </div>
-        </div>
-        {loading ? (
-          <div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div></div>
-        ) : inquiries.length === 0 ? (
-          <div className="bg-white rounded-3xl p-20 text-center shadow-sm border border-gray-100">
-            <Mail className="text-gray-400 w-10 h-10 mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">No orders yet</h2>
-            <p className="text-gray-500">Orders will appear here when customers submit the form.</p>
-          </div>
-        ) : (
-          <div className="grid gap-6">
-            {inquiries.map((inquiry, idx) => (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key={idx} className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                  <div className="space-y-4 flex-1">
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm font-medium"><User className="w-4 h-4 text-gray-400" />{inquiry.name}</div>
-                      <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm font-medium"><Mail className="w-4 h-4 text-gray-400" />{inquiry.email}</div>
-                      {inquiry.projectType && <div className="flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-sm font-bold"><Box className="w-4 h-4" />{inquiry.projectType}</div>}
-                    </div>
-                    {inquiry.message && <div><h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Notes</h3><p className="text-gray-700 leading-relaxed">{inquiry.message}</p></div>}
-                    {inquiry['Attached Files'] && inquiry['Attached Files'] !== 'No files uploaded' && (
-                      <div>
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Files</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {inquiry['Attached Files'].split('\n').map((line: string, i: number) => {
-                            const parts = line.split(': ');
-                            const name = parts[0];
-                            const url = parts.slice(1).join(': ');
-                            return url ? (
-                              <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl text-xs font-bold transition-colors">
-                                <Paperclip className="w-3 h-3" />{name}
-                              </a>
-                            ) : null;
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-right shrink-0 flex flex-col items-end gap-4">
-                    <div className="flex items-center gap-2 text-gray-400 text-xs font-mono uppercase"><Clock className="w-3 h-3" />{new Date(inquiry.created_at).toLocaleString()}</div>
-                    <a href={`mailto:${inquiry.email}`} className="inline-flex items-center gap-2 bg-brand-dark text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brand-primary transition-colors">
-                      Reply <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
- 
+
 const Home = () => (
   <main>
     <Hero />
     <LithophaneSection />
     <HowItWorks />
     <CurrentProducts />
-    {/* <Gallery /> */}
     <Contact />
   </main>
 );
- 
+
 export default function App() {
   const location = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
@@ -735,7 +845,6 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/developer" element={<DeveloperDashboard />} />
       </Routes>
       <Footer />
     </div>
