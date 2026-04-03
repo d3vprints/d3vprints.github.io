@@ -746,13 +746,15 @@ const Contact = () => {
                           <span className="text-gray-500 font-medium">Style</span>
                           <span className="font-bold">{formData.projectType}</span>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500 font-medium">Color</span>
-                          <span className="font-bold flex items-center gap-2">
-                            {formData.color || 'Not selected'}
-                            {isPremiumColor && <span className="text-[10px] text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded-full">Premium +${PREMIUM_SURCHARGE}</span>}
-                          </span>
-                        </div>
+                        {formData.projectType === 'Custom / Other Print' && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-500 font-medium">Color</span>
+                            <span className="font-bold flex items-center gap-2">
+                              {formData.color || 'Not selected'}
+                              {isPremiumColor && <span className="text-[10px] text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded-full">Premium +${PREMIUM_SURCHARGE}</span>}
+                            </span>
+                          </div>
+                        )}
                         {uploadedFiles.length > 0 && (
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Files</span>
