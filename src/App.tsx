@@ -634,27 +634,30 @@ const Contact = () => {
                       </div>
 
                       {/* Color picker */}
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Choose Color</label>
-                        <p className="text-xs text-gray-400 mb-2">Standard (no extra charge)</p>
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {STANDARD_COLORS.map(c => (
-                            <button key={c} onClick={() => setFormData({ ...formData, color: c })}
-                              className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                              {c}
-                            </button>
-                          ))}
-                        </div>
-                        <p className="text-xs text-gray-400 mb-2">Premium (+${PREMIUM_SURCHARGE}.00)</p>
-                        <div className="flex flex-wrap gap-2">
-                          {PREMIUM_COLORS.map(c => (
-                            <button key={c} onClick={() => setFormData({ ...formData, color: c })}
-                              className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                              {c}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+                      {/* Only show color picker for Custom / Other Print */}
+                        {formData.projectType === 'Custom / Other Print' && (
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Choose Color</label>
+                            <p className="text-xs text-gray-400 mb-2">Standard (no extra charge)</p>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {STANDARD_COLORS.map(c => (
+                                <button key={c} onClick={() => setFormData({ ...formData, color: c })}
+                                  className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                                  {c}
+                                </button>
+                              ))}
+                            </div>
+                            <p className="text-xs text-gray-400 mb-2">Premium (+${PREMIUM_SURCHARGE}.00)</p>
+                            <div className="flex flex-wrap gap-2">
+                              {PREMIUM_COLORS.map(c => (
+                                <button key={c} onClick={() => setFormData({ ...formData, color: c })}
+                                  className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                                  {c}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                       <div>
                         <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Any notes or requests?</label>
@@ -804,8 +807,8 @@ const Footer = () => (
         <span className="font-bold text-lg tracking-tighter">D3V PRINTS</span>
       </div>
       <div className="flex gap-8 text-sm text-gray-500 font-medium">
-        <a href="#" className="hover:text-brand-dark transition-colors">Privacy Policy</a>
-        <a href="#" className="hover:text-brand-dark transition-colors">Terms of Service</a>
+        <a href="/terms.html" className="hover:text-brand-dark transition-colors">Terms of Service</a>
+        <a href="/privacy.html" className="hover:text-brand-dark transition-colors">Privacy Policy</a>
       </div>
       <div className="flex gap-4">
         <a href="https://www.instagram.com/d3v.prints/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
