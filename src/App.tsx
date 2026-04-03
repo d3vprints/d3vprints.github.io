@@ -14,7 +14,7 @@ const PREMIUM_SURCHARGE = 3;
 
 const BASE_PRICES: Record<string, number> = {
   'Flat Panel Night Light': 25,
-  'Curved Lamp': 35,
+  'Night Light': 35,
   'Heart Shape': 30,
   'Custom / Other Print': 0,
 };
@@ -196,7 +196,7 @@ const HowItWorks = () => (
       </div>
       <div className="grid md:grid-cols-4 gap-8">
         {[
-          { step: "01", icon: <Camera className="w-7 h-7" />, title: "Pick Your Style", desc: "Choose flat panel, curved lamp, heart, or a custom shape from the order form." },
+          { step: "01", icon: <Camera className="w-7 h-7" />, title: "Pick Your Style", desc: "Choose flat panel, night light, heart, or a custom shape from the order form." },
           { step: "02", icon: <Upload className="w-7 h-7" />, title: "Upload Your Photo", desc: "Send us your image directly through the form. Higher resolution = sharper result." },
           { step: "03", icon: <Printer className="w-7 h-7" />, title: "We Print It", desc: "We process and print your lithophane with precision over 24+ hours." },
           { step: "04", icon: <Package className="w-7 h-7" />, title: "Shipped to You", desc: "Carefully packaged with the LED base included and sent directly to your door." },
@@ -275,7 +275,7 @@ const CurrentProducts = () => {
   const products = [
     {
       id: 1, name: "Mini Flexi Octopus", price: "From $5.00", tag: "Best Seller",
-      images: ["/octopus.png"],
+      images: ["/octopus.png","/whistle.png"],
       description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.",
       basePrice: 5,
       credit: "Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints."
@@ -502,7 +502,7 @@ const Contact = () => {
 
   const projectTypes = [
     { id: 'flat', title: 'Flat Panel Night Light', description: 'Classic lithophane from your photo', icon: <ImageIcon className="w-6 h-6" />, price: 25 },
-    { id: 'curved', title: 'Curved Lamp', description: '360° cylindrical lithophane', icon: <Lightbulb className="w-6 h-6" />, price: 35 },
+    { id: 'nightLight', title: 'NIght Light', description: '120° Curved lithophane', icon: <Lightbulb className="w-6 h-6" />, price: 35 },
     { id: 'heart', title: 'Heart Shape', description: 'Romantic heart lithophane', icon: <Heart className="w-6 h-6" />, price: 30 },
     { id: 'custom', title: 'Custom / Other Print', description: 'STL files or special requests', icon: <FileText className="w-6 h-6" />, price: 0 },
   ];
