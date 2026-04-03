@@ -275,7 +275,7 @@ const CurrentProducts = () => {
   const products = [
     {
       id: 1, name: "Mini Flexi Octopus", price: "From $5.00", tag: "Best Seller",
-      images: ["/octopus.png","/whistle.png"],
+      images: ["/octopus.png"],
       description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.",
       basePrice: 5,
       credit: "Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints."
