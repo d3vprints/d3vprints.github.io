@@ -395,7 +395,7 @@ const LithophaneSection = () => (
       </div>
       <div className="grid lg:grid-cols-3 gap-8 mb-16">
         {[
-          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works: portraits, landscapes, pets, couples. The higher the resolution, the sharper the detail." },
+          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works — portraits, landscapes, pets, couples. The higher the resolution, the sharper the detail." },
           { icon: <Printer className="w-8 h-8" />, title: "We Print It", desc: "Using 0.1mm layer resolution and premium PLA+ white filament for the clearest possible image." },
           { icon: <Lightbulb className="w-8 h-8" />, title: "It Glows", desc: "Plug in the LED base and watch your photo appear in stunning backlit detail. Pure magic." }
         ].map((f, i) => (
@@ -416,61 +416,22 @@ const LithophaneSection = () => (
   </section>
 );
 
-// ─── Style Showcase ─────────────────────────────────────────────────────────── FIX 2: slideshow images
+// ─── Style Showcase ───────────────────────────────────────────────────────────
 const StyleShowcase = () => {
   const { addItem } = useCart();
   const [addedId, setAddedId] = useState<string | null>(null);
   const [imgIndexes, setImgIndexes] = useState<Record<string, number>>({});
 
   const styles = [
-    {
-      id: 'flat',
-      name: "Flat Panel",
-      tag: "Most Popular",
-      desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.",
-      detail: "Warm LED base included",
-      price: LITHOPHANE_PRICES['Flat Panel'],
-      images: ["/flatlitho.png", "/all litho.png"],
-      best: "Portraits, families, pets",
-    },
-    {
-      id: 'night',
-      name: "Night Light",
-      tag: "Smart Light",
-      desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light. No switches needed.",
-      detail: "Auto on/off light sensor",
-      price: LITHOPHANE_PRICES['Night Light'],
-      images: ["/nightlightlitho.png", "/nightlight2litho.png"],
-      best: "Bedrooms, kids rooms, hallways",
-      highlight: true,
-    },
-    {
-      id: 'heart',
-      name: "Heart Shape",
-      tag: "Best Gift",
-      desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",
-      detail: "Stand-alone display piece",
-      price: LITHOPHANE_PRICES['Heart Shape'],
-      images: ["/heartlitho.png"],
-      best: "Couples, Valentine's Day, memorials",
-    },
-    {
-      id: 'custom',
-      name: "Custom Shape",
-      tag: "Unique",
-      desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",
-      detail: "Stand-alone piece, no base",
-      price: LITHOPHANE_PRICES['Custom Shape'],
-      images: ["/flatlitho.png"],
-      best: "Logos, names, unique gifts",
-    },
+    { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",    price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png", "/all litho.png"],               best: "Portraits, families, pets" },
+    { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",       detail: "Auto on/off light sensor", price: LITHOPHANE_PRICES['Night Light'],  images: ["/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
+    { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",     detail: "Stand-alone display piece", price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
+    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",              detail: "Stand-alone piece, no base", price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
   ];
 
   const getImg = (id: string) => imgIndexes[id] ?? 0;
-  const prevImg = (id: string, len: number) =>
-    setImgIndexes(prev => ({ ...prev, [id]: (getImg(id) - 1 + len) % len }));
-  const nextImg = (id: string, len: number) =>
-    setImgIndexes(prev => ({ ...prev, [id]: (getImg(id) + 1) % len }));
+  const prevImg = (id: string, len: number) => setImgIndexes(prev => ({ ...prev, [id]: (getImg(id) - 1 + len) % len }));
+  const nextImg = (id: string, len: number) => setImgIndexes(prev => ({ ...prev, [id]: (getImg(id) + 1) % len }));
 
   const handleAddToCart = (style: typeof styles[0]) => {
     const price = SALE_ACTIVE ? style.price.sale : style.price.original;
@@ -483,58 +444,34 @@ const StyleShowcase = () => {
     <section id="styles" className="py-24 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-            Choose Your Style
-          </div>
+          <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">Choose Your Style</div>
           <h2 className="text-5xl font-bold mb-4">Which One Is Right <span className="text-brand-primary italic">For You?</span></h2>
           <p className="text-gray-500 max-w-xl mx-auto">Same 0.1mm precision printing across every style. Pick the shape and light that fits your space.</p>
         </div>
         {SALE_ACTIVE && (
           <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-2xl px-6 py-4 mb-10 text-center">
-            <p className="text-brand-dark font-bold text-sm">
-              <Tag className="w-4 h-4 inline mr-1 text-brand-primary" />
-              Launch Sale: First 50 customers only. Prices shown are already reduced.
-            </p>
+            <p className="text-brand-dark font-bold text-sm"><Tag className="w-4 h-4 inline mr-1 text-brand-primary" />Launch Sale: First 50 customers only. Prices shown are already reduced.</p>
           </div>
         )}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {styles.map((style) => (
             <motion.div key={style.id} whileHover={{ y: -8 }}
-              className={`rounded-3xl border overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col ${style.highlight ? 'border-brand-primary ring-2 ring-brand-primary/20' : 'border-gray-100'}`}>
-              {/* Image carousel */}
+              className={`rounded-3xl border overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col ${(style as any).highlight ? 'border-brand-primary ring-2 ring-brand-primary/20' : 'border-gray-100'}`}>
               <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative shrink-0">
                 <AnimatePresence mode="wait">
-                  <motion.img
-                    key={getImg(style.id)}
-                    src={style.images[getImg(style.id)]}
-                    alt={style.name}
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full h-full object-contain p-4"
-                  />
+                  <motion.img key={getImg(style.id)} src={style.images[getImg(style.id)]} alt={style.name}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                    className="w-full h-full object-contain p-4" />
                 </AnimatePresence>
-                <div className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${style.highlight ? 'bg-brand-primary text-white' : 'bg-brand-dark text-white'}`}>
-                  {style.tag}
-                </div>
+                <div className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${(style as any).highlight ? 'bg-brand-primary text-white' : 'bg-brand-dark text-white'}`}>{style.tag}</div>
                 {style.images.length > 1 && (
                   <>
-                    <button
-                      onClick={() => prevImg(style.id, style.images.length)}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 z-10">
-                      <ChevronLeft className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={() => nextImg(style.id, style.images.length)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 z-10">
-                      <ChevronRight className="w-3 h-3" />
-                    </button>
+                    <button onClick={() => prevImg(style.id, style.images.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 z-10"><ChevronLeft className="w-3 h-3" /></button>
+                    <button onClick={() => nextImg(style.id, style.images.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 z-10"><ChevronRight className="w-3 h-3" /></button>
                     <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
                       {style.images.map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setImgIndexes(prev => ({ ...prev, [style.id]: i }))}
-                          className={`w-1.5 h-1.5 rounded-full transition-all ${i === getImg(style.id) ? 'bg-white scale-125' : 'bg-white/50'}`}
-                        />
+                        <button key={i} onClick={() => setImgIndexes(prev => ({ ...prev, [style.id]: i }))}
+                          className={`w-1.5 h-1.5 rounded-full transition-all ${i === getImg(style.id) ? 'bg-white scale-125' : 'bg-white/50'}`} />
                       ))}
                     </div>
                   </>
@@ -543,9 +480,7 @@ const StyleShowcase = () => {
               <div className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold mb-2">{style.name}</h3>
                 <p className="text-gray-500 text-xs leading-relaxed mb-3">{style.desc}</p>
-                <div className="bg-brand-light rounded-lg px-3 py-1.5 text-[10px] font-bold text-gray-500 mb-3 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-brand-primary" /> {style.detail}
-                </div>
+                <div className="bg-brand-light rounded-lg px-3 py-1.5 text-[10px] font-bold text-gray-500 mb-3 flex items-center gap-1"><Sparkles className="w-3 h-3 text-brand-primary" /> {style.detail}</div>
                 <div className="text-xs text-gray-400 mb-4">Best for: <span className="font-semibold text-gray-600">{style.best}</span></div>
                 <div className="mt-auto space-y-3">
                   <div>
@@ -558,14 +493,9 @@ const StyleShowcase = () => {
                       <span className="text-xl font-black">${style.price.original}</span>
                     )}
                   </div>
-                  <button
-                    onClick={() => handleAddToCart(style)}
+                  <button onClick={() => handleAddToCart(style)}
                     className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${addedId === style.id ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary'}`}>
-                    {addedId === style.id ? (
-                      <><CheckCircle className="w-4 h-4" /> Added to Cart</>
-                    ) : (
-                      <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
-                    )}
+                    {addedId === style.id ? <><CheckCircle className="w-4 h-4" /> Added to Cart</> : <><ShoppingCart className="w-4 h-4" /> Add to Cart</>}
                   </button>
                 </div>
               </div>
@@ -577,9 +507,7 @@ const StyleShowcase = () => {
             <h4 className="font-bold text-lg mb-1">Ordering 6 or more? You get a bulk discount.</h4>
             <p className="text-gray-400 text-sm">Orders of {BULK_THRESHOLD + 1}+ lithophanes automatically get {BULK_DISCOUNT * 100}% off. Perfect for events, weddings, or family gifts.</p>
           </div>
-          <Link to="/checkout" className="shrink-0 bg-brand-primary text-brand-dark px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform whitespace-nowrap">
-            Go to Checkout
-          </Link>
+          <Link to="/checkout" className="shrink-0 bg-brand-primary text-brand-dark px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform whitespace-nowrap">Go to Checkout</Link>
         </div>
       </div>
     </section>
@@ -596,10 +524,10 @@ const HowItWorks = () => (
       </div>
       <div className="grid md:grid-cols-4 gap-6 mb-16">
         {[
-          { step: "01", icon: <Camera className="w-7 h-7" />,  title: "Pick Your Style",    desc: "Flat panel, night light, heart, or custom shape." },
-          { step: "02", icon: <ShoppingCart className="w-7 h-7" />, title: "Add to Cart",   desc: "Build your order with multiple items." },
-          { step: "03", icon: <Upload className="w-7 h-7" />,  title: "Upload at Checkout", desc: "Upload your photos and files when you check out." },
-          { step: "04", icon: <Package className="w-7 h-7" />, title: "You Pick It Up",     desc: "Free pickup in Plainsboro, NJ." },
+          { step: "01", icon: <Camera className="w-7 h-7" />,       title: "Pick Your Style",    desc: "Flat panel, night light, heart, or custom shape." },
+          { step: "02", icon: <ShoppingCart className="w-7 h-7" />, title: "Add to Cart",        desc: "Build your order with multiple items." },
+          { step: "03", icon: <Upload className="w-7 h-7" />,       title: "Upload at Checkout", desc: "Upload your photos and files when you check out." },
+          { step: "04", icon: <Package className="w-7 h-7" />,      title: "You Pick It Up",     desc: "Free pickup in Plainsboro, NJ." },
         ].map((s, i) => (
           <motion.div key={i} whileHover={{ y: -8 }} className="relative p-8 rounded-3xl bg-white border border-gray-100 hover:shadow-xl transition-all">
             <div className="text-5xl font-black text-brand-primary/10 absolute top-6 right-6 font-mono">{s.step}</div>
@@ -610,10 +538,7 @@ const HowItWorks = () => (
         ))}
       </div>
       <div className="bg-brand-dark text-white rounded-3xl p-10">
-        <div className="flex items-center gap-3 mb-2">
-          <MapPin className="w-5 h-5 text-brand-primary" />
-          <h3 className="text-2xl font-bold">Pickup and Delivery</h3>
-        </div>
+        <div className="flex items-center gap-3 mb-2"><MapPin className="w-5 h-5 text-brand-primary" /><h3 className="text-2xl font-bold">Pickup and Delivery</h3></div>
         <p className="text-gray-400 text-sm mb-10">We are currently local only, based in <span className="text-white font-semibold">Plainsboro, NJ</span>.</p>
         <div className="grid md:grid-cols-3 gap-6">
           {[
@@ -621,7 +546,7 @@ const HowItWorks = () => (
             { icon: <Car className="w-7 h-7" />,     title: "Local Dropoff", badge: "Small fee",   green: false, desc: "We deliver to you within our local area. Enter your address in the order form and we will confirm if you are in range." },
             { icon: <Package className="w-7 h-7" />, title: "Shipping",      badge: "Coming soon", green: false, desc: "Shipping is not available right now. We are working on expanding, check back soon!", disabled: true },
           ].map((opt, i) => (
-            <div key={i} className={`rounded-2xl p-8 border ${opt.disabled ? 'bg-white/[0.03] border-white/5 opacity-50' : 'bg-white/5 border-white/10'}`}>
+            <div key={i} className={`rounded-2xl p-8 border ${(opt as any).disabled ? 'bg-white/[0.03] border-white/5 opacity-50' : 'bg-white/5 border-white/10'}`}>
               <div className="text-gray-400 mb-4">{opt.icon}</div>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-bold text-lg">{opt.title}</h4>
@@ -637,6 +562,8 @@ const HowItWorks = () => (
 );
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
+// FIX: price row is a fixed h-7 container. "Get a quote" is removed from the price
+// row entirely and moved into the button label instead — so all 5 buttons align.
 const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => void }) => {
   const [currentImg, setCurrentImg] = useState(0);
   const [customAdded, setCustomAdded] = useState(false);
@@ -648,6 +575,10 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
     setCustomAdded(true);
     setTimeout(() => setCustomAdded(false), 2000);
   };
+
+  const showSalePrice = SALE_ACTIVE && product.salePrice;
+  const showFromPrice = !showSalePrice && product.basePrice > 0;
+  const isQuote       = product.basePrice === 0;
 
   return (
     <motion.div whileHover={{ y: -10 }} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
@@ -668,29 +599,36 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-base mb-1 group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
         <p className="text-gray-500 text-xs mb-4 leading-relaxed flex-1">{product.description}</p>
-        {/* FIX 3: min-h on price row so all cards align regardless of sale/quote state */}
-        <div className="space-y-2 mt-auto">
-          <div className="flex items-center min-h-[2rem]">
-            {SALE_ACTIVE && product.salePrice ? (
+
+        <div className="mt-auto space-y-2">
+          {/* Fixed-height price row — empty for quote products so button Y is identical */}
+          <div className="h-7 flex items-center">
+            {showSalePrice && (
               <div className="flex items-center gap-2">
                 <span className="text-lg font-black text-brand-primary">${product.salePrice.toFixed(2)}</span>
                 <span className="text-xs text-gray-400 line-through">${product.basePrice.toFixed(2)}</span>
                 <span className="text-[9px] font-bold bg-brand-primary text-white px-1.5 py-0.5 rounded-full">SALE</span>
               </div>
-            ) : (
-              <span className="text-lg font-bold font-mono">{product.basePrice > 0 ? `From $${product.basePrice.toFixed(2)}` : 'Get a quote'}</span>
             )}
+            {showFromPrice && (
+              <span className="text-lg font-bold font-mono">From ${product.basePrice.toFixed(2)}</span>
+            )}
+            {/* isQuote: row intentionally empty — button below says "Get a Quote" */}
           </div>
+
           <button
             onClick={() => product.isCustom ? handleCustomAdd() : onOrder(product)}
             className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${customAdded ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary'}`}>
             {customAdded ? (
               <><CheckCircle className="w-4 h-4" /> Added!</>
+            ) : isQuote ? (
+              <><ShoppingCart className="w-4 h-4" /> Get a Quote</>
             ) : (
               <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
             )}
           </button>
         </div>
+
         {product.credit && <p className="text-[9px] text-gray-300 mt-3 leading-relaxed">{product.credit}</p>}
       </div>
     </motion.div>
@@ -747,9 +685,7 @@ const ReviewCard = ({ review }: { review: any }) => (
         <p className="font-bold text-sm">{review.name}</p>
         <p className="text-xs text-gray-400">{review.date}</p>
       </div>
-      <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-sm">
-        {review.name[0]}
-      </div>
+      <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-sm">{review.name[0]}</div>
     </div>
   </div>
 );
@@ -767,11 +703,7 @@ const Reviews = () => {
     try {
       await fetch('https://api.web3forms.com/submit', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
-          subject: `New Review from ${form.name} (${form.rating}/5 stars)`,
-          message: `Name: ${form.name}\nRating: ${form.rating}/5\n\n"${form.text}"`
-        })
+        body: JSON.stringify({ access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55', subject: `New Review from ${form.name} (${form.rating}/5 stars)`, message: `Name: ${form.name}\nRating: ${form.rating}/5\n\n"${form.text}"` })
       });
     } catch {}
     setSubmitted(true);
@@ -781,41 +713,28 @@ const Reviews = () => {
   return (
     <section id="reviews" className="py-24 px-6 bg-brand-light overflow-hidden">
       <style>{`
-        @keyframes d3v-scroll {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        .review-marquee {
-          animation: d3v-scroll ${duration}s linear infinite;
-          will-change: transform;
-        }
+        @keyframes d3v-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .review-marquee { animation: d3v-scroll ${duration}s linear infinite; will-change: transform; }
         .review-marquee:hover { animation-play-state: paused; }
       `}</style>
-
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-            Customer Reviews
-          </div>
+          <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">Customer Reviews</div>
           <h2 className="text-5xl font-bold mb-4">What People <span className="text-brand-primary italic">Are Saying</span></h2>
           <div className="flex items-center justify-center gap-2 mt-4">
             <div className="flex text-yellow-400 text-xl">{"★★★★★"}</div>
             <span className="text-gray-500 font-medium text-sm">{reviews.length} reviews · 5.0 average</span>
           </div>
         </div>
-
         <div className="-mx-6 mb-16 overflow-hidden">
           <div className="review-marquee flex py-4">
             {doubled.map((review, i) => <ReviewCard key={i} review={review} />)}
           </div>
         </div>
-
         <div className="bg-brand-dark text-white rounded-3xl p-10 max-w-2xl mx-auto">
           {submitted ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-6">
-              <div className="w-16 h-16 bg-brand-primary/20 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8" />
-              </div>
+              <div className="w-16 h-16 bg-brand-primary/20 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-4"><CheckCircle className="w-8 h-8" /></div>
               <h3 className="text-xl font-bold mb-2">Thanks for your review!</h3>
               <p className="text-gray-400 text-sm">Your feedback means a lot to us. We will review it and add it to the site soon.</p>
               <button onClick={() => setSubmitted(false)} className="mt-6 text-brand-primary text-sm font-bold hover:underline">Leave another review</button>
@@ -826,23 +745,19 @@ const Reviews = () => {
               <p className="text-gray-400 text-sm mb-8">Had a great experience? We would love to hear about it.</p>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary"
-                  placeholder="Your name" required />
+                  className="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary" placeholder="Your name" required />
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Rating</label>
                   <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map(n => (
-                      <button key={n} type="button" onClick={() => setForm({ ...form, rating: n })}
-                        className={`text-2xl transition-all ${n <= form.rating ? 'text-yellow-400' : 'text-gray-600'}`}>★</button>
+                    {[1,2,3,4,5].map(n => (
+                      <button key={n} type="button" onClick={() => setForm({ ...form, rating: n })} className={`text-2xl transition-all ${n <= form.rating ? 'text-yellow-400' : 'text-gray-600'}`}>★</button>
                     ))}
                   </div>
                 </div>
                 <textarea rows={4} value={form.text} onChange={e => setForm({ ...form, text: e.target.value })}
                   className="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"
                   placeholder="Tell us about your experience..." required />
-                <button type="submit" className="w-full bg-brand-primary text-brand-dark py-4 rounded-2xl font-bold hover:scale-105 transition-transform">
-                  Submit Review
-                </button>
+                <button type="submit" className="w-full bg-brand-primary text-brand-dark py-4 rounded-2xl font-bold hover:scale-105 transition-transform">Submit Review</button>
               </form>
             </>
           )}
@@ -857,10 +772,7 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">Delivery Preference</label>
     <div className="flex flex-col gap-2 mb-3">
-      {[
-        { label: 'Pickup (Free: Plainsboro, NJ)', value: 'Pickup' },
-        { label: 'Local Dropoff (small fee)', value: 'Dropoff' },
-      ].map(d => (
+      {[{ label: 'Pickup (Free — Plainsboro, NJ)', value: 'Pickup' }, { label: 'Local Dropoff (small fee)', value: 'Dropoff' }].map(d => (
         <button key={d.value} type="button" onClick={() => onDelivery(d.value)}
           className={`text-left px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${value === d.value ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{d.label}</button>
       ))}
@@ -874,7 +786,7 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
   </div>
 );
 
-// ─── FIX 1: useUploadcare Hook — with Uploadcare fallback ─────────────────────
+// ─── useUploadcare — with quota fallback ─────────────────────────────────────
 const useUploadcare = () => {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string; fallback?: boolean }[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -890,9 +802,7 @@ const useUploadcare = () => {
       const json = await res.json();
       if (json.file) return { name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` };
       return null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -900,18 +810,11 @@ const useUploadcare = () => {
     const files = Array.from(e.target.files);
     setUploading(true);
     const uploaded: { name: string; url: string; fallback?: boolean }[] = [];
-
     for (const file of files) {
       const result = await tryUploadcare(file);
-      if (result) {
-        uploaded.push(result);
-      } else {
-        // Uploadcare failed (quota hit, network, etc.) — flag for email fallback
-        setUsedFallback(true);
-        uploaded.push({ name: file.name, url: '', fallback: true });
-      }
+      if (result) { uploaded.push(result); }
+      else { setUsedFallback(true); uploaded.push({ name: file.name, url: '', fallback: true }); }
     }
-
     setUploadedFiles(prev => [...prev, ...uploaded]);
     setUploading(false);
   };
@@ -919,16 +822,12 @@ const useUploadcare = () => {
   return { uploadedFiles, uploading, handleUpload, usedFallback };
 };
 
-// ─── FIX 1: Reusable File Upload — shows fallback warning ────────────────────
-const FileUpload = ({
-  files, uploading, onUpload, label, hint, usedFallback,
-}: {
+// ─── Reusable: File Upload ────────────────────────────────────────────────────
+const FileUpload = ({ files, uploading, onUpload, label, hint, usedFallback }: {
   files: { name: string; url: string; fallback?: boolean }[];
   uploading: boolean;
   onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  label: string;
-  hint?: string;
-  usedFallback?: boolean;
+  label: string; hint?: string; usedFallback?: boolean;
 }) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">{label}</label>
@@ -938,11 +837,9 @@ const FileUpload = ({
       <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-6 text-center transition-colors">
         <Upload className="w-7 h-7 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
         <div className="text-sm font-bold text-gray-500">
-          {uploading
-            ? 'Uploading...'
-            : files.length > 0
-              ? `${files.filter(f => !f.fallback).length} file(s) uploaded ✓${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''}`
-              : 'Drag and drop or click to upload'}
+          {uploading ? 'Uploading...' : files.length > 0
+            ? `${files.filter(f => !f.fallback).length} file(s) uploaded ✓${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''}`
+            : 'Drag and drop or click to upload'}
         </div>
         <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB each</div>
       </div>
@@ -950,38 +847,49 @@ const FileUpload = ({
     {usedFallback && (
       <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
         <p className="text-amber-800 text-xs font-bold mb-1">File upload temporarily unavailable</p>
-        <p className="text-amber-700 text-xs leading-relaxed">
-          No worries, just reply to our confirmation email with your photos or files attached. We will take care of the rest.
-        </p>
+        <p className="text-amber-700 text-xs leading-relaxed">No worries — just reply to our confirmation email with your photos or files attached. We will take care of the rest.</p>
       </div>
     )}
     {files.length > 0 && (
       <div className="flex flex-wrap gap-2 mt-2">
-        {files.map((f, i) =>
-          f.fallback ? (
-            <span key={i} className="bg-amber-100 text-amber-700 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2">
-              <Paperclip className="w-3 h-3" /> {f.name} (send via email)
-            </span>
-          ) : (
-            <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200">
-              <Paperclip className="w-3 h-3" /> {f.name}
-            </a>
-          )
+        {files.map((f, i) => f.fallback
+          ? <span key={i} className="bg-amber-100 text-amber-700 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2"><Paperclip className="w-3 h-3" /> {f.name} (send via email)</span>
+          : <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200"><Paperclip className="w-3 h-3" /> {f.name}</a>
         )}
       </div>
     )}
   </div>
 );
 
+// ─── submitOrder ──────────────────────────────────────────────────────────────
+// Sheet columns: Name | Email | Project Type | Message | Files | Date | Payment Interface | Status
+// We map: name→Name, email→Email, delivery→Project Type, items+notes→Message, fileLinks→Files, date→Date
+// "Payment Interface" and "Status" stay blank — you fill those in manually per order.
 const submitOrder = async (subject: string, payload: object, fileLinks: string) => {
-  const body = { ...payload, access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55', subject, 'Attached Files': fileLinks };
+  const p = payload as any;
+
+  // web3forms email
+  const emailBody = { ...payload, access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55', subject, 'Attached Files': fileLinks };
   const emailRes = await fetch('https://api.web3forms.com/submit', {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify(emailBody),
   });
+
+  // Google Sheets — fields keyed to match your existing doPost handler exactly
+  const sheetsPayload = {
+    name:        p.name,
+    email:       p.email,
+    projectType: p.delivery,
+    message:     `ITEMS:\n${p.items}${p.bulkDiscount ? `\nBulk Discount: ${p.bulkDiscount}` : ''}\nSubtotal: ${p.subtotal}\nTotal: ${p.total}\n\nNotes: ${p.notes}`,
+    files:       fileLinks,
+    date:        p.date,
+  };
+
   await fetch('https://script.google.com/macros/s/AKfycbxWkorFdGZlupFCzIlw4KkkLtYCj4BrL7jmH2DfOeuNyUzUw4yd9u-_Rs1TI2eX7dparQ/exec', {
-    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(sheetsPayload),
   });
+
   return emailRes.ok;
 };
 
@@ -1026,8 +934,7 @@ const CheckoutPage = () => {
       : 'No files uploaded';
 
     const payload = {
-      name,
-      email,
+      name, email,
       delivery: delivery + (address ? ` — ${address}` : ''),
       items: orderLines.join('\n'),
       subtotal: `$${total.toFixed(2)}`,
@@ -1041,39 +948,27 @@ const CheckoutPage = () => {
 
     try {
       const ok = await submitOrder(subject, payload, fileLinks);
-      if (ok) {
-        clearCart();
-        setStatus('success');
-      } else {
-        setStatus('error');
-      }
-    } catch {
-      setStatus('error');
-    }
+      if (ok) { clearCart(); setStatus('success'); }
+      else setStatus('error');
+    } catch { setStatus('error'); }
   };
 
-  // Empty cart state
   if (items.length === 0 && status !== 'success') {
     return (
       <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center justify-center text-center">
         <ShoppingBag className="w-20 h-20 text-gray-200 mb-6" />
         <h2 className="text-3xl font-bold mb-3">Your cart is empty</h2>
         <p className="text-gray-500 mb-8">Add some items before checking out.</p>
-        <Link to="/" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
-          Browse Products
-        </Link>
+        <Link to="/" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Browse Products</Link>
       </div>
     );
   }
 
-  // Success state
   if (status === 'success') {
     return (
       <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center justify-center text-center">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md">
-          <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8">
-            <CheckCircle className="w-12 h-12" />
-          </div>
+          <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8"><CheckCircle className="w-12 h-12" /></div>
           <h2 className="text-4xl font-bold mb-4">Order Placed!</h2>
           <p className="text-gray-500 mb-3 leading-relaxed">
             Thanks, <span className="font-bold text-brand-dark">{name}</span>! We have received your order and will email you at <span className="font-bold text-brand-dark">{email}</span> within 12 hours with confirmation and payment details.
@@ -1090,9 +985,7 @@ const CheckoutPage = () => {
               <p className="text-amber-600 text-xs">Some files could not upload. Please reply to our confirmation email with them attached.</p>
             </div>
           )}
-          <Link to="/" className="inline-block bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
-            Back to Shop
-          </Link>
+          <Link to="/" className="inline-block bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Back to Shop</Link>
         </motion.div>
       </div>
     );
@@ -1101,11 +994,8 @@ const CheckoutPage = () => {
   return (
     <div className="min-h-screen pt-28 pb-20 px-6 bg-brand-light">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex items-center gap-4 mb-10">
-          <Link to="/" className="w-10 h-10 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
+          <Link to="/" className="w-10 h-10 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors"><ChevronLeft className="w-5 h-5" /></Link>
           <div>
             <h1 className="text-4xl font-bold tracking-tight">Checkout</h1>
             <p className="text-gray-500 text-sm mt-0.5">{items.reduce((s, i) => s + i.qty, 0)} item{items.reduce((s, i) => s + i.qty, 0) !== 1 ? 's' : ''} in your order</p>
@@ -1113,48 +1003,26 @@ const CheckoutPage = () => {
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8">
-
-          {/* ─── Left: Cart + Upload ─── */}
           <div className="lg:col-span-3 space-y-6">
-
-            {/* Cart Items */}
             <div className="bg-white rounded-3xl p-8 shadow-sm">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-brand-primary" /> Your Items
-              </h2>
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><ShoppingBag className="w-5 h-5 text-brand-primary" /> Your Items</h2>
               <div className="space-y-4">
                 {items.map(item => (
                   <div key={item.cartId} className="flex gap-4 bg-gray-50 rounded-2xl p-4">
-                    {item.image && (
-                      <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover bg-white shrink-0" />
-                    )}
+                    {item.image && <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover bg-white shrink-0" />}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <p className="font-bold text-sm leading-tight">{item.name}</p>
-                        <button onClick={() => removeItem(item.cartId)} className="text-gray-300 hover:text-red-400 transition-colors shrink-0 ml-2">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <button onClick={() => removeItem(item.cartId)} className="text-gray-300 hover:text-red-400 transition-colors shrink-0 ml-2"><Trash2 className="w-4 h-4" /></button>
                       </div>
                       {item.color && <p className="text-xs text-gray-500 mb-1">Color: {item.color}</p>}
-                      {item.type === 'lithophane' && (
-                        <p className="text-[10px] text-amber-600 font-bold mb-2 flex items-center gap-1">
-                          <Camera className="w-3 h-3" /> Upload photo below
-                        </p>
-                      )}
-                      {item.productId === 5 && (
-                        <p className="text-[10px] text-brand-primary font-bold mb-2 flex items-center gap-1">
-                          <FileText className="w-3 h-3" /> Upload STL/file below
-                        </p>
-                      )}
+                      {item.type === 'lithophane' && <p className="text-[10px] text-amber-600 font-bold mb-2 flex items-center gap-1"><Camera className="w-3 h-3" /> Upload photo below</p>}
+                      {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mb-2 flex items-center gap-1"><FileText className="w-3 h-3" /> Upload STL/file below</p>}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <button onClick={() => updateQty(item.cartId, item.qty - 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors">
-                            <Minus className="w-3 h-3" />
-                          </button>
+                          <button onClick={() => updateQty(item.cartId, item.qty - 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors"><Minus className="w-3 h-3" /></button>
                           <span className="text-sm font-bold w-5 text-center">{item.qty}</span>
-                          <button onClick={() => updateQty(item.cartId, item.qty + 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors">
-                            <Plus className="w-3 h-3" />
-                          </button>
+                          <button onClick={() => updateQty(item.cartId, item.qty + 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors"><Plus className="w-3 h-3" /></button>
                         </div>
                         <p className="font-bold text-brand-primary text-sm">
                           {item.unitPrice === 0 ? <span className="text-gray-400 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}
@@ -1166,13 +1034,9 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* File Upload Section */}
             {needsFiles && (
               <div className="bg-white rounded-3xl p-8 shadow-sm">
-                <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-                  <Upload className="w-5 h-5 text-brand-primary" /> Upload Your Files
-                </h2>
-
+                <h2 className="text-xl font-bold mb-2 flex items-center gap-2"><Upload className="w-5 h-5 text-brand-primary" /> Upload Your Files</h2>
                 {hasLithophanes && (
                   <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6">
                     <p className="text-amber-800 font-bold text-sm mb-1 flex items-center gap-2">
@@ -1181,101 +1045,66 @@ const CheckoutPage = () => {
                     </p>
                     <p className="text-amber-700 text-xs leading-relaxed">
                       {lithoItems.length > 1
-                        ? `You have ${lithoItems.length} lithophane styles in your cart. Upload all your photos here, then use the Notes field below to tell us which photo goes with which lithophane (e.g. "Photo 1 = Flat Panel, Photo 2 = Night Light"). We will match them up.`
+                        ? `You have ${lithoItems.length} lithophane styles in your cart. Upload all your photos here, then use the Notes field to tell us which photo goes with which lithophane.`
                         : 'Upload the photo you want printed as a lithophane. Higher resolution = sharper detail.'}
                     </p>
                     {lithoItems.length > 1 && (
                       <div className="mt-3 space-y-1">
                         {lithoItems.map((item, i) => (
-                          <p key={item.cartId} className="text-amber-600 text-xs font-bold">
-                            • Photo {i + 1} → {item.name.replace('Lithophane: ', '')} (qty: {item.qty})
-                          </p>
+                          <p key={item.cartId} className="text-amber-600 text-xs font-bold">• Photo {i + 1} → {item.name.replace('Lithophane: ', '')} (qty: {item.qty})</p>
                         ))}
                       </div>
                     )}
                   </div>
                 )}
-
-                {hasCustomPrint && !hasLithophanes && (
-                  <p className="text-gray-500 text-sm mb-4">Upload your STL file or any reference images for your custom print.</p>
-                )}
-                {hasCustomPrint && hasLithophanes && (
-                  <p className="text-gray-500 text-sm mb-4">Also upload your STL file or reference images for the custom print.</p>
-                )}
-
-                <FileUpload
-                  files={uploadedFiles}
-                  uploading={uploading}
-                  onUpload={handleUpload}
-                  usedFallback={usedFallback}
-                  label={hasLithophanes && hasCustomPrint ? 'All Photos & Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'}
-                />
+                {hasCustomPrint && !hasLithophanes && <p className="text-gray-500 text-sm mb-4">Upload your STL file or any reference images for your custom print.</p>}
+                {hasCustomPrint && hasLithophanes && <p className="text-gray-500 text-sm mb-4">Also upload your STL file or reference images for the custom print.</p>}
+                <FileUpload files={uploadedFiles} uploading={uploading} onUpload={handleUpload} usedFallback={usedFallback}
+                  label={hasLithophanes && hasCustomPrint ? 'All Photos & Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'} />
               </div>
             )}
           </div>
 
-          {/* ─── Right: Contact + Delivery + Summary ─── */}
           <div className="lg:col-span-2 space-y-6">
-
-            {/* Your Info */}
             <div className="bg-white rounded-3xl p-8 shadow-sm">
               <h2 className="text-xl font-bold mb-6">Your Details</h2>
               <div className="space-y-4">
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
-                  <input
-                    type="text" value={name} onChange={e => setName(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm"
-                    placeholder="John Doe" />
+                  <input type="text" value={name} onChange={e => setName(e.target.value)}
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm" placeholder="John Doe" />
                 </div>
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
-                  <input
-                    type="email" value={email} onChange={e => setEmail(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm"
-                    placeholder="john@example.com" />
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm" placeholder="john@example.com" />
                 </div>
                 <DeliveryPicker value={delivery} address={address} onDelivery={setDelivery} onAddress={setAddress} />
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Notes</label>
-                  <textarea
-                    rows={3} value={notes} onChange={e => setNotes(e.target.value)}
+                  <textarea rows={3} value={notes} onChange={e => setNotes(e.target.value)}
                     className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
-                    placeholder={
-                      hasLithophanes && lithoItems.length > 1
-                        ? 'Specify which photo is for which lithophane (e.g. Photo 1 = Flat Panel, Photo 2 = Night Light)...'
-                        : hasLithophanes
-                        ? 'Any special requests (e.g. crop to face only, warm tone)...'
-                        : 'Any special requests or notes...'
-                    }
-                  />
+                    placeholder={hasLithophanes && lithoItems.length > 1 ? 'Specify which photo is for which lithophane...' : hasLithophanes ? 'Any special requests (e.g. crop to face only, warm tone)...' : 'Any special requests or notes...'} />
                 </div>
               </div>
             </div>
 
-            {/* Order Summary */}
             <div className="bg-brand-dark text-white rounded-3xl p-8 shadow-sm">
               <h2 className="text-xl font-bold mb-6">Order Summary</h2>
               <div className="space-y-3 mb-6">
                 {items.map(item => (
                   <div key={item.cartId} className="flex justify-between text-sm">
-                    <span className="text-gray-400 truncate max-w-[65%]">
-                      {item.name}{item.color ? ` (${item.color})` : ''} ×{item.qty}
-                    </span>
-                    <span className="font-bold shrink-0">
-                      {item.unitPrice === 0 ? <span className="text-gray-500 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}
-                    </span>
+                    <span className="text-gray-400 truncate max-w-[65%]">{item.name}{item.color ? ` (${item.color})` : ''} ×{item.qty}</span>
+                    <span className="font-bold shrink-0">{item.unitPrice === 0 ? <span className="text-gray-500 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}</span>
                   </div>
                 ))}
               </div>
-
               {hasBulkDiscount && (
                 <div className="flex justify-between text-sm text-brand-primary font-bold mb-3 border-t border-white/10 pt-3">
                   <span>Bulk discount ({BULK_DISCOUNT * 100}% off lithophanes)</span>
                   <span>-${discountAmount.toFixed(2)}</span>
                 </div>
               )}
-
               <div className="border-t border-white/10 pt-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 font-medium text-sm">Estimated Total</span>
@@ -1283,27 +1112,17 @@ const CheckoutPage = () => {
                 </div>
                 <p className="text-gray-500 text-xs mt-2">Final price confirmed via email within 12 hours.</p>
               </div>
-
               {SALE_ACTIVE && (
                 <div className="mt-4 bg-brand-primary/10 border border-brand-primary/30 rounded-xl px-4 py-3">
-                  <p className="text-brand-primary text-xs font-bold flex items-center gap-1">
-                    <Tag className="w-3 h-3" /> Launch sale pricing applied
-                  </p>
+                  <p className="text-brand-primary text-xs font-bold flex items-center gap-1"><Tag className="w-3 h-3" /> Launch sale pricing applied</p>
                 </div>
               )}
-
-              <button
-                onClick={handleSubmit}
-                disabled={!canSubmit || status === 'submitting'}
+              <button onClick={handleSubmit} disabled={!canSubmit || status === 'submitting'}
                 className="w-full mt-6 bg-brand-primary text-brand-dark py-4 rounded-2xl font-black hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 text-base">
                 {status === 'submitting' ? 'Placing Order...' : 'Place Order →'}
               </button>
-
-              {status === 'error' && (
-                <p className="text-red-400 text-sm text-center mt-3">Something went wrong. Please try again.</p>
-              )}
+              {status === 'error' && <p className="text-red-400 text-sm text-center mt-3">Something went wrong. Please try again.</p>}
             </div>
-
           </div>
         </div>
       </div>
