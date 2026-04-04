@@ -16,7 +16,7 @@ const PREMIUM_SURCHARGE = 3;
 const SALE_ACTIVE = true;
 const BULK_DISCOUNT = 0.15;
 const BULK_THRESHOLD = 5;
-const UPLOADCARE_PUB_KEY = 'bc495550492636fc4db6';
+const UPLOADCARE_PUB_KEY = 'bc495550492636fc4db';
 
 const LITHOPHANE_PRICES: Record<string, { original: number; sale: number }> = {
   'Flat Panel':   { original: 30, sale: 25 },
