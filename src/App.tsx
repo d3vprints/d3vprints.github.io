@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createContext, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   ShoppingCart, Upload, Package, Printer, Lightbulb,
   ChevronRight, Instagram, ArrowRight, Menu, X,
@@ -110,6 +110,12 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
 // ─── Cart Drawer ───────────────────────────────────────────────────────────────
 const CartDrawer = () => {
   const { items, removeItem, updateQty, total, count, isOpen, setIsOpen, clearCart } = useCart();
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    setIsOpen(false);
+    navigate('/checkout');
+  };
 
   return (
     <AnimatePresence>
@@ -152,6 +158,7 @@ const CartDrawer = () => {
                             <p className="font-bold text-sm leading-tight">{item.name}</p>
                             {item.color && <p className="text-xs text-gray-500">Color: {item.color}</p>}
                             {item.type === 'lithophane' && <p className="text-[10px] text-brand-primary font-bold mt-0.5">Photo needed at checkout</p>}
+                            {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mt-0.5">File upload + quote at checkout</p>}
                           </div>
                           <button onClick={() => removeItem(item.cartId)} className="text-gray-300 hover:text-red-400 transition-colors shrink-0">
                             <Trash2 className="w-4 h-4" />
@@ -167,7 +174,9 @@ const CartDrawer = () => {
                               <Plus className="w-3 h-3" />
                             </button>
                           </div>
-                          <p className="font-bold text-brand-primary text-sm">${(item.unitPrice * item.qty).toFixed(2)}</p>
+                          <p className="font-bold text-brand-primary text-sm">
+                            {item.unitPrice === 0 ? 'Quote' : `$${(item.unitPrice * item.qty).toFixed(2)}`}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -178,10 +187,10 @@ const CartDrawer = () => {
                     <span className="text-gray-500 font-medium">Estimated Total</span>
                     <span className="text-2xl font-black text-brand-primary">${total.toFixed(2)}</span>
                   </div>
-                  <p className="text-xs text-gray-400">Final price confirmed via email. Lithophanes require a photo at checkout.</p>
-                  <a href="#contact" onClick={() => setIsOpen(false)} className="block text-center bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
+                  <p className="text-xs text-gray-400">Final price confirmed via email. Photos and files uploaded at checkout.</p>
+                  <button onClick={handleCheckout} className="block w-full text-center bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
                     Proceed to Checkout
-                  </a>
+                  </button>
                   <button onClick={clearCart} className="w-full text-gray-400 text-sm py-1 hover:text-gray-600 transition-colors font-medium">
                     Clear cart
                   </button>
@@ -267,14 +276,15 @@ const QuickAddModal = ({ product, onClose }: { product: any; onClose: () => void
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { count, setIsOpen: setCartOpen } = useCart();
+  const navigate = useNavigate();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between glass rounded-2xl px-6 py-3 shadow-sm">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="bg-brand-dark p-1.5 rounded-lg"><Printer className="w-5 h-5 text-brand-primary" /></div>
           <span className="font-bold text-xl tracking-tighter">D3V PRINTS</span>
-        </div>
+        </Link>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#lithophanes" className="hover:text-brand-primary transition-colors font-semibold text-brand-primary">Lithophanes</a>
           <a href="#styles" className="hover:text-brand-primary transition-colors">Styles</a>
@@ -284,7 +294,9 @@ const Navbar = () => {
             <ShoppingCart className="w-5 h-5" />
             {count > 0 && <span className="absolute -top-1 -right-1 bg-brand-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{count}</span>}
           </button>
-          <a href="#contact" className="bg-brand-dark text-white px-5 py-2 rounded-xl hover:bg-brand-dark/90 transition-all">Order Now</a>
+          <button onClick={() => navigate('/checkout')} className="bg-brand-dark text-white px-5 py-2 rounded-xl hover:bg-brand-dark/90 transition-all flex items-center gap-2">
+            <ShoppingCart className="w-4 h-4" /> Checkout {count > 0 && <span className="bg-brand-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{count}</span>}
+          </button>
         </div>
         <div className="flex items-center gap-2 md:hidden">
           <button onClick={() => setCartOpen(true)} className="relative p-2">
@@ -302,7 +314,9 @@ const Navbar = () => {
             <a href="#styles" onClick={() => setIsOpen(false)} className="text-lg font-medium">Styles</a>
             <a href="#products" onClick={() => setIsOpen(false)} className="text-lg font-medium">Products</a>
             <a href="#reviews" onClick={() => setIsOpen(false)} className="text-lg font-medium">Reviews</a>
-            <a href="#contact" onClick={() => setIsOpen(false)} className="bg-brand-dark text-white px-5 py-3 rounded-xl text-center">Order Now</a>
+            <button onClick={() => { setIsOpen(false); navigate('/checkout'); }} className="bg-brand-dark text-white px-5 py-3 rounded-xl text-center font-bold">
+              Checkout {count > 0 && `(${count})`}
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -325,7 +339,7 @@ const Hero = () => (
           D3V Prints transforms your favorite photos into stunning lithophane night lights. Upload a photo, we do the rest.
         </p>
         <div className="flex flex-wrap gap-4 mb-8">
-          <a href="#contact" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
+          <a href="#styles" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
             Order a Night Light <ArrowRight className="w-5 h-5" />
           </a>
           <a href="#styles" className="bg-white border border-gray-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-50 transition-colors">
@@ -410,7 +424,7 @@ const StyleShowcase = () => {
     { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",          price: LITHOPHANE_PRICES['Flat Panel'],   image: "/flatlitho.png",      best: "Portraits, families, pets" },
     { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light. No switches needed.", detail: "Auto on/off light sensor",      price: LITHOPHANE_PRICES['Night Light'],  image: "/nightlightlitho.png", best: "Bedrooms, kids rooms, hallways", highlight: true },
     { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",              detail: "Stand-alone display piece",       price: LITHOPHANE_PRICES['Heart Shape'],  image: "/heartlitho.png",     best: "Couples, Valentine's Day, memorials" },
-    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",                         detail: "LED base included",               price: LITHOPHANE_PRICES['Custom Shape'], image: "/flatlitho.png",      best: "Logos, names, unique gifts" },
+    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",                         detail: "Stand-alone piece, no base",     price: LITHOPHANE_PRICES['Custom Shape'], image: "/flatlitho.png",      best: "Logos, names, unique gifts" },
   ];
 
   const handleAddToCart = (style: typeof styles[0]) => {
@@ -441,21 +455,21 @@ const StyleShowcase = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {styles.map((style) => (
             <motion.div key={style.id} whileHover={{ y: -8 }}
-              className={`rounded-3xl border overflow-hidden shadow-sm hover:shadow-xl transition-all ${(style as any).highlight ? 'border-brand-primary ring-2 ring-brand-primary/20' : 'border-gray-100'}`}>
-              <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative">
+              className={`rounded-3xl border overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col ${(style as any).highlight ? 'border-brand-primary ring-2 ring-brand-primary/20' : 'border-gray-100'}`}>
+              <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative shrink-0">
                 <img src={style.image} alt={style.name} className="w-full h-full object-contain p-4" />
                 <div className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${(style as any).highlight ? 'bg-brand-primary text-white' : 'bg-brand-dark text-white'}`}>
                   {style.tag}
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold mb-2">{style.name}</h3>
                 <p className="text-gray-500 text-xs leading-relaxed mb-3">{style.desc}</p>
-                <div className="bg-brand-light rounded-lg px-3 py-1.5 text-[10px] font-bold text-gray-500 mb-4 flex items-center gap-1">
+                <div className="bg-brand-light rounded-lg px-3 py-1.5 text-[10px] font-bold text-gray-500 mb-3 flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-brand-primary" /> {style.detail}
                 </div>
                 <div className="text-xs text-gray-400 mb-4">Best for: <span className="font-semibold text-gray-600">{style.best}</span></div>
-                <div className="flex items-center justify-between gap-2">
+                <div className="mt-auto space-y-3">
                   <div>
                     {SALE_ACTIVE ? (
                       <div className="flex items-center gap-1.5">
@@ -466,13 +480,15 @@ const StyleShowcase = () => {
                       <span className="text-xl font-black">${style.price.original}</span>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => handleAddToCart(style)}
-                      className={`px-3 py-2 rounded-xl font-bold text-xs transition-all ${addedId === style.id ? 'bg-green-500 text-white' : 'bg-brand-light text-brand-dark hover:bg-brand-primary/20'}`}>
-                      {addedId === style.id ? 'Saved!' : 'Save'}
-                    </button>
-                    <a href="#contact" className="bg-brand-dark text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-brand-primary transition-colors">Order</a>
-                  </div>
+                  <button
+                    onClick={() => handleAddToCart(style)}
+                    className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${addedId === style.id ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary'}`}>
+                    {addedId === style.id ? (
+                      <><CheckCircle className="w-4 h-4" /> Added to Cart</>
+                    ) : (
+                      <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
+                    )}
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -483,9 +499,9 @@ const StyleShowcase = () => {
             <h4 className="font-bold text-lg mb-1">Ordering 6 or more? You get a bulk discount.</h4>
             <p className="text-gray-400 text-sm">Orders of {BULK_THRESHOLD + 1}+ lithophanes automatically get {BULK_DISCOUNT * 100}% off. Perfect for events, weddings, or family gifts.</p>
           </div>
-          <a href="#contact" className="shrink-0 bg-brand-primary text-brand-dark px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform whitespace-nowrap">
-            Place Bulk Order
-          </a>
+          <Link to="/checkout" className="shrink-0 bg-brand-primary text-brand-dark px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform whitespace-nowrap">
+            Go to Checkout
+          </Link>
         </div>
       </div>
     </section>
@@ -503,8 +519,8 @@ const HowItWorks = () => (
       <div className="grid md:grid-cols-4 gap-6 mb-16">
         {[
           { step: "01", icon: <Camera className="w-7 h-7" />,  title: "Pick Your Style",   desc: "Flat panel, night light, heart, or custom shape." },
-          { step: "02", icon: <Upload className="w-7 h-7" />,  title: "Upload Your Photo", desc: "Higher resolution means sharper detail." },
-          { step: "03", icon: <Printer className="w-7 h-7" />, title: "We Print It",       desc: "Precision printed over 24+ hours." },
+          { step: "02", icon: <ShoppingCart className="w-7 h-7" />, title: "Add to Cart",  desc: "Build your order with multiple items." },
+          { step: "03", icon: <Upload className="w-7 h-7" />,  title: "Upload at Checkout", desc: "Upload your photos and files when you check out." },
           { step: "04", icon: <Package className="w-7 h-7" />, title: "You Pick It Up",    desc: "Free pickup in Plainsboro, NJ." },
         ].map((s, i) => (
           <motion.div key={i} whileHover={{ y: -8 }} className="relative p-8 rounded-3xl bg-white border border-gray-100 hover:shadow-xl transition-all">
@@ -545,11 +561,19 @@ const HowItWorks = () => (
 // ─── Product Card ─────────────────────────────────────────────────────────────
 const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => void }) => {
   const [currentImg, setCurrentImg] = useState(0);
+  const [customAdded, setCustomAdded] = useState(false);
+  const { addItem } = useCart();
   const images = product.images || [product.image];
 
+  const handleCustomAdd = () => {
+    addItem({ type: 'product', productId: product.id, name: 'Custom Print', qty: 1, unitPrice: 0, image: product.images[0] });
+    setCustomAdded(true);
+    setTimeout(() => setCustomAdded(false), 2000);
+  };
+
   return (
-    <motion.div whileHover={{ y: -10 }} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
-      <div className="relative aspect-square overflow-hidden">
+    <motion.div whileHover={{ y: -10 }} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
+      <div className="relative aspect-square overflow-hidden shrink-0">
         <AnimatePresence mode="wait">
           <motion.img key={currentImg} src={images[currentImg]} alt={product.name}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
@@ -563,24 +587,29 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
           </>
         )}
       </div>
-      <div className="p-6">
-        <h3 className="font-bold text-lg mb-1 group-hover:text-brand-primary transition-colors">{product.name}</h3>
-        <p className="text-gray-500 text-sm mb-4">{product.description}</p>
-        <div className="flex items-center justify-between">
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="font-bold text-base mb-1 group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
+        <p className="text-gray-500 text-xs mb-4 leading-relaxed flex-1">{product.description}</p>
+        <div className="space-y-2 mt-auto">
           <div>
             {SALE_ACTIVE && product.salePrice ? (
               <div className="flex items-center gap-2">
-                <span className="text-xl font-black text-brand-primary">${product.salePrice.toFixed(2)}</span>
-                <span className="text-sm text-gray-400 line-through">${product.basePrice.toFixed(2)}</span>
+                <span className="text-lg font-black text-brand-primary">${product.salePrice.toFixed(2)}</span>
+                <span className="text-xs text-gray-400 line-through">${product.basePrice.toFixed(2)}</span>
                 <span className="text-[9px] font-bold bg-brand-primary text-white px-1.5 py-0.5 rounded-full">SALE</span>
               </div>
             ) : (
-              <span className="text-xl font-bold font-mono">{product.basePrice > 0 ? `From $${product.basePrice.toFixed(2)}` : 'Get a quote'}</span>
+              <span className="text-lg font-bold font-mono">{product.basePrice > 0 ? `From $${product.basePrice.toFixed(2)}` : 'Get a quote'}</span>
             )}
           </div>
-          <button onClick={() => product.isCustom ? (window.location.href = '#contact') : onOrder(product)}
-            className="bg-brand-dark text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-primary transition-colors flex items-center gap-2">
-            <ShoppingCart className="w-4 h-4" /> {product.isCustom ? 'Quote' : 'Add to Cart'}
+          <button
+            onClick={() => product.isCustom ? handleCustomAdd() : onOrder(product)}
+            className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${customAdded ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary'}`}>
+            {customAdded ? (
+              <><CheckCircle className="w-4 h-4" /> Added!</>
+            ) : (
+              <><ShoppingCart className="w-4 h-4" /> {product.isCustom ? 'Add to Cart' : 'Add to Cart'}</>
+            )}
           </button>
         </div>
         {product.credit && <p className="text-[9px] text-gray-300 mt-3 leading-relaxed">{product.credit}</p>}
@@ -608,7 +637,7 @@ const CurrentProducts = () => {
             </div>
           )}
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {PRODUCTS.map(product => <ProductCard key={product.id} product={product} onOrder={setModalProduct} />)}
         </div>
         <p className="text-[9px] text-gray-300 text-center mt-10 max-w-2xl mx-auto leading-relaxed">
@@ -744,33 +773,13 @@ const Reviews = () => {
   );
 };
 
-// ─── Reusable: Color Picker ───────────────────────────────────────────────────
-const ColorPicker = ({ value, onChange }: { value: string; onChange: (c: string) => void }) => (
-  <div>
-    <p className="text-xs font-semibold text-gray-500 mb-2">Standard (no extra charge)</p>
-    <div className="flex flex-wrap gap-2 mb-3">
-      {STANDARD_COLORS.map(c => (
-        <button key={c} type="button" onClick={() => onChange(c)}
-          className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${value === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
-      ))}
-    </div>
-    <p className="text-xs font-semibold text-gray-500 mb-2">Premium (+${PREMIUM_SURCHARGE})</p>
-    <div className="flex flex-wrap gap-2">
-      {PREMIUM_COLORS.map(c => (
-        <button key={c} type="button" onClick={() => onChange(c)}
-          className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${value === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
-      ))}
-    </div>
-  </div>
-);
-
 // ─── Reusable: Delivery Picker ────────────────────────────────────────────────
 const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: string; address: string; onDelivery: (v: string) => void; onAddress: (v: string) => void }) => (
   <div>
-    <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Delivery Preference</label>
+    <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">Delivery Preference</label>
     <div className="flex flex-col gap-2 mb-3">
       {[
-        { label: 'Pickup (Free, Plainsboro NJ)', value: 'Pickup' },
+        { label: 'Pickup (Free — Plainsboro, NJ)', value: 'Pickup' },
         { label: 'Local Dropoff (small fee)', value: 'Dropoff' },
       ].map(d => (
         <button key={d.value} type="button" onClick={() => onDelivery(d.value)}
@@ -787,17 +796,18 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
 );
 
 // ─── Reusable: File Upload ────────────────────────────────────────────────────
-const FileUpload = ({ files, uploading, onUpload, label }: { files: {name:string,url:string}[]; uploading: boolean; onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void; label: string }) => (
+const FileUpload = ({ files, uploading, onUpload, label, hint }: { files: {name:string,url:string}[]; uploading: boolean; onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void; label: string; hint?: string }) => (
   <div>
-    <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">{label}</label>
+    <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">{label}</label>
+    {hint && <p className="text-xs text-gray-400 mb-3 leading-relaxed">{hint}</p>}
     <div className="relative group">
       <input type="file" multiple onChange={onUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
       <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-6 text-center transition-colors">
         <Upload className="w-7 h-7 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
         <div className="text-sm font-bold text-gray-500">
-          {uploading ? 'Uploading...' : files.length > 0 ? `${files.length} file(s) uploaded` : 'Drag and drop or click to upload'}
+          {uploading ? 'Uploading...' : files.length > 0 ? `${files.length} file(s) uploaded ✓` : 'Drag and drop or click to upload'}
         </div>
-        <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB</div>
+        <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB each</div>
       </div>
     </div>
     {files.length > 0 && (
@@ -812,16 +822,7 @@ const FileUpload = ({ files, uploading, onUpload, label }: { files: {name:string
   </div>
 );
 
-// ─── Contact / Order Form ─────────────────────────────────────────────────────
-type OrderCategory = 'lithophane' | 'custom' | 'products' | null;
-
-const LITHO_STYLES = [
-  { id: 'flat',   name: 'Flat Panel',   tag: 'Most Popular', desc: 'Classic lithophane on a warm LED base.',           price: LITHOPHANE_PRICES['Flat Panel'],   detail: 'Warm LED base included', icon: <ImageIcon className="w-6 h-6" /> },
-  { id: 'night',  name: 'Night Light',  tag: 'Smart Light',  desc: 'Auto on/off sensor. Turns on when it gets dark.',  price: LITHOPHANE_PRICES['Night Light'],  detail: 'Auto on/off sensor',     icon: <Lightbulb className="w-6 h-6" /> },
-  { id: 'heart',  name: 'Heart Shape',  tag: 'Best Gift',    desc: 'Heart-shaped panel. Stand-alone or hangable.',      price: LITHOPHANE_PRICES['Heart Shape'],  detail: 'Stand-alone piece',      icon: <Heart className="w-6 h-6" /> },
-  { id: 'custom', name: 'Custom Shape', tag: 'Unique',       desc: 'Name, logo, silhouette, or any shape.',             price: LITHOPHANE_PRICES['Custom Shape'], detail: 'LED base included',      icon: <Sparkles className="w-6 h-6" /> },
-];
-
+// ─── useUploadcare Hook ────────────────────────────────────────────────────────
 const useUploadcare = () => {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string }[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -861,551 +862,321 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
   return emailRes.ok;
 };
 
-const Contact = () => {
-  const [category, setCategory] = useState<OrderCategory>(null);
-  const [step, setStep] = useState(1);
+// ─── Checkout Page ─────────────────────────────────────────────────────────────
+const CheckoutPage = () => {
+  const { items, updateQty, removeItem, total, clearCart } = useCart();
+  const navigate = useNavigate();
 
-  // Lithophane
-  const [lithoStyleId, setLithoStyleId] = useState('');
-
-  // Shared
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [delivery, setDelivery] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const { uploadedFiles, uploading, handleUpload } = useUploadcare();
-
-  // Custom print
-  const [customColor, setCustomColor] = useState('');
-
-  // Products
-  const [productOrders, setProductOrders] = useState<Record<number, { color: string; qty: number }>>({});
-  const [customPrintRequest, setCustomPrintRequest] = useState('');
-
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  const reset = () => {
-    setCategory(null); setStep(1); setLithoStyleId('');
-    setDelivery(''); setAddress(''); setNotes('');
-    setName(''); setEmail('');
-    setCustomColor(''); setProductOrders({}); setCustomPrintRequest('');
-    setStatus('idle');
-  };
+  const hasLithophanes = items.some(i => i.type === 'lithophane');
+  const hasCustomPrint = items.some(i => i.productId === 5);
+  const needsFiles = hasLithophanes || hasCustomPrint;
 
-  const setProductOrder = (id: number, updates: Partial<{ color: string; qty: number }>) => {
-    setProductOrders(prev => {
-      const current = prev[id] || { color: '', qty: 0 };
-      return { ...prev, [id]: { ...current, ...updates } };
-    });
-  };
+  const lithoItems = items.filter(i => i.type === 'lithophane');
+  const lithoQty = lithoItems.reduce((s, i) => s + i.qty, 0);
+  const hasBulkDiscount = lithoQty > BULK_THRESHOLD;
+  const lithoSubtotal = lithoItems.reduce((s, i) => s + i.unitPrice * i.qty, 0);
+  const discountAmount = hasBulkDiscount ? lithoSubtotal * BULK_DISCOUNT : 0;
+  const finalTotal = total - discountAmount;
 
-  const selectedStyle = LITHO_STYLES.find(s => s.id === lithoStyleId);
-  const isPremiumColor = PREMIUM_COLORS.includes(customColor);
-  const fileLinks = uploadedFiles.length > 0 ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n') : 'No files uploaded';
+  const canSubmit = name.trim() && email.trim() && delivery;
 
-  const lithoPrice = selectedStyle ? (SALE_ACTIVE ? selectedStyle.price.sale : selectedStyle.price.original) : 0;
-
-  const productTotal = PRODUCTS.reduce((sum, p) => {
-    if (p.isCustom) return sum;
-    const o = productOrders[p.id];
-    if (!o || !o.qty) return sum;
-    const base = SALE_ACTIVE && p.salePrice ? p.salePrice : p.basePrice;
-    const premium = PREMIUM_COLORS.includes(o.color) ? PREMIUM_SURCHARGE : 0;
-    return sum + (base + premium) * o.qty;
-  }, 0);
-
-  const hasProductItems = Object.values(productOrders).some(o => o.qty > 0 && o.color) || customPrintRequest.trim().length > 0;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (!canSubmit) return;
     setStatus('submitting');
 
-    let subject = '';
-    let messageBody = '';
+    const orderLines = items.map(i =>
+      i.unitPrice === 0
+        ? `${i.name} x${i.qty} — Quote on request`
+        : `${i.name}${i.color ? ` (${i.color})` : ''} x${i.qty} @ $${i.unitPrice.toFixed(2)} = $${(i.unitPrice * i.qty).toFixed(2)}`
+    );
 
-    if (category === 'lithophane') {
-      subject = `New Order: Lithophane ${selectedStyle?.name ?? ''}`;
-      messageBody = `Style: ${selectedStyle?.name}\nDelivery: ${delivery}${address ? ` | Address: ${address}` : ''}\nNotes: ${notes || 'None'}`;
-    } else if (category === 'custom') {
-      subject = 'New Order: Custom 3D Print';
-      messageBody = `Color: ${customColor}\nDelivery: ${delivery}${address ? ` | Address: ${address}` : ''}\nNotes: ${notes || 'None'}`;
-    } else if (category === 'products') {
-      subject = 'New Order: Popular Products';
-      const lines = PRODUCTS
-        .filter(p => !p.isCustom && productOrders[p.id]?.qty > 0)
-        .map(p => `${p.name} x${productOrders[p.id].qty} (${productOrders[p.id].color})`);
-      if (customPrintRequest) lines.push(`Custom Print Request: ${customPrintRequest}`);
-      messageBody = `Items:\n${lines.join('\n')}\n\nDelivery: ${delivery}${address ? ` | Address: ${address}` : ''}\nNotes: ${notes || 'None'}`;
-    }
+    const fileLinks = uploadedFiles.length > 0
+      ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n')
+      : 'No files uploaded';
 
-    const payload = { name, email, projectType: subject, message: messageBody, files: fileLinks, date: new Date().toLocaleString() };
+    const payload = {
+      name, email,
+      delivery: delivery + (address ? ` — ${address}` : ''),
+      items: orderLines.join('\n'),
+      subtotal: `$${total.toFixed(2)}`,
+      ...(hasBulkDiscount ? { bulkDiscount: `-$${discountAmount.toFixed(2)} (${BULK_DISCOUNT * 100}% off lithophanes)` } : {}),
+      total: `$${finalTotal.toFixed(2)}`,
+      notes: notes || 'None',
+      date: new Date().toLocaleString(),
+    };
+
+    const subject = `New Order from ${name} — $${finalTotal.toFixed(2)}`;
 
     try {
       const ok = await submitOrder(subject, payload, fileLinks);
-      setStatus(ok ? 'success' : 'error');
-    } catch { setStatus('error'); }
+      if (ok) {
+        clearCart();
+        setStatus('success');
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
   };
 
-  const stepLabels: Record<string, string[]> = {
-    lithophane: ['Pick Style', 'Photo and Details', 'Your Info', 'Review'],
-    custom:     ['Details', 'Your Info', 'Review'],
-    products:   ['Choose Items', 'Delivery and Notes', 'Your Info', 'Review'],
-  };
-  const labels = category ? stepLabels[category] : [];
+  // Empty cart state
+  if (items.length === 0 && status !== 'success') {
+    return (
+      <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center justify-center text-center">
+        <ShoppingBag className="w-20 h-20 text-gray-200 mb-6" />
+        <h2 className="text-3xl font-bold mb-3">Your cart is empty</h2>
+        <p className="text-gray-500 mb-8">Add some items before checking out.</p>
+        <Link to="/" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
+          Browse Products
+        </Link>
+      </div>
+    );
+  }
+
+  // Success state
+  if (status === 'success') {
+    return (
+      <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center justify-center text-center">
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md">
+          <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8">
+            <CheckCircle className="w-12 h-12" />
+          </div>
+          <h2 className="text-4xl font-bold mb-4">Order Placed!</h2>
+          <p className="text-gray-500 mb-3 leading-relaxed">
+            Thanks, <span className="font-bold text-brand-dark">{name}</span>! We have received your order and will email you at <span className="font-bold text-brand-dark">{email}</span> within 12 hours with confirmation and payment details.
+          </p>
+          {hasLithophanes && uploadedFiles.length === 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 text-left">
+              <p className="text-amber-700 text-sm font-bold mb-1">Reminder: Photos needed</p>
+              <p className="text-amber-600 text-xs">You can reply to our confirmation email with your lithophane photos, or we will ask for them when we follow up.</p>
+            </div>
+          )}
+          <Link to="/" className="inline-block bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
+            Back to Shop
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <section id="contact" className="py-24 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-brand-dark rounded-[3rem] p-8 lg:p-20 text-white relative overflow-hidden">
-          <div className="relative z-10 grid lg:grid-cols-5 gap-16">
-
-            <div className="lg:col-span-2">
-              <h2 className="text-5xl font-bold mb-4 leading-tight">Place Your <br /><span className="text-brand-primary">Order</span></h2>
-              <p className="text-gray-400 mb-6 leading-relaxed text-sm">Lithophane night lights, custom prints, or popular products. Fill out the form and we will get back to you within 12 hours.</p>
-              <div className="flex items-center gap-2 text-brand-primary text-sm font-bold mb-4">
-                <MapPin className="w-4 h-4" /> Based in Plainsboro, NJ
-              </div>
-              {SALE_ACTIVE && (
-                <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-xl px-4 py-3 mb-8">
-                  <p className="text-brand-primary text-xs font-bold"><Tag className="w-3 h-3 inline mr-1" />Launch sale pricing applied automatically</p>
-                </div>
-              )}
-              {category && (
-                <div className="hidden lg:block space-y-6">
-                  {labels.map((label, i) => (
-                    <div key={i} className={`flex items-center gap-4 transition-opacity ${step >= i + 1 ? 'opacity-100' : 'opacity-30'}`}>
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border-2 text-sm ${step >= i + 1 ? 'bg-brand-primary border-brand-primary text-brand-dark' : 'border-white/20'}`}>{i + 1}</div>
-                      <div className="text-sm font-bold uppercase tracking-widest">{label}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="lg:col-span-3 bg-white rounded-[2.5rem] p-8 lg:p-12 text-brand-dark">
-              {status === 'success' ? (
-                <div className="h-full flex flex-col items-center justify-center text-center py-12">
-                  <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6"><CheckCircle className="w-10 h-10" /></div>
-                  <h3 className="text-2xl font-bold mb-3">Order Received!</h3>
-                  <p className="text-gray-500 mb-8 leading-relaxed">You will receive an email within 12 hours with your order update and payment instructions.</p>
-                  <button onClick={reset} className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Place Another Order</button>
-                </div>
-              ) : !category ? (
-
-                /* Category Picker */
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                  <h3 className="text-2xl font-bold">What would you like?</h3>
-                  <p className="text-gray-500 text-sm">Pick a category to get started.</p>
-                  <div className="space-y-3">
-                    {[
-                      { id: 'lithophane' as OrderCategory, icon: <Camera className="w-7 h-7" />,      title: 'Lithophane Night Lights', desc: 'Turn your photos into glowing art. Flat panels, night lights, heart shapes, and custom shapes.', badge: 'Our Specialty' },
-                      { id: 'custom'     as OrderCategory, icon: <FileText className="w-7 h-7" />,     title: 'Custom 3D Print',         desc: 'Send us your STL file and we will print it in any color. Quote on request.',                 badge: null },
-                      { id: 'products'   as OrderCategory, icon: <ShoppingBag className="w-7 h-7" />,  title: 'Popular Products',        desc: 'Flexi octopuses, phone stands, whistles, keychains, and more.',                           badge: 'Sale pricing' },
-                    ].map(cat => (
-                      <button key={cat.id} onClick={() => { setCategory(cat.id); setStep(1); }}
-                        className="w-full text-left p-5 rounded-3xl border-2 border-gray-100 hover:border-brand-primary hover:bg-brand-primary/5 transition-all group flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-gray-100 group-hover:bg-brand-primary/20 flex items-center justify-center transition-colors shrink-0 text-brand-dark">{cat.icon}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <span className="font-bold">{cat.title}</span>
-                            {cat.badge && <span className="text-[10px] font-bold bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded-full">{cat.badge}</span>}
-                          </div>
-                          <p className="text-xs text-gray-500">{cat.desc}</p>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-brand-primary transition-colors shrink-0" />
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-
-              ) : category === 'lithophane' ? (
-                <div>
-                  {/* Litho Step 1: Style */}
-                  {step === 1 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <div className="flex items-center gap-3 mb-2">
-                        <button onClick={() => setCategory(null)} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center hover:bg-gray-50"><ChevronLeft className="w-4 h-4" /></button>
-                        <h3 className="text-2xl font-bold">Pick Your Style</h3>
-                      </div>
-                      <div className="grid sm:grid-cols-2 gap-3">
-                        {LITHO_STYLES.map(style => (
-                          <button key={style.id} onClick={() => { setLithoStyleId(style.id); setStep(2); }}
-                            className="text-left p-5 rounded-3xl border-2 border-gray-100 hover:border-brand-primary hover:bg-brand-primary/5 transition-all group">
-                            <div className="w-10 h-10 rounded-2xl bg-gray-100 group-hover:bg-brand-primary/20 flex items-center justify-center mb-3 transition-colors">{style.icon}</div>
-                            <div className="font-bold mb-0.5">{style.name}</div>
-                            <div className="text-xs text-gray-500 mb-2">{style.desc}</div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-brand-primary font-bold text-sm">${SALE_ACTIVE ? style.price.sale : style.price.original}</span>
-                              {SALE_ACTIVE && <span className="text-gray-400 text-xs line-through">${style.price.original}</span>}
-                              <span className="text-[10px] bg-gray-100 text-gray-500 font-bold px-2 py-0.5 rounded-full ml-auto">{style.tag}</span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Litho Step 2: Photo and Delivery */}
-                  {step === 2 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-2xl font-bold">Photo and Details</h3>
-                        <span className="text-sm font-bold text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">{selectedStyle?.name}</span>
-                      </div>
-                      <FileUpload files={uploadedFiles} uploading={uploading} onUpload={handleUpload} label="Upload Your Photo" />
-                      <DeliveryPicker value={delivery} address={address} onDelivery={setDelivery} onAddress={setAddress} />
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Notes or requests</label>
-                        <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-                          className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
-                          placeholder="e.g. crop to face only, warm LED preferred..." />
-                      </div>
-                      <div className="flex gap-4 pt-2">
-                        <button onClick={() => setStep(1)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={() => setStep(3)} disabled={!delivery || uploading}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          Next <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Litho Step 3: Contact Info */}
-                  {step === 3 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <h3 className="text-2xl font-bold">Your Details</h3>
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="John Doe" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="john@example.com" />
-                      </div>
-                      <div className="flex gap-4 pt-2">
-                        <button onClick={() => setStep(2)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={() => setStep(4)} disabled={!name || !email}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          Review Order <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Litho Step 4: Review */}
-                  {step === 4 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <h3 className="text-2xl font-bold">Review Your Order</h3>
-                      <div className="bg-brand-light rounded-2xl p-6 space-y-4">
-                        {[
-                          { label: 'Name', value: name },
-                          { label: 'Email', value: email },
-                          { label: 'Style', value: selectedStyle?.name ?? '' },
-                          { label: 'Delivery', value: delivery + (address ? ` (${address})` : '') },
-                          ...(uploadedFiles.length > 0 ? [{ label: 'Files', value: `${uploadedFiles.length} uploaded` }] : []),
-                          ...(notes ? [{ label: 'Notes', value: notes }] : []),
-                        ].map((row, i) => (
-                          <div key={i} className="flex justify-between text-sm">
-                            <span className="text-gray-500 font-medium">{row.label}</span>
-                            <span className="font-bold text-right max-w-[60%]">{row.value}</span>
-                          </div>
-                        ))}
-                        <div className="border-t border-gray-300 pt-4 flex justify-between items-center">
-                          <span className="font-bold">Estimated Total</span>
-                          <span className="font-black text-brand-primary text-xl">From ${lithoPrice.toFixed(2)}</span>
-                        </div>
-                        <p className="text-[10px] text-gray-400">Final price confirmed via email after order review.</p>
-                      </div>
-                      <div className="flex gap-4">
-                        <button onClick={() => setStep(3)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={handleSubmit} disabled={status === 'submitting'}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          {status === 'submitting' ? 'Placing Order...' : 'Place Order'}
-                        </button>
-                      </div>
-                      {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
-                    </motion.div>
-                  )}
-                </div>
-
-              ) : category === 'custom' ? (
-                <div>
-                  {/* Custom Step 1: Details */}
-                  {step === 1 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <div className="flex items-center gap-3 mb-2">
-                        <button onClick={() => setCategory(null)} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center hover:bg-gray-50"><ChevronLeft className="w-4 h-4" /></button>
-                        <h3 className="text-2xl font-bold">Custom Print Details</h3>
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Choose Color</label>
-                        <ColorPicker value={customColor} onChange={setCustomColor} />
-                      </div>
-                      <FileUpload files={uploadedFiles} uploading={uploading} onUpload={handleUpload} label="Upload Your STL File" />
-                      <DeliveryPicker value={delivery} address={address} onDelivery={setDelivery} onAddress={setAddress} />
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Describe your print</label>
-                        <textarea rows={3} value={notes} onChange={e => setNotes(e.target.value)}
-                          className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
-                          placeholder="Describe what you want printed, dimensions, material, or any other details..." />
-                      </div>
-                      <button onClick={() => setStep(2)} disabled={!customColor || !delivery}
-                        className="w-full bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors disabled:opacity-50">
-                        Next <ChevronRight className="w-4 h-4 inline ml-1" />
-                      </button>
-                    </motion.div>
-                  )}
-
-                  {/* Custom Step 2: Info */}
-                  {step === 2 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <h3 className="text-2xl font-bold">Your Details</h3>
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="John Doe" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="john@example.com" />
-                      </div>
-                      <div className="flex gap-4 pt-2">
-                        <button onClick={() => setStep(1)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={() => setStep(3)} disabled={!name || !email}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          Review <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Custom Step 3: Review */}
-                  {step === 3 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <h3 className="text-2xl font-bold">Review Your Order</h3>
-                      <div className="bg-brand-light rounded-2xl p-6 space-y-4">
-                        {[
-                          { label: 'Name', value: name },
-                          { label: 'Email', value: email },
-                          { label: 'Color', value: customColor + (PREMIUM_COLORS.includes(customColor) ? ` (+$${PREMIUM_SURCHARGE})` : '') },
-                          { label: 'Delivery', value: delivery + (address ? ` (${address})` : '') },
-                          ...(uploadedFiles.length > 0 ? [{ label: 'Files', value: `${uploadedFiles.length} uploaded` }] : []),
-                          ...(notes ? [{ label: 'Description', value: notes }] : []),
-                        ].map((row, i) => (
-                          <div key={i} className="flex justify-between text-sm">
-                            <span className="text-gray-500 font-medium">{row.label}</span>
-                            <span className="font-bold text-right max-w-[60%]">{row.value}</span>
-                          </div>
-                        ))}
-                        <div className="border-t border-gray-300 pt-4 flex justify-between items-center">
-                          <span className="font-bold">Price</span>
-                          <span className="font-black text-brand-primary text-xl">Quote on request</span>
-                        </div>
-                        <p className="text-[10px] text-gray-400">We will email you a quote within 12 hours.</p>
-                      </div>
-                      <div className="flex gap-4">
-                        <button onClick={() => setStep(2)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={handleSubmit} disabled={status === 'submitting'}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          {status === 'submitting' ? 'Sending...' : 'Submit Request'}
-                        </button>
-                      </div>
-                      {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
-                    </motion.div>
-                  )}
-                </div>
-
-              ) : category === 'products' ? (
-                <div>
-                  {/* Products Step 1: Choose Items */}
-                  {step === 1 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <div className="flex items-center gap-3 mb-2">
-                        <button onClick={() => setCategory(null)} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center hover:bg-gray-50"><ChevronLeft className="w-4 h-4" /></button>
-                        <h3 className="text-2xl font-bold">Choose Your Items</h3>
-                      </div>
-                      <p className="text-gray-500 text-sm">Add as many items as you want. Pick a color and quantity for each.</p>
-
-                      <div className="space-y-4 max-h-[420px] overflow-y-auto pr-1">
-                        {PRODUCTS.filter(p => !p.isCustom).map(p => {
-                          const order = productOrders[p.id] || { color: '', qty: 0 };
-                          const base = SALE_ACTIVE && p.salePrice ? p.salePrice : p.basePrice;
-                          const premium = PREMIUM_COLORS.includes(order.color) ? PREMIUM_SURCHARGE : 0;
-                          const unitPrice = base + premium;
-                          return (
-                            <div key={p.id} className="border-2 border-gray-100 rounded-2xl p-5 hover:border-gray-200 transition-colors">
-                              <div className="flex items-start gap-4 mb-4">
-                                <img src={p.images[0]} alt={p.name} className="w-14 h-14 rounded-xl object-cover bg-gray-50 shrink-0" />
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <p className="font-bold text-sm">{p.name}</p>
-                                    <div className="flex items-center gap-1">
-                                      {SALE_ACTIVE && p.salePrice && (
-                                        <>
-                                          <span className="font-black text-brand-primary text-sm">${p.salePrice}</span>
-                                          <span className="text-xs text-gray-400 line-through">${p.basePrice}</span>
-                                        </>
-                                      )}
-                                      {(!SALE_ACTIVE || !p.salePrice) && <span className="font-black text-sm">${p.basePrice}</span>}
-                                    </div>
-                                  </div>
-                                  <p className="text-xs text-gray-500 mt-0.5">{p.description}</p>
-                                </div>
-                              </div>
-
-                              <div className="flex flex-wrap gap-1.5 mb-3">
-                                {[...STANDARD_COLORS, ...PREMIUM_COLORS].map(c => (
-                                  <button key={c} onClick={() => setProductOrder(p.id, { color: c, qty: order.qty || 1 })}
-                                    className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${order.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                                    {c}{PREMIUM_COLORS.includes(c) ? '*' : ''}
-                                  </button>
-                                ))}
-                              </div>
-                              <p className="text-[10px] text-gray-400 mb-3">* Premium color +${PREMIUM_SURCHARGE}</p>
-
-                              {order.color && (
-                                <div className="flex items-center gap-3">
-                                  <button onClick={() => setProductOrder(p.id, { qty: Math.max(0, order.qty - 1) })} className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:border-brand-primary transition-colors">
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="font-bold text-sm w-6 text-center">{order.qty}</span>
-                                  <button onClick={() => setProductOrder(p.id, { qty: order.qty + 1 })} className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:border-brand-primary transition-colors">
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                  {order.qty > 0 && (
-                                    <span className="ml-auto text-brand-primary font-bold text-sm">${(unitPrice * order.qty).toFixed(2)}</span>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-
-                        {/* Custom print request */}
-                        <div className="border-2 border-gray-100 rounded-2xl p-5">
-                          <p className="font-bold text-sm mb-1">Custom Print (STL file)</p>
-                          <p className="text-xs text-gray-500 mb-3">Describe what you want or upload your file in the next step.</p>
-                          <textarea rows={2} value={customPrintRequest} onChange={e => setCustomPrintRequest(e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
-                            placeholder="e.g. print my STL file in black, 15% infill..." />
-                        </div>
-                      </div>
-
-                      {productTotal > 0 && (
-                        <div className="bg-brand-light rounded-xl px-4 py-3 flex justify-between text-sm">
-                          <span className="text-gray-500 font-medium">Subtotal so far</span>
-                          <span className="font-black text-brand-primary">${productTotal.toFixed(2)}</span>
-                        </div>
-                      )}
-
-                      <button onClick={() => setStep(2)} disabled={!hasProductItems}
-                        className="w-full bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors disabled:opacity-50">
-                        Continue <ChevronRight className="w-4 h-4 inline ml-1" />
-                      </button>
-                    </motion.div>
-                  )}
-
-                  {/* Products Step 2: Delivery and Notes */}
-                  {step === 2 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <h3 className="text-2xl font-bold">Delivery and Notes</h3>
-                      <DeliveryPicker value={delivery} address={address} onDelivery={setDelivery} onAddress={setAddress} />
-                      {customPrintRequest && (
-                        <FileUpload files={uploadedFiles} uploading={uploading} onUpload={handleUpload} label="Upload STL File (optional)" />
-                      )}
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Additional notes</label>
-                        <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-                          className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
-                          placeholder="Any special requests or notes..." />
-                      </div>
-                      <div className="flex gap-4 pt-2">
-                        <button onClick={() => setStep(1)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={() => setStep(3)} disabled={!delivery}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          Next <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Products Step 3: Info */}
-                  {step === 3 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <h3 className="text-2xl font-bold">Your Details</h3>
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="John Doe" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="john@example.com" />
-                      </div>
-                      <div className="flex gap-4 pt-2">
-                        <button onClick={() => setStep(2)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={() => setStep(4)} disabled={!name || !email}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          Review <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Products Step 4: Review */}
-                  {step === 4 && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-                      <h3 className="text-2xl font-bold">Review Your Order</h3>
-                      <div className="bg-brand-light rounded-2xl p-6 space-y-4">
-                        <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Name</span><span className="font-bold">{name}</span></div>
-                        <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Email</span><span className="font-bold">{email}</span></div>
-                        <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Delivery</span><span className="font-bold">{delivery}{address ? ` (${address})` : ''}</span></div>
-
-                        {PRODUCTS.filter(p => !p.isCustom && productOrders[p.id]?.qty > 0).map(p => {
-                          const o = productOrders[p.id];
-                          const base = SALE_ACTIVE && p.salePrice ? p.salePrice : p.basePrice;
-                          const premium = PREMIUM_COLORS.includes(o.color) ? PREMIUM_SURCHARGE : 0;
-                          return (
-                            <div key={p.id} className="flex justify-between text-sm">
-                              <span className="text-gray-500">{p.name} x{o.qty} ({o.color})</span>
-                              <span className="font-bold">${((base + premium) * o.qty).toFixed(2)}</span>
-                            </div>
-                          );
-                        })}
-
-                        {customPrintRequest && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Custom Print</span>
-                            <span className="font-bold">Quote on request</span>
-                          </div>
-                        )}
-
-                        {productTotal > 0 && (
-                          <div className="border-t border-gray-300 pt-4 flex justify-between items-center">
-                            <span className="font-bold">Estimated Total</span>
-                            <span className="font-black text-brand-primary text-xl">${productTotal.toFixed(2)}</span>
-                          </div>
-                        )}
-                        <p className="text-[10px] text-gray-400">Final price confirmed via email after order review.</p>
-                      </div>
-                      <div className="flex gap-4">
-                        <button onClick={() => setStep(3)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"><ChevronLeft className="w-5 h-5" /> Back</button>
-                        <button onClick={handleSubmit} disabled={status === 'submitting'}
-                          className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-                          {status === 'submitting' ? 'Placing Order...' : 'Place Order'}
-                        </button>
-                      </div>
-                      {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
-                    </motion.div>
-                  )}
-                </div>
-              ) : null}
-            </div>
+    <div className="min-h-screen pt-28 pb-20 px-6 bg-brand-light">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-10">
+          <Link to="/" className="w-10 h-10 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight">Checkout</h1>
+            <p className="text-gray-500 text-sm mt-0.5">{items.reduce((s, i) => s + i.qty, 0)} item{items.reduce((s, i) => s + i.qty, 0) !== 1 ? 's' : ''} in your order</p>
           </div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/20 blur-[100px] -mr-32 -mt-32" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-primary/10 blur-[100px] -ml-32 -mb-32" />
+        </div>
+
+        <div className="grid lg:grid-cols-5 gap-8">
+
+          {/* ─── Left: Cart + Upload ─── */}
+          <div className="lg:col-span-3 space-y-6">
+
+            {/* Cart Items */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-brand-primary" /> Your Items
+              </h2>
+              <div className="space-y-4">
+                {items.map(item => (
+                  <div key={item.cartId} className="flex gap-4 bg-gray-50 rounded-2xl p-4">
+                    {item.image && (
+                      <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover bg-white shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <p className="font-bold text-sm leading-tight">{item.name}</p>
+                        <button onClick={() => removeItem(item.cartId)} className="text-gray-300 hover:text-red-400 transition-colors shrink-0 ml-2">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      {item.color && <p className="text-xs text-gray-500 mb-1">Color: {item.color}</p>}
+                      {item.type === 'lithophane' && (
+                        <p className="text-[10px] text-amber-600 font-bold mb-2 flex items-center gap-1">
+                          <Camera className="w-3 h-3" /> Upload photo below
+                        </p>
+                      )}
+                      {item.productId === 5 && (
+                        <p className="text-[10px] text-brand-primary font-bold mb-2 flex items-center gap-1">
+                          <FileText className="w-3 h-3" /> Upload STL/file below
+                        </p>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => updateQty(item.cartId, item.qty - 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors">
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="text-sm font-bold w-5 text-center">{item.qty}</span>
+                          <button onClick={() => updateQty(item.cartId, item.qty + 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors">
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <p className="font-bold text-brand-primary text-sm">
+                          {item.unitPrice === 0 ? <span className="text-gray-400 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* File Upload Section */}
+            {needsFiles && (
+              <div className="bg-white rounded-3xl p-8 shadow-sm">
+                <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+                  <Upload className="w-5 h-5 text-brand-primary" /> Upload Your Files
+                </h2>
+
+                {hasLithophanes && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6">
+                    <p className="text-amber-800 font-bold text-sm mb-1 flex items-center gap-2">
+                      <Camera className="w-4 h-4" />
+                      {lithoItems.length > 1 ? 'Multiple lithophanes — please read' : 'Lithophane photo instructions'}
+                    </p>
+                    <p className="text-amber-700 text-xs leading-relaxed">
+                      {lithoItems.length > 1
+                        ? `You have ${lithoItems.length} lithophane styles in your cart. Upload all your photos here, then use the Notes field below to tell us which photo goes with which lithophane (e.g. "Photo 1 = Flat Panel, Photo 2 = Night Light"). We will match them up.`
+                        : 'Upload the photo you want printed as a lithophane. Higher resolution = sharper detail.'}
+                    </p>
+                    {lithoItems.length > 1 && (
+                      <div className="mt-3 space-y-1">
+                        {lithoItems.map((item, i) => (
+                          <p key={item.cartId} className="text-amber-600 text-xs font-bold">
+                            • Photo {i + 1} → {item.name.replace('Lithophane: ', '')} (qty: {item.qty})
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {hasCustomPrint && !hasLithophanes && (
+                  <p className="text-gray-500 text-sm mb-4">Upload your STL file or any reference images for your custom print.</p>
+                )}
+                {hasCustomPrint && hasLithophanes && (
+                  <p className="text-gray-500 text-sm mb-4">Also upload your STL file or reference images for the custom print.</p>
+                )}
+
+                <FileUpload
+                  files={uploadedFiles}
+                  uploading={uploading}
+                  onUpload={handleUpload}
+                  label={hasLithophanes && hasCustomPrint ? 'All Photos & Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ─── Right: Contact + Delivery + Summary ─── */}
+          <div className="lg:col-span-2 space-y-6">
+
+            {/* Your Info */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm">
+              <h2 className="text-xl font-bold mb-6">Your Details</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
+                  <input
+                    type="text" value={name} onChange={e => setName(e.target.value)}
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm"
+                    placeholder="John Doe" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
+                  <input
+                    type="email" value={email} onChange={e => setEmail(e.target.value)}
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm"
+                    placeholder="john@example.com" />
+                </div>
+                <DeliveryPicker value={delivery} address={address} onDelivery={setDelivery} onAddress={setAddress} />
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Notes</label>
+                  <textarea
+                    rows={3} value={notes} onChange={e => setNotes(e.target.value)}
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
+                    placeholder={
+                      hasLithophanes && lithoItems.length > 1
+                        ? 'Specify which photo is for which lithophane (e.g. Photo 1 = Flat Panel, Photo 2 = Night Light)...'
+                        : hasLithophanes
+                        ? 'Any special requests (e.g. crop to face only, warm tone)...'
+                        : 'Any special requests or notes...'
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="bg-brand-dark text-white rounded-3xl p-8 shadow-sm">
+              <h2 className="text-xl font-bold mb-6">Order Summary</h2>
+              <div className="space-y-3 mb-6">
+                {items.map(item => (
+                  <div key={item.cartId} className="flex justify-between text-sm">
+                    <span className="text-gray-400 truncate max-w-[65%]">
+                      {item.name}{item.color ? ` (${item.color})` : ''} ×{item.qty}
+                    </span>
+                    <span className="font-bold shrink-0">
+                      {item.unitPrice === 0 ? <span className="text-gray-500 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {hasBulkDiscount && (
+                <div className="flex justify-between text-sm text-brand-primary font-bold mb-3 border-t border-white/10 pt-3">
+                  <span>Bulk discount ({BULK_DISCOUNT * 100}% off lithophanes)</span>
+                  <span>-${discountAmount.toFixed(2)}</span>
+                </div>
+              )}
+
+              <div className="border-t border-white/10 pt-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 font-medium text-sm">Estimated Total</span>
+                  <span className="text-3xl font-black text-brand-primary">${finalTotal.toFixed(2)}</span>
+                </div>
+                <p className="text-gray-500 text-xs mt-2">Final price confirmed via email within 12 hours.</p>
+              </div>
+
+              {SALE_ACTIVE && (
+                <div className="mt-4 bg-brand-primary/10 border border-brand-primary/30 rounded-xl px-4 py-3">
+                  <p className="text-brand-primary text-xs font-bold flex items-center gap-1">
+                    <Tag className="w-3 h-3" /> Launch sale pricing applied
+                  </p>
+                </div>
+              )}
+
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit || status === 'submitting'}
+                className="w-full mt-6 bg-brand-primary text-brand-dark py-4 rounded-2xl font-black hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 text-base">
+                {status === 'submitting' ? 'Placing Order...' : 'Place Order →'}
+              </button>
+
+              {status === 'error' && (
+                <p className="text-red-400 text-sm text-center mt-3">Something went wrong. Please try again.</p>
+              )}
+            </div>
+
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
@@ -1438,7 +1209,7 @@ const Footer = () => (
   </footer>
 );
 
-// ─── App ──────────────────────────────────────────────────────────────────────
+// ─── Home ─────────────────────────────────────────────────────────────────────
 const Home = () => (
   <main>
     <Hero />
@@ -1447,10 +1218,10 @@ const Home = () => (
     <HowItWorks />
     <CurrentProducts />
     <Reviews />
-    <Contact />
   </main>
 );
 
+// ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const location = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
@@ -1461,6 +1232,7 @@ export default function App() {
         <CartDrawer />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>
         <Footer />
       </div>
