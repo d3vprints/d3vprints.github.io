@@ -886,7 +886,7 @@ const useUploadcare = () => {
     data.append('UPLOADCARE_STORE', '1');
     data.append('file', file);
     try {
-      const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
+      const res = await fetch('https://upload.uploadcare.com/FAKE_ENDPOINT/', { method: 'POST', body: data });
       const json = await res.json();
       if (json.file) return { name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` };
       return null;
