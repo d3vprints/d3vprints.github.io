@@ -16,6 +16,7 @@ const PREMIUM_SURCHARGE = 3;
 const SALE_ACTIVE = true;
 const BULK_DISCOUNT = 0.15;
 const BULK_THRESHOLD = 5;
+const UPLOADCARE_PUB_KEY = 'bc495550492636fc4db6';
 
 const LITHOPHANE_PRICES: Record<string, { original: number; sale: number }> = {
   'Flat Panel':   { original: 30, sale: 25 },
@@ -415,21 +416,65 @@ const LithophaneSection = () => (
   </section>
 );
 
-// ─── Style Showcase ───────────────────────────────────────────────────────────
+// ─── Style Showcase ─────────────────────────────────────────────────────────── FIX 2: slideshow images
 const StyleShowcase = () => {
   const { addItem } = useCart();
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [imgIndexes, setImgIndexes] = useState<Record<string, number>>({});
 
   const styles = [
-    { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",          price: LITHOPHANE_PRICES['Flat Panel'],   image: "/flatlitho.png",      best: "Portraits, families, pets" },
-    { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light. No switches needed.", detail: "Auto on/off light sensor",      price: LITHOPHANE_PRICES['Night Light'],  image: "/nightlightlitho.png", best: "Bedrooms, kids rooms, hallways", highlight: true },
-    { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",              detail: "Stand-alone display piece",       price: LITHOPHANE_PRICES['Heart Shape'],  image: "/heartlitho.png",     best: "Couples, Valentine's Day, memorials" },
-    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",                         detail: "Stand-alone piece, no base",     price: LITHOPHANE_PRICES['Custom Shape'], image: "/flatlitho.png",      best: "Logos, names, unique gifts" },
+    {
+      id: 'flat',
+      name: "Flat Panel",
+      tag: "Most Popular",
+      desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.",
+      detail: "Warm LED base included",
+      price: LITHOPHANE_PRICES['Flat Panel'],
+      images: ["/flatlitho.png", "/all litho.png"],
+      best: "Portraits, families, pets",
+    },
+    {
+      id: 'night',
+      name: "Night Light",
+      tag: "Smart Light",
+      desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light. No switches needed.",
+      detail: "Auto on/off light sensor",
+      price: LITHOPHANE_PRICES['Night Light'],
+      images: ["/nightlightlitho.png", "/nightlight2litho.png"],
+      best: "Bedrooms, kids rooms, hallways",
+      highlight: true,
+    },
+    {
+      id: 'heart',
+      name: "Heart Shape",
+      tag: "Best Gift",
+      desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",
+      detail: "Stand-alone display piece",
+      price: LITHOPHANE_PRICES['Heart Shape'],
+      images: ["/heartlitho.png"],
+      best: "Couples, Valentine's Day, memorials",
+    },
+    {
+      id: 'custom',
+      name: "Custom Shape",
+      tag: "Unique",
+      desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",
+      detail: "Stand-alone piece, no base",
+      price: LITHOPHANE_PRICES['Custom Shape'],
+      images: ["/flatlitho.png"],
+      best: "Logos, names, unique gifts",
+    },
   ];
+
+  const getImg = (id: string) => imgIndexes[id] ?? 0;
+  const prevImg = (id: string, len: number) =>
+    setImgIndexes(prev => ({ ...prev, [id]: (getImg(id) - 1 + len) % len }));
+  const nextImg = (id: string, len: number) =>
+    setImgIndexes(prev => ({ ...prev, [id]: (getImg(id) + 1) % len }));
 
   const handleAddToCart = (style: typeof styles[0]) => {
     const price = SALE_ACTIVE ? style.price.sale : style.price.original;
-    addItem({ type: 'lithophane', name: `Lithophane: ${style.name}`, qty: 1, unitPrice: price, image: style.image });
+    addItem({ type: 'lithophane', name: `Lithophane: ${style.name}`, qty: 1, unitPrice: price, image: style.images[0] });
     setAddedId(style.id);
     setTimeout(() => setAddedId(null), 2000);
   };
@@ -455,12 +500,45 @@ const StyleShowcase = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {styles.map((style) => (
             <motion.div key={style.id} whileHover={{ y: -8 }}
-              className={`rounded-3xl border overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col ${(style as any).highlight ? 'border-brand-primary ring-2 ring-brand-primary/20' : 'border-gray-100'}`}>
+              className={`rounded-3xl border overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col ${style.highlight ? 'border-brand-primary ring-2 ring-brand-primary/20' : 'border-gray-100'}`}>
+              {/* Image carousel */}
               <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative shrink-0">
-                <img src={style.image} alt={style.name} className="w-full h-full object-contain p-4" />
-                <div className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${(style as any).highlight ? 'bg-brand-primary text-white' : 'bg-brand-dark text-white'}`}>
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={getImg(style.id)}
+                    src={style.images[getImg(style.id)]}
+                    alt={style.name}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full h-full object-contain p-4"
+                  />
+                </AnimatePresence>
+                <div className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${style.highlight ? 'bg-brand-primary text-white' : 'bg-brand-dark text-white'}`}>
                   {style.tag}
                 </div>
+                {style.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => prevImg(style.id, style.images.length)}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 z-10">
+                      <ChevronLeft className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={() => nextImg(style.id, style.images.length)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 z-10">
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                    <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+                      {style.images.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setImgIndexes(prev => ({ ...prev, [style.id]: i }))}
+                          className={`w-1.5 h-1.5 rounded-full transition-all ${i === getImg(style.id) ? 'bg-white scale-125' : 'bg-white/50'}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
               <div className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold mb-2">{style.name}</h3>
@@ -518,10 +596,10 @@ const HowItWorks = () => (
       </div>
       <div className="grid md:grid-cols-4 gap-6 mb-16">
         {[
-          { step: "01", icon: <Camera className="w-7 h-7" />,  title: "Pick Your Style",   desc: "Flat panel, night light, heart, or custom shape." },
-          { step: "02", icon: <ShoppingCart className="w-7 h-7" />, title: "Add to Cart",  desc: "Build your order with multiple items." },
+          { step: "01", icon: <Camera className="w-7 h-7" />,  title: "Pick Your Style",    desc: "Flat panel, night light, heart, or custom shape." },
+          { step: "02", icon: <ShoppingCart className="w-7 h-7" />, title: "Add to Cart",   desc: "Build your order with multiple items." },
           { step: "03", icon: <Upload className="w-7 h-7" />,  title: "Upload at Checkout", desc: "Upload your photos and files when you check out." },
-          { step: "04", icon: <Package className="w-7 h-7" />, title: "You Pick It Up",    desc: "Free pickup in Plainsboro, NJ." },
+          { step: "04", icon: <Package className="w-7 h-7" />, title: "You Pick It Up",     desc: "Free pickup in Plainsboro, NJ." },
         ].map((s, i) => (
           <motion.div key={i} whileHover={{ y: -8 }} className="relative p-8 rounded-3xl bg-white border border-gray-100 hover:shadow-xl transition-all">
             <div className="text-5xl font-black text-brand-primary/10 absolute top-6 right-6 font-mono">{s.step}</div>
@@ -590,8 +668,9 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-base mb-1 group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
         <p className="text-gray-500 text-xs mb-4 leading-relaxed flex-1">{product.description}</p>
+        {/* FIX 3: min-h on price row so all cards align regardless of sale/quote state */}
         <div className="space-y-2 mt-auto">
-          <div>
+          <div className="flex items-center min-h-[2rem]">
             {SALE_ACTIVE && product.salePrice ? (
               <div className="flex items-center gap-2">
                 <span className="text-lg font-black text-brand-primary">${product.salePrice.toFixed(2)}</span>
@@ -608,7 +687,7 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
             {customAdded ? (
               <><CheckCircle className="w-4 h-4" /> Added!</>
             ) : (
-              <><ShoppingCart className="w-4 h-4" /> {product.isCustom ? 'Add to Cart' : 'Add to Cart'}</>
+              <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
             )}
           </button>
         </div>
@@ -795,8 +874,62 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
   </div>
 );
 
-// ─── Reusable: File Upload ────────────────────────────────────────────────────
-const FileUpload = ({ files, uploading, onUpload, label, hint }: { files: {name:string,url:string}[]; uploading: boolean; onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void; label: string; hint?: string }) => (
+// ─── FIX 1: useUploadcare Hook — with Uploadcare fallback ─────────────────────
+const useUploadcare = () => {
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string; fallback?: boolean }[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [usedFallback, setUsedFallback] = useState(false);
+
+  const tryUploadcare = async (file: File): Promise<{ name: string; url: string } | null> => {
+    const data = new FormData();
+    data.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
+    data.append('UPLOADCARE_STORE', '1');
+    data.append('file', file);
+    try {
+      const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
+      const json = await res.json();
+      if (json.file) return { name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` };
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    setUploading(true);
+    const uploaded: { name: string; url: string; fallback?: boolean }[] = [];
+
+    for (const file of files) {
+      const result = await tryUploadcare(file);
+      if (result) {
+        uploaded.push(result);
+      } else {
+        // Uploadcare failed (quota hit, network, etc.) — flag for email fallback
+        setUsedFallback(true);
+        uploaded.push({ name: file.name, url: '', fallback: true });
+      }
+    }
+
+    setUploadedFiles(prev => [...prev, ...uploaded]);
+    setUploading(false);
+  };
+
+  return { uploadedFiles, uploading, handleUpload, usedFallback };
+};
+
+// ─── FIX 1: Reusable File Upload — shows fallback warning ────────────────────
+const FileUpload = ({
+  files, uploading, onUpload, label, hint, usedFallback,
+}: {
+  files: { name: string; url: string; fallback?: boolean }[];
+  uploading: boolean;
+  onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  hint?: string;
+  usedFallback?: boolean;
+}) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">{label}</label>
     {hint && <p className="text-xs text-gray-400 mb-3 leading-relaxed">{hint}</p>}
@@ -805,50 +938,40 @@ const FileUpload = ({ files, uploading, onUpload, label, hint }: { files: {name:
       <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-6 text-center transition-colors">
         <Upload className="w-7 h-7 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
         <div className="text-sm font-bold text-gray-500">
-          {uploading ? 'Uploading...' : files.length > 0 ? `${files.length} file(s) uploaded ✓` : 'Drag and drop or click to upload'}
+          {uploading
+            ? 'Uploading...'
+            : files.length > 0
+              ? `${files.filter(f => !f.fallback).length} file(s) uploaded ✓${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''}`
+              : 'Drag and drop or click to upload'}
         </div>
         <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB each</div>
       </div>
     </div>
+    {usedFallback && (
+      <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+        <p className="text-amber-800 text-xs font-bold mb-1">File upload temporarily unavailable</p>
+        <p className="text-amber-700 text-xs leading-relaxed">
+          No worries — just reply to our confirmation email with your photos or files attached. We will take care of the rest.
+        </p>
+      </div>
+    )}
     {files.length > 0 && (
       <div className="flex flex-wrap gap-2 mt-2">
-        {files.map((f, i) => (
-          <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200">
-            <Paperclip className="w-3 h-3" /> {f.name}
-          </a>
-        ))}
+        {files.map((f, i) =>
+          f.fallback ? (
+            <span key={i} className="bg-amber-100 text-amber-700 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2">
+              <Paperclip className="w-3 h-3" /> {f.name} (send via email)
+            </span>
+          ) : (
+            <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200">
+              <Paperclip className="w-3 h-3" /> {f.name}
+            </a>
+          )
+        )}
       </div>
     )}
   </div>
 );
-
-// ─── useUploadcare Hook ────────────────────────────────────────────────────────
-const useUploadcare = () => {
-  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string }[]>([]);
-  const [uploading, setUploading] = useState(false);
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const files = Array.from(e.target.files);
-    setUploading(true);
-    const uploaded: { name: string; url: string }[] = [];
-    for (const file of files) {
-      const data = new FormData();
-      data.append('UPLOADCARE_PUB_KEY', 'bc495550492636fc4db6');
-      data.append('UPLOADCARE_STORE', '1');
-      data.append('file', file);
-      try {
-        const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
-        const json = await res.json();
-        if (json.file) uploaded.push({ name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` });
-      } catch {}
-    }
-    setUploadedFiles(prev => [...prev, ...uploaded]);
-    setUploading(false);
-  };
-
-  return { uploadedFiles, uploading, handleUpload };
-};
 
 const submitOrder = async (subject: string, payload: object, fileLinks: string) => {
   const body = { ...payload, access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55', subject, 'Attached Files': fileLinks };
@@ -856,7 +979,7 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify(body)
   });
-  await fetch('https://script.google.com/macros/s/AKfycbx4VDX9kxQYqkGRg5cLoTvrt6R3To4QMG4U6qXAzevWAfm93Oqd-CQwUrfwboNy-_n9LA/exec', {
+  await fetch('https://script.google.com/macros/s/AKfycbxWkorFdGZlupFCzIlw4KkkLtYCj4BrL7jmH2DfOeuNyUzUw4yd9u-_Rs1TI2eX7dparQ/exec', {
     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
   });
   return emailRes.ok;
@@ -872,7 +995,7 @@ const CheckoutPage = () => {
   const [delivery, setDelivery] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
-  const { uploadedFiles, uploading, handleUpload } = useUploadcare();
+  const { uploadedFiles, uploading, handleUpload, usedFallback } = useUploadcare();
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const hasLithophanes = items.some(i => i.type === 'lithophane');
@@ -899,11 +1022,12 @@ const CheckoutPage = () => {
     );
 
     const fileLinks = uploadedFiles.length > 0
-      ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n')
+      ? uploadedFiles.map(f => f.fallback ? `${f.name}: [customer will email]` : `${f.name}: ${f.url}`).join('\n')
       : 'No files uploaded';
 
     const payload = {
-      name, email,
+      name,
+      email,
       delivery: delivery + (address ? ` — ${address}` : ''),
       items: orderLines.join('\n'),
       subtotal: `$${total.toFixed(2)}`,
@@ -954,10 +1078,16 @@ const CheckoutPage = () => {
           <p className="text-gray-500 mb-3 leading-relaxed">
             Thanks, <span className="font-bold text-brand-dark">{name}</span>! We have received your order and will email you at <span className="font-bold text-brand-dark">{email}</span> within 12 hours with confirmation and payment details.
           </p>
-          {hasLithophanes && uploadedFiles.length === 0 && (
+          {hasLithophanes && uploadedFiles.filter(f => !f.fallback).length === 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 text-left">
               <p className="text-amber-700 text-sm font-bold mb-1">Reminder: Photos needed</p>
               <p className="text-amber-600 text-xs">You can reply to our confirmation email with your lithophane photos, or we will ask for them when we follow up.</p>
+            </div>
+          )}
+          {usedFallback && (
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 text-left">
+              <p className="text-amber-700 text-sm font-bold mb-1">Send your files via email</p>
+              <p className="text-amber-600 text-xs">Some files could not upload. Please reply to our confirmation email with them attached.</p>
             </div>
           )}
           <Link to="/" className="inline-block bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
@@ -1077,6 +1207,7 @@ const CheckoutPage = () => {
                   files={uploadedFiles}
                   uploading={uploading}
                   onUpload={handleUpload}
+                  usedFallback={usedFallback}
                   label={hasLithophanes && hasCustomPrint ? 'All Photos & Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'}
                 />
               </div>
