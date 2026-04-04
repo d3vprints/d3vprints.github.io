@@ -395,7 +395,7 @@ const LithophaneSection = () => (
       </div>
       <div className="grid lg:grid-cols-3 gap-8 mb-16">
         {[
-          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works — portraits, landscapes, pets, couples. The higher the resolution, the sharper the detail." },
+          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works: portraits, landscapes, pets, couples. The higher the resolution, the sharper the detail." },
           { icon: <Printer className="w-8 h-8" />, title: "We Print It", desc: "Using 0.1mm layer resolution and premium PLA+ white filament for the clearest possible image." },
           { icon: <Lightbulb className="w-8 h-8" />, title: "It Glows", desc: "Plug in the LED base and watch your photo appear in stunning backlit detail. Pure magic." }
         ].map((f, i) => (
@@ -458,7 +458,7 @@ const StyleShowcase = () => {
       id: 'custom',
       name: "Custom Shape",
       tag: "Unique",
-      desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",
+      desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",
       detail: "Stand-alone piece, no base",
       price: LITHOPHANE_PRICES['Custom Shape'],
       images: ["/flatlitho.png"],
@@ -858,7 +858,7 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">Delivery Preference</label>
     <div className="flex flex-col gap-2 mb-3">
       {[
-        { label: 'Pickup (Free — Plainsboro, NJ)', value: 'Pickup' },
+        { label: 'Pickup (Free: Plainsboro, NJ)', value: 'Pickup' },
         { label: 'Local Dropoff (small fee)', value: 'Dropoff' },
       ].map(d => (
         <button key={d.value} type="button" onClick={() => onDelivery(d.value)}
@@ -886,7 +886,7 @@ const useUploadcare = () => {
     data.append('UPLOADCARE_STORE', '1');
     data.append('file', file);
     try {
-      const res = await fetch('https://upload.uploadcare.com/FAKE_ENDPOINT/', { method: 'POST', body: data });
+      const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
       const json = await res.json();
       if (json.file) return { name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` };
       return null;
@@ -951,7 +951,7 @@ const FileUpload = ({
       <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
         <p className="text-amber-800 text-xs font-bold mb-1">File upload temporarily unavailable</p>
         <p className="text-amber-700 text-xs leading-relaxed">
-          No worries — just reply to our confirmation email with your photos or files attached. We will take care of the rest.
+          No worries, just reply to our confirmation email with your photos or files attached. We will take care of the rest.
         </p>
       </div>
     )}
