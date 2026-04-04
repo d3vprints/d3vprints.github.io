@@ -5,19 +5,23 @@ import {
   ShoppingCart, Upload, Settings2, Package, Printer, Lightbulb, Layers,
   ChevronRight, Mail, Instagram, Twitter, CheckCircle2, ArrowRight, Menu, X,
   Box, Zap, ShieldCheck, Database, Clock, User, ExternalLink, Circle,
-  CheckCircle, PlayCircle, FileText, Image as ImageIcon, ChevronLeft, Paperclip, Star, Heart, Camera, Palette
+  CheckCircle, PlayCircle, FileText, Image as ImageIcon, ChevronLeft, Paperclip, Star, Heart, Camera, Palette, MapPin, Truck, Car, Tag
 } from 'lucide-react';
 
 const STANDARD_COLORS = ['Black', 'White', 'Blue'];
 const PREMIUM_COLORS = ['Red', 'Green', 'Yellow', 'Orange', 'Purple', 'Pink', 'Gray', 'Teal', 'Gold', 'Silver'];
 const PREMIUM_SURCHARGE = 3;
+const SALE_ACTIVE = true;
+const SALE_SLOTS_REMAINING = 50;
 
-const BASE_PRICES: Record<string, number> = {
-  'Flat Panel Night Light': 25,
-  'Night Light': 35,
-  'Heart Shape': 30,
-  'Custom / Other Print': 0,
+const LITHOPHANE_PRICES: Record<string, { original: number; sale: number }> = {
+  'Flat Panel Night Light': { original: 30, sale: 25 },
+  'Night Light':            { original: 40, sale: 35 },
+  'Heart Shape':            { original: 35, sale: 30 },
 };
+
+const BULK_THRESHOLD = 5;
+const BULK_DISCOUNT = 0.15; // 15% off for 6+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,6 +59,17 @@ const Navbar = () => {
   );
 };
 
+// --- Sale Banner ---
+const SaleBanner = () => {
+  if (!SALE_ACTIVE) return null;
+  return (
+    <div className="bg-brand-primary text-brand-dark py-2.5 px-6 text-center text-sm font-bold tracking-wide">
+      <Tag className="w-4 h-4 inline mr-2 mb-0.5" />
+      Launch Sale — First {SALE_SLOTS_REMAINING} customers get exclusive pricing. Only a few spots left!
+    </div>
+  );
+};
+
 const Hero = () => (
   <section className="relative pt-32 pb-20 px-6 overflow-hidden">
     <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
@@ -67,7 +82,7 @@ const Hero = () => (
           <span className="text-brand-primary italic">Glowing Forever.</span>
         </h1>
         <p className="text-lg text-gray-600 max-w-md mb-8 leading-relaxed">
-          D3V Prints transforms your favorite photos into stunning lithophane night lights. Upload a photo we do the rest.
+          D3V Prints transforms your favorite photos into stunning lithophane night lights. Upload a photo, we do the rest.
         </p>
         <div className="flex flex-wrap gap-4">
           <a href="#contact" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
@@ -114,6 +129,102 @@ const Hero = () => (
   </section>
 );
 
+// --- Style Showcase ---
+const StyleShowcase = () => {
+  const styles = [
+    {
+      name: "Flat Panel",
+      desc: "The classic. A thin rectangular panel that sits on a warm LED base. Perfect for portrait photos, family shots, or any image you want to display on a shelf or nightstand.",
+      price: LITHOPHANE_PRICES['Flat Panel Night Light'],
+      image: "/flatlitho.png",
+      best: "Portraits, families, pets",
+    },
+    {
+      name: "Night Light",
+      desc: "A curved cylindrical wrap that glows from the inside. The image wraps around giving a soft 120° glow. Great for landscapes, group photos, or panoramic shots.",
+      price: LITHOPHANE_PRICES['Night Light'],
+      image: "/nightlightlitho.png",
+      best: "Landscapes, panoramas, groups",
+    },
+    {
+      name: "Heart Shape",
+      desc: "A heart-shaped panel with the same stunning backlit detail. The most gifted style on the site. Loved by couples, parents, and anyone looking for a meaningful present.",
+      price: LITHOPHANE_PRICES['Heart Shape'],
+      image: "/heartlitho.png",
+      best: "Couples, Valentine's Day, gifts",
+    },
+  ];
+
+  return (
+    <section id="styles" className="py-24 px-6 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+            Choose Your Style
+          </div>
+          <h2 className="text-5xl font-bold mb-4">Which One Is Right <span className="text-brand-primary italic">For You?</span></h2>
+          <p className="text-gray-500 text-lg max-w-xl mx-auto">Every style uses the same 0.1mm precision printing. The only difference is the shape and how the light glows.</p>
+        </div>
+
+        {/* Sale notice */}
+        {SALE_ACTIVE && (
+          <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-2xl px-6 py-4 mb-12 text-center">
+            <p className="text-brand-dark font-bold text-sm">
+              <Tag className="w-4 h-4 inline mr-1 text-brand-primary" />
+              Launch Sale — First {SALE_SLOTS_REMAINING} customers only. Prices shown are already reduced. Order now before they go back up.
+            </p>
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {styles.map((style, i) => (
+            <motion.div key={i} whileHover={{ y: -8 }} className="rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all bg-white">
+              <div className="aspect-[4/3] overflow-hidden bg-gray-50">
+                <img src={style.image} alt={style.name} className="w-full h-full object-contain p-4" />
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-3">{style.name}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed mb-4">{style.desc}</p>
+                <div className="bg-brand-light rounded-xl px-4 py-2 text-xs font-bold text-gray-500 mb-6">
+                  Best for: {style.best}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    {SALE_ACTIVE ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-black text-brand-primary">${style.price.sale}</span>
+                        <span className="text-sm text-gray-400 line-through">${style.price.original}</span>
+                        <span className="text-[10px] font-bold bg-brand-primary text-white px-2 py-0.5 rounded-full">SALE</span>
+                      </div>
+                    ) : (
+                      <span className="text-2xl font-black">${style.price.original}</span>
+                    )}
+                    <p className="text-xs text-gray-400 mt-0.5">+ LED base included</p>
+                  </div>
+                  <a href="#contact" className="bg-brand-dark text-white px-5 py-3 rounded-xl font-bold text-sm hover:bg-brand-primary transition-colors">
+                    Order This
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bulk discount notice */}
+        <div className="mt-12 bg-brand-dark text-white rounded-2xl px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h4 className="font-bold text-lg mb-1">Ordering 6 or more? You get a bulk discount.</h4>
+            <p className="text-gray-400 text-sm">Orders of 6+ lithophanes automatically get {BULK_DISCOUNT * 100}% off. Great for events, weddings, or family gifts.</p>
+          </div>
+          <a href="#contact" className="shrink-0 bg-brand-primary text-brand-dark px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform">
+            Place Bulk Order
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const LithophaneSection = () => (
   <section id="lithophanes" className="py-24 px-6 bg-brand-dark text-white">
     <div className="max-w-7xl mx-auto">
@@ -143,42 +254,17 @@ const LithophaneSection = () => (
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
-        <div>
-          <h3 className="text-4xl font-bold mb-8">Available Styles</h3>
-          <div className="space-y-6">
-            {[
-              { name: "Flat Panel", desc: "Classic rectangular panel, perfect for portraits. Comes with a warm LED base.", price: "From $25" },
-              { name: "Night Light", desc: "Wrap-around cylindrical design for a softer 120° glow. Great for panoramic shots.", price: "From $35" },
-              { name: "Heart Shape", desc: "Romantic heart-shaped lithophane. Most popular for couples and Valentine's Day.", price: "From $30" },
-              { name: "Custom Shape", desc: "Any shape you want, names, logos, silhouettes. Contact us for a quote.", price: "Custom" },
-            ].map((style, i) => (
-              <div key={i} className="flex items-center justify-between p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brand-primary/50 transition-colors">
-                <div>
-                  <h4 className="font-bold text-lg">{style.name}</h4>
-                  <p className="text-gray-400 text-sm mt-1">{style.desc}</p>
-                </div>
-                <div className="text-brand-primary font-bold font-mono shrink-0 ml-4">{style.price}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <img src="/heartlitho.png" alt="Lithophane example 1" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
-            <img src="/nightlightlitho.png" alt="Lithophane example 2" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
-          </div>
-          <div className="space-y-4 pt-12">
-            <img src="/nightlight2litho.png" alt="Lithophane example 3" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
-            <img src="/flatlitho.png" alt="Lithophane example 4" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
-          </div>
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
+        <img src="/heartlitho.png" alt="Heart lithophane" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
+        <img src="/nightlightlitho.png" alt="Night light lithophane" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90 mt-8" />
+        <img src="/nightlight2litho.png" alt="Night light 2" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90" />
+        <img src="/flatlitho.png" alt="Flat lithophane" className="rounded-2xl w-full aspect-[3/4] object-contain bg-white/5 opacity-90 mt-8" />
       </div>
 
       <div className="text-center bg-brand-primary/10 border border-brand-primary/20 rounded-3xl p-16">
         <Heart className="w-12 h-12 text-brand-primary mx-auto mb-6" />
         <h3 className="text-4xl font-bold mb-4">Ready to Create Yours?</h3>
-        <p className="text-gray-400 text-xl mb-10 max-w-lg mx-auto">Upload your photo, pick a style, and we'll ship your finished night light asap.</p>
+        <p className="text-gray-400 text-xl mb-10 max-w-lg mx-auto">Upload your photo, pick a style, and we'll get it printed and delivered asap.</p>
         <a href="#contact" className="inline-flex items-center gap-3 bg-brand-primary text-brand-dark px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition-transform">
           Order Your Lithophane <ArrowRight className="w-5 h-5" />
         </a>
@@ -194,12 +280,12 @@ const HowItWorks = () => (
         <h2 className="text-5xl font-bold mb-4">Ordering Is <span className="text-brand-primary italic">Simple</span></h2>
         <p className="text-gray-500 text-lg max-w-xl mx-auto">From photo to doorstep in just a few steps.</p>
       </div>
-      <div className="grid md:grid-cols-4 gap-8">
+      <div className="grid md:grid-cols-4 gap-8 mb-16">
         {[
           { step: "01", icon: <Camera className="w-7 h-7" />, title: "Pick Your Style", desc: "Choose flat panel, night light, heart, or a custom shape from the order form." },
           { step: "02", icon: <Upload className="w-7 h-7" />, title: "Upload Your Photo", desc: "Send us your image directly through the form. Higher resolution = sharper result." },
           { step: "03", icon: <Printer className="w-7 h-7" />, title: "We Print It", desc: "We process and print your lithophane with precision over 24+ hours." },
-          { step: "04", icon: <Package className="w-7 h-7" />, title: "Shipped to You", desc: "Carefully packaged with the LED base included and sent directly to your door." },
+          { step: "04", icon: <Package className="w-7 h-7" />, title: "You Get It", desc: "Pick it up for free or we drop it off. Shipping available too." },
         ].map((s, i) => (
           <motion.div key={i} whileHover={{ y: -8 }} className="relative p-8 rounded-3xl bg-brand-light border border-gray-100 hover:shadow-xl transition-all">
             <div className="text-5xl font-black text-brand-primary/10 absolute top-6 right-6 font-mono">{s.step}</div>
@@ -208,6 +294,46 @@ const HowItWorks = () => (
             <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
           </motion.div>
         ))}
+      </div>
+
+      {/* Delivery Options */}
+      <div className="bg-brand-dark text-white rounded-3xl p-10">
+        <h3 className="text-2xl font-bold mb-2 text-center">Delivery Options</h3>
+        <p className="text-gray-400 text-center text-sm mb-10">We are currently local only. Pick the option that works best for you.</p>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              icon: <MapPin className="w-7 h-7" />,
+              title: "Pickup",
+              price: "Free",
+              desc: "Come grab your order from us. We'll send you the exact location once your print is ready. Zero cost, zero hassle.",
+              highlight: true,
+            },
+            {
+              icon: <Car className="w-7 h-7" />,
+              title: "Local Dropoff",
+              price: "Small fee",
+              desc: "We bring it to you within our local area. Let us know your address when ordering and we'll confirm if you're in range.",
+              highlight: false,
+            },
+            {
+              icon: <Truck className="w-7 h-7" />,
+              title: "Shipping",
+              price: "Calculated at checkout",
+              desc: "We ship via USPS for customers outside our area. Shipping cost is added to your order total and confirmed via email.",
+              highlight: false,
+            },
+          ].map((option, i) => (
+            <div key={i} className={`rounded-2xl p-8 border transition-all ${option.highlight ? 'bg-brand-primary/10 border-brand-primary/40' : 'bg-white/5 border-white/10'}`}>
+              <div className={`mb-4 ${option.highlight ? 'text-brand-primary' : 'text-gray-400'}`}>{option.icon}</div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-lg">{option.title}</h4>
+                <span className={`text-sm font-bold px-3 py-1 rounded-full ${option.highlight ? 'bg-brand-primary text-brand-dark' : 'bg-white/10 text-gray-300'}`}>{option.price}</span>
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed">{option.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   </section>
@@ -222,19 +348,11 @@ const ProductCard = ({ product, onOrder }: { product: any, onOrder: (p: any) => 
     <motion.div whileHover={{ y: -10 }} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
       <div className="relative aspect-square overflow-hidden">
         <AnimatePresence mode="wait">
-          <motion.img
-            key={currentImg}
-            src={images[currentImg]}
-            alt={product.name}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-full h-full object-cover"
-          />
+          <motion.img key={currentImg} src={images[currentImg]} alt={product.name}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+            className="w-full h-full object-cover" />
         </AnimatePresence>
         <div className="absolute top-4 left-4 bg-brand-primary text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md">{product.tag}</div>
-
         {images.length > 1 && (
           <>
             <button onClick={() => setCurrentImg(i => (i - 1 + images.length) % images.length)}
@@ -258,7 +376,17 @@ const ProductCard = ({ product, onOrder }: { product: any, onOrder: (p: any) => 
         <h3 className="font-bold text-lg mb-1 group-hover:text-brand-primary transition-colors">{product.name}</h3>
         <p className="text-gray-500 text-sm mb-4">{product.description}</p>
         <div className="flex items-center justify-between">
-          <span className="text-xl font-bold font-mono">{product.price}</span>
+          <div>
+            {SALE_ACTIVE && product.salePrice ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-black text-brand-primary">${product.salePrice.toFixed(2)}</span>
+                <span className="text-sm text-gray-400 line-through">${product.basePrice.toFixed(2)}</span>
+                <span className="text-[9px] font-bold bg-brand-primary text-white px-1.5 py-0.5 rounded-full">SALE</span>
+              </div>
+            ) : (
+              <span className="text-xl font-bold font-mono">From ${product.basePrice.toFixed(2)}</span>
+            )}
+          </div>
           <button onClick={() => onOrder(product)} className="bg-brand-dark text-white p-3 rounded-xl hover:bg-brand-primary transition-colors">
             <ShoppingCart className="w-5 h-5" />
           </button>
@@ -271,36 +399,11 @@ const ProductCard = ({ product, onOrder }: { product: any, onOrder: (p: any) => 
 
 const CurrentProducts = () => {
   const [orderProduct, setOrderProduct] = useState<any>(null);
-
   const products = [
-    {
-      id: 1, name: "Mini Flexi Octopus", price: "From $5.00", tag: "Best Seller",
-      images: ["/octopus.png"],
-      description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.",
-      basePrice: 5,
-      credit: "Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints."
-    },
-    {
-      id: 2, name: "Credit Card Sized Phone Stand", price: "From $4.00", tag: "New Arrival",
-      images: ["/phonestand.png"],
-      description: "A slim, wallet friendly phone stand that folds flat and sets up in seconds.",
-      basePrice: 4,
-      credit: "Design: 0.8mm thin adjustable credit card phone stand by jq910, Thingiverse, CC BY 4.0. Printed by D3V Prints."
-    },
-    {
-      id: 3, name: "Keychain", price: "From $3.00", tag: "New Arrival",
-      images: ["/keychain.png"],
-      description: "Many different types of keychains available upon request, name keychains, Formula 1 keychains and much more!",
-      basePrice: 3,
-      credit: "Design: Dependent on keychain, credits available upon request. Printed by D3V Prints."
-    },
-    {
-      id: 4, name: "118dB Emergency Whistle", price: "From $4.00", tag: "Popular",
-      images: ["/whistle.png"],
-      description: "A loud, pea-less 118dB emergency whistle perfect for hiking, camping, or everyday carry.",
-      basePrice: 4,
-      credit: "Design: V29 by jzisa, Thingiverse, CC BY 4.0. Printed by D3V Prints."
-    }
+    { id: 1, name: "Mini Flexi Octopus", basePrice: 5, salePrice: 4, tag: "Best Seller", images: ["/octopus.png"], description: "A fun articulated octopus with flexible legs. Great desk toy or gift for kids.", credit: "Design: Cute mini octopus by Louay23644, Thingiverse, CC BY-SA 3.0. Printed by D3V Prints." },
+    { id: 2, name: "Credit Card Sized Phone Stand", basePrice: 4, salePrice: 3, tag: "New Arrival", images: ["/phonestand.png"], description: "A slim, wallet friendly phone stand that folds flat and sets up in seconds.", credit: "Design: 0.8mm thin adjustable credit card phone stand by jq910, Thingiverse, CC BY 4.0. Printed by D3V Prints." },
+    { id: 3, name: "Keychain", basePrice: 3, salePrice: null, tag: "New Arrival", images: ["/keychain.png"], description: "Many different types of keychains available upon request, name keychains, Formula 1 keychains and much more!", credit: "Design: Dependent on keychain, credits available upon request. Printed by D3V Prints." },
+    { id: 4, name: "118dB Emergency Whistle", basePrice: 4, salePrice: 3, tag: "Popular", images: ["/whistle.png"], description: "A loud, pea-less 118dB emergency whistle perfect for hiking, camping, or everyday carry.", credit: "Design: V29 by jzisa, Thingiverse, CC BY 4.0. Printed by D3V Prints." }
   ];
 
   return (
@@ -312,6 +415,11 @@ const CurrentProducts = () => {
             <h2 className="text-4xl font-bold mb-4 italic">Popular Products</h2>
             <p className="text-gray-500 max-w-md">Fun and functional prints available to order anytime.</p>
           </div>
+          {SALE_ACTIVE && (
+            <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-2xl px-5 py-3 text-sm font-bold text-brand-dark flex items-center gap-2">
+              <Tag className="w-4 h-4 text-brand-primary" /> Launch sale prices applied
+            </div>
+          )}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
@@ -322,12 +430,8 @@ const CurrentProducts = () => {
           Some products feature third-party designs licensed under Creative Commons Attribution 4.0 International (CC BY 4.0) or similar open licenses. Original designers retain copyright of their respective works. D3V Prints provides physical printing services only and is not affiliated with original designers. Credits available upon request.
         </p>
       </div>
-
-      {/* Quick Order Modal for products */}
       <AnimatePresence>
-        {orderProduct && (
-          <ProductOrderModal product={orderProduct} onClose={() => setOrderProduct(null)} />
-        )}
+        {orderProduct && <ProductOrderModal product={orderProduct} onClose={() => setOrderProduct(null)} />}
       </AnimatePresence>
     </section>
   );
@@ -338,20 +442,25 @@ const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => 
   const [color, setColor] = useState('');
   const [qty, setQty] = useState(1);
   const [notes, setNotes] = useState('');
+  const [delivery, setDelivery] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [step, setStep] = useState(1);
 
   const isPremium = PREMIUM_COLORS.includes(color);
-  const estimated = color ? (product.basePrice + (isPremium ? PREMIUM_SURCHARGE : 0)) * qty : null;
+  const baseUnit = SALE_ACTIVE && product.salePrice ? product.salePrice : product.basePrice;
+  const unitPrice = baseUnit + (isPremium ? PREMIUM_SURCHARGE : 0);
+  const isBulk = qty > BULK_THRESHOLD;
+  const subtotal = unitPrice * qty;
+  const estimated = color ? (isBulk ? subtotal * (1 - BULK_DISCOUNT) : subtotal) : null;
 
   const handleSubmit = async () => {
     setStatus('submitting');
     const payload = {
       name, email,
       projectType: product.name,
-      message: `Color: ${color} | Qty: ${qty} | Notes: ${notes || 'None'}`,
+      message: `Color: ${color} | Qty: ${qty} | Delivery: ${delivery} | Notes: ${notes || 'None'}${isBulk ? ' | BULK ORDER' : ''}`,
       files: 'No files uploaded',
       date: new Date().toLocaleString()
     };
@@ -359,17 +468,10 @@ const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => 
       const emailRes = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
-          subject: `New D3V Prints Order: ${product.name}`,
-          ...payload,
-          'Attached Files': 'No files uploaded'
-        })
+        body: JSON.stringify({ access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55', subject: `New D3V Prints Order: ${product.name}`, ...payload, 'Attached Files': 'No files uploaded' })
       });
       await fetch('https://script.google.com/macros/s/AKfycbx4VDX9kxQYqkGRg5cLoTvrt6R3To4QMG4U6qXAzevWAfm93Oqd-CQwUrfwboNy-_n9LA/exec', {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
       });
       if (emailRes.ok) setStatus('success');
       else setStatus('error');
@@ -380,11 +482,10 @@ const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => 
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
       <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative w-full max-w-lg bg-white rounded-[2.5rem] overflow-hidden shadow-2xl p-10">
+        className="relative w-full max-w-lg bg-white rounded-[2.5rem] overflow-y-auto max-h-[90vh] shadow-2xl p-10">
         <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20 transition-colors">
           <X className="w-5 h-5" />
         </button>
-
         {status === 'success' ? (
           <div className="text-center py-8">
             <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6"><CheckCircle className="w-10 h-10" /></div>
@@ -396,37 +497,23 @@ const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => 
           <>
             <h3 className="text-2xl font-bold mb-1">{product.name}</h3>
             <p className="text-gray-500 text-sm mb-6">{product.description}</p>
-
             {step === 1 && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">
-                    <Palette className="w-3 h-3 inline mr-1" /> Choose Color
-                  </label>
-                  <div className="mb-2">
-                    <p className="text-xs font-semibold text-gray-500 mb-2">Standard Colors (no extra charge)</p>
-                    <div className="flex flex-wrap gap-2">
-                      {STANDARD_COLORS.map(c => (
-                        <button key={c} onClick={() => setColor(c)}
-                          className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                          {c}
-                        </button>
-                      ))}
-                    </div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Choose Color</label>
+                  <p className="text-xs font-semibold text-gray-500 mb-2">Standard (no extra charge)</p>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {STANDARD_COLORS.map(c => (
+                      <button key={c} onClick={() => setColor(c)} className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
+                    ))}
                   </div>
-                  <div className="mt-3">
-                    <p className="text-xs font-semibold text-gray-500 mb-2">Premium Colors (+${PREMIUM_SURCHARGE}.00)</p>
-                    <div className="flex flex-wrap gap-2">
-                      {PREMIUM_COLORS.map(c => (
-                        <button key={c} onClick={() => setColor(c)}
-                          className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                          {c}
-                        </button>
-                      ))}
-                    </div>
+                  <p className="text-xs font-semibold text-gray-500 mb-2">Premium (+${PREMIUM_SURCHARGE}.00)</p>
+                  <div className="flex flex-wrap gap-2">
+                    {PREMIUM_COLORS.map(c => (
+                      <button key={c} onClick={() => setColor(c)} className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
+                    ))}
                   </div>
                 </div>
-
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Quantity</label>
                   <div className="flex items-center gap-4">
@@ -434,22 +521,33 @@ const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => 
                     <span className="text-2xl font-bold w-8 text-center">{qty}</span>
                     <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center font-bold hover:border-brand-primary transition-colors">+</button>
                   </div>
+                  {qty > BULK_THRESHOLD && (
+                    <p className="text-brand-primary text-xs font-bold mt-2">Bulk discount applied! {BULK_DISCOUNT * 100}% off your order.</p>
+                  )}
                 </div>
-
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Delivery Preference</label>
+                  <div className="flex flex-col gap-2">
+                    {['Pickup (Free)', 'Local Dropoff (Small fee)', 'Shipping (USPS)'].map(d => (
+                      <button key={d} onClick={() => setDelivery(d)}
+                        className={`text-left px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${delivery === d ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Notes (optional)</label>
                   <textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
                     placeholder="Any special requests..." />
                 </div>
-
-                <button onClick={() => setStep(2)} disabled={!color}
+                <button onClick={() => setStep(2)} disabled={!color || !delivery}
                   className="w-full bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors disabled:opacity-50">
                   Continue <ChevronRight className="w-4 h-4 inline ml-1" />
                 </button>
               </motion.div>
             )}
-
             {step === 2 && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                 <h4 className="text-lg font-bold">Your Details</h4>
@@ -457,23 +555,22 @@ const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => 
                   className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="Your Name" />
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                   className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none" placeholder="Email Address" />
-
-                {/* Order Summary */}
                 <div className="bg-brand-light rounded-2xl p-5 space-y-3">
                   <h5 className="font-bold text-sm uppercase tracking-widest text-gray-500">Order Summary</h5>
                   <div className="flex justify-between text-sm"><span className="text-gray-500">Product</span><span className="font-bold">{product.name}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-gray-500">Color</span>
-                    <span className="font-bold flex items-center gap-1">{color} {isPremium && <span className="text-[10px] text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded-full">Premium</span>}</span>
-                  </div>
-                  <div className="flex justify-between text-sm"><span className="text-gray-500">Quantity</span><span className="font-bold">{qty}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-gray-500">Color</span><span className="font-bold flex items-center gap-1">{color} {isPremium && <span className="text-[10px] text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded-full">Premium</span>}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-gray-500">Quantity</span><span className="font-bold">{qty} {isBulk && <span className="text-brand-primary text-[10px] font-bold">(Bulk -{BULK_DISCOUNT * 100}%)</span>}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-gray-500">Delivery</span><span className="font-bold">{delivery}</span></div>
                   {notes && <div className="flex justify-between text-sm"><span className="text-gray-500">Notes</span><span className="font-bold text-right max-w-[60%]">{notes}</span></div>}
+                  {SALE_ACTIVE && product.salePrice && (
+                    <div className="flex justify-between text-sm text-brand-primary"><span className="font-bold">Launch Sale Applied</span><span className="font-bold">✓</span></div>
+                  )}
                   <div className="border-t border-gray-200 pt-3 flex justify-between">
                     <span className="font-bold">Estimated Total</span>
                     <span className="font-black text-brand-primary text-lg">${estimated?.toFixed(2)}</span>
                   </div>
                   <p className="text-[10px] text-gray-400">Final price confirmed via email after order review.</p>
                 </div>
-
                 <div className="flex gap-3">
                   <button onClick={() => setStep(1)} className="flex-1 py-4 rounded-2xl font-bold border-2 border-gray-200 hover:bg-gray-50 transition-colors">
                     <ChevronLeft className="w-4 h-4 inline mr-1" /> Back
@@ -495,23 +592,22 @@ const ProductOrderModal = ({ product, onClose }: { product: any, onClose: () => 
 
 const Contact = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({ name: '', email: '', projectType: '', message: '', color: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', projectType: '', message: '', color: '', delivery: '' });
   const [uploadedFiles, setUploadedFiles] = useState<{name: string, url: string}[]>([]);
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const projectTypes = [
-    { id: 'flat', title: 'Flat Panel Night Light', description: 'Classic lithophane from your photo', icon: <ImageIcon className="w-6 h-6" />, price: 25 },
-    { id: 'nightLight', title: 'NIght Light', description: '120° Curved lithophane', icon: <Lightbulb className="w-6 h-6" />, price: 35 },
-    { id: 'heart', title: 'Heart Shape', description: 'Romantic heart lithophane', icon: <Heart className="w-6 h-6" />, price: 30 },
-    { id: 'custom', title: 'Custom / Other Print', description: 'STL files or special requests', icon: <FileText className="w-6 h-6" />, price: 0 },
+    { id: 'flat', title: 'Flat Panel Night Light', description: 'Classic lithophane from your photo', icon: <ImageIcon className="w-6 h-6" />, price: LITHOPHANE_PRICES['Flat Panel Night Light'] },
+    { id: 'nightLight', title: 'Night Light', description: '120° Curved lithophane', icon: <Lightbulb className="w-6 h-6" />, price: LITHOPHANE_PRICES['Night Light'] },
+    { id: 'heart', title: 'Heart Shape', description: 'Romantic heart lithophane', icon: <Heart className="w-6 h-6" />, price: LITHOPHANE_PRICES['Heart Shape'] },
+    { id: 'custom', title: 'Custom / Other Print', description: 'STL files or special requests', icon: <FileText className="w-6 h-6" />, price: null },
   ];
 
   const selectedType = projectTypes.find(p => p.title === formData.projectType);
   const isPremiumColor = PREMIUM_COLORS.includes(formData.color);
-  const estimatedPrice = selectedType && selectedType.price > 0
-    ? selectedType.price + (isPremiumColor ? PREMIUM_SURCHARGE : 0)
-    : null;
+  const basePrice = selectedType?.price ? (SALE_ACTIVE ? selectedType.price.sale : selectedType.price.original) : null;
+  const estimatedPrice = basePrice ? basePrice + (isPremiumColor ? PREMIUM_SURCHARGE : 0) : null;
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -538,10 +634,9 @@ const Contact = () => {
     setStatus('submitting');
     const fileLinks = uploadedFiles.length > 0 ? uploadedFiles.map(f => `${f.name}: ${f.url}`).join('\n') : 'No files uploaded';
     const payload = {
-      name: formData.name,
-      email: formData.email,
+      name: formData.name, email: formData.email,
       projectType: formData.projectType,
-      message: `Color: ${formData.color || 'Not specified'} | Notes: ${formData.message || 'None'}`,
+      message: `Delivery: ${formData.delivery} | Color: ${formData.color || 'N/A'} | Notes: ${formData.message || 'None'}`,
       files: fileLinks,
       date: new Date().toLocaleString()
     };
@@ -549,21 +644,14 @@ const Contact = () => {
       const emailResponse = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
-          subject: `New D3V Prints Order: ${formData.projectType}`,
-          ...payload,
-          'Attached Files': fileLinks
-        })
+        body: JSON.stringify({ access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55', subject: `New D3V Prints Order: ${formData.projectType}`, ...payload, 'Attached Files': fileLinks })
       });
       await fetch('https://script.google.com/macros/s/AKfycbx4VDX9kxQYqkGRg5cLoTvrt6R3To4QMG4U6qXAzevWAfm93Oqd-CQwUrfwboNy-_n9LA/exec', {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
       });
       if (emailResponse.ok) {
         setStatus('success');
-        setFormData({ name: '', email: '', projectType: '', message: '', color: '' });
+        setFormData({ name: '', email: '', projectType: '', message: '', color: '', delivery: '' });
         setUploadedFiles([]);
         setStep(1);
       } else { setStatus('error'); }
@@ -580,16 +668,21 @@ const Contact = () => {
           <div className="relative z-10 grid lg:grid-cols-5 gap-16">
             <div className="lg:col-span-2">
               <h2 className="text-5xl font-bold mb-4 leading-tight">Order Your <br /><span className="text-brand-primary">Night Light</span></h2>
-              <p className="text-gray-400 mb-4 leading-relaxed">Upload your photo and we'll have your lithophane printed and shipped asap.</p>
-              <div className="flex items-center gap-2 text-brand-primary text-sm font-bold mb-12">
+              <p className="text-gray-400 mb-4 leading-relaxed">Upload your photo and we'll have your lithophane printed and ready asap.</p>
+              <div className="flex items-center gap-2 text-brand-primary text-sm font-bold mb-4">
                 <CheckCircle2 className="w-4 h-4" /> Includes LED base
               </div>
+              {SALE_ACTIVE && (
+                <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-xl px-4 py-3 mb-8">
+                  <p className="text-brand-primary text-xs font-bold"><Tag className="w-3 h-3 inline mr-1" />Launch sale pricing applied automatically</p>
+                </div>
+              )}
               <div className="hidden lg:block space-y-8">
                 {[1, 2, 3, 4].map((s) => (
                   <div key={s} className={`flex items-center gap-4 transition-opacity ${step >= s ? 'opacity-100' : 'opacity-30'}`}>
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 ${step >= s ? 'bg-brand-primary border-brand-primary text-brand-dark' : 'border-white/20'}`}>{s}</div>
                     <div className="text-sm font-bold uppercase tracking-widest">
-                      {s === 1 ? 'Select Style' : s === 2 ? 'Upload Photo' : s === 3 ? 'Your Details' : 'Review Order'}
+                      {s === 1 ? 'Select Style' : s === 2 ? 'Photo & Details' : s === 3 ? 'Your Info' : 'Review Order'}
                     </div>
                   </div>
                 ))}
@@ -607,7 +700,7 @@ const Contact = () => {
               ) : (
                 <div className="h-full flex flex-col">
 
-                  {/* Step 1: Select Style */}
+                  {/* Step 1 */}
                   {step === 1 && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                       <h3 className="text-2xl font-bold mb-6">What style would you like?</h3>
@@ -618,14 +711,21 @@ const Contact = () => {
                             <div className="w-12 h-12 rounded-2xl bg-gray-100 group-hover:bg-brand-primary/20 flex items-center justify-center mb-4 transition-colors">{type.icon}</div>
                             <div className="font-bold text-lg">{type.title}</div>
                             <div className="text-sm text-gray-500 mt-1">{type.description}</div>
-                            {type.price > 0 && <div className="text-brand-primary font-bold text-sm mt-2">From ${type.price}</div>}
+                            {type.price && (
+                              <div className="mt-2 flex items-center gap-2">
+                                <span className="text-brand-primary font-bold text-sm">${SALE_ACTIVE ? type.price.sale : type.price.original}</span>
+                                {SALE_ACTIVE && <span className="text-gray-400 text-xs line-through">${type.price.original}</span>}
+                                {SALE_ACTIVE && <span className="text-[9px] font-bold bg-brand-primary text-white px-1.5 py-0.5 rounded-full">SALE</span>}
+                              </div>
+                            )}
+                            {!type.price && <div className="text-brand-primary font-bold text-sm mt-2">Quote on request</div>}
                           </button>
                         ))}
                       </div>
                     </motion.div>
                   )}
 
-                  {/* Step 2: Upload + Color + Notes */}
+                  {/* Step 2 */}
                   {step === 2 && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                       <div className="flex items-center justify-between mb-2">
@@ -633,31 +733,37 @@ const Contact = () => {
                         <span className="text-sm font-bold text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">{formData.projectType}</span>
                       </div>
 
-                      {/* Color picker */}
-                      {/* Only show color picker for Custom / Other Print */}
-                        {formData.projectType === 'Custom / Other Print' && (
-                          <div>
-                            <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Choose Color</label>
-                            <p className="text-xs text-gray-400 mb-2">Standard (no extra charge)</p>
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {STANDARD_COLORS.map(c => (
-                                <button key={c} onClick={() => setFormData({ ...formData, color: c })}
-                                  className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                                  {c}
-                                </button>
-                              ))}
-                            </div>
-                            <p className="text-xs text-gray-400 mb-2">Premium (+${PREMIUM_SURCHARGE}.00)</p>
-                            <div className="flex flex-wrap gap-2">
-                              {PREMIUM_COLORS.map(c => (
-                                <button key={c} onClick={() => setFormData({ ...formData, color: c })}
-                                  className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                                  {c}
-                                </button>
-                              ))}
-                            </div>
+                      {formData.projectType === 'Custom / Other Print' && (
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Choose Color</label>
+                          <p className="text-xs text-gray-400 mb-2">Standard (no extra charge)</p>
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {STANDARD_COLORS.map(c => (
+                              <button key={c} onClick={() => setFormData({ ...formData, color: c })}
+                                className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
+                            ))}
                           </div>
-                        )}
+                          <p className="text-xs text-gray-400 mb-2">Premium (+${PREMIUM_SURCHARGE}.00)</p>
+                          <div className="flex flex-wrap gap-2">
+                            {PREMIUM_COLORS.map(c => (
+                              <button key={c} onClick={() => setFormData({ ...formData, color: c })}
+                                className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${formData.color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Delivery Preference</label>
+                        <div className="flex flex-col gap-2">
+                          {['Pickup (Free)', 'Local Dropoff (Small fee)', 'Shipping (USPS)'].map(d => (
+                            <button key={d} onClick={() => setFormData({ ...formData, delivery: d })}
+                              className={`text-left px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${formData.delivery === d ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                              {d}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
 
                       <div>
                         <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Any notes or requests?</label>
@@ -695,7 +801,7 @@ const Contact = () => {
                         <button onClick={() => setStep(1)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                           <ChevronLeft className="w-5 h-5" /> Back
                         </button>
-                        <button onClick={() => setStep(3)} disabled={uploading}
+                        <button onClick={() => setStep(3)} disabled={uploading || !formData.delivery}
                           className="flex-[2] bg-brand-dark text-white px-6 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
                           Next Step <ChevronRight className="w-5 h-5" />
                         </button>
@@ -703,7 +809,7 @@ const Contact = () => {
                     </motion.div>
                   )}
 
-                  {/* Step 3: Contact Info */}
+                  {/* Step 3 */}
                   {step === 3 && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                       <h3 className="text-2xl font-bold">Your Details</h3>
@@ -729,43 +835,32 @@ const Contact = () => {
                     </motion.div>
                   )}
 
-                  {/* Step 4: Order Summary */}
+                  {/* Step 4 */}
                   {step === 4 && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                       <h3 className="text-2xl font-bold">Review Your Order</h3>
                       <div className="bg-brand-light rounded-2xl p-6 space-y-4">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500 font-medium">Name</span>
-                          <span className="font-bold">{formData.name}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500 font-medium">Email</span>
-                          <span className="font-bold">{formData.email}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500 font-medium">Style</span>
-                          <span className="font-bold">{formData.projectType}</span>
-                        </div>
-                        {formData.projectType === 'Custom / Other Print' && (
+                        <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Name</span><span className="font-bold">{formData.name}</span></div>
+                        <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Email</span><span className="font-bold">{formData.email}</span></div>
+                        <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Style</span><span className="font-bold">{formData.projectType}</span></div>
+                        <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Delivery</span><span className="font-bold">{formData.delivery}</span></div>
+                        {formData.projectType === 'Custom / Other Print' && formData.color && (
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-500 font-medium">Color</span>
                             <span className="font-bold flex items-center gap-2">
-                              {formData.color || 'Not selected'}
+                              {formData.color}
                               {isPremiumColor && <span className="text-[10px] text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded-full">Premium +${PREMIUM_SURCHARGE}</span>}
                             </span>
                           </div>
                         )}
                         {uploadedFiles.length > 0 && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500 font-medium">Files</span>
-                            <span className="font-bold">{uploadedFiles.length} file(s) uploaded</span>
-                          </div>
+                          <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Files</span><span className="font-bold">{uploadedFiles.length} file(s) uploaded</span></div>
                         )}
                         {formData.message && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500 font-medium">Notes</span>
-                            <span className="font-bold text-right max-w-[60%]">{formData.message}</span>
-                          </div>
+                          <div className="flex justify-between text-sm"><span className="text-gray-500 font-medium">Notes</span><span className="font-bold text-right max-w-[60%]">{formData.message}</span></div>
+                        )}
+                        {SALE_ACTIVE && estimatedPrice && (
+                          <div className="flex justify-between text-sm text-brand-primary"><span className="font-bold">Launch Sale Applied</span><span className="font-bold">✓</span></div>
                         )}
                         <div className="border-t border-gray-300 pt-4 flex justify-between items-center">
                           <span className="font-bold">Estimated Total</span>
@@ -775,7 +870,6 @@ const Contact = () => {
                         </div>
                         <p className="text-[10px] text-gray-400">Final price confirmed via email after order review.</p>
                       </div>
-
                       <div className="flex gap-4">
                         <button onClick={() => setStep(3)} className="flex-1 px-6 py-4 rounded-2xl font-bold border-2 border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                           <ChevronLeft className="w-5 h-5" /> Back
@@ -833,6 +927,7 @@ const Home = () => (
   <main>
     <Hero />
     <LithophaneSection />
+    <StyleShowcase />
     <HowItWorks />
     <CurrentProducts />
     <Contact />
@@ -844,6 +939,7 @@ export default function App() {
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
   return (
     <div className="min-h-screen selection:bg-brand-primary selection:text-white">
+      <SaleBanner />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
