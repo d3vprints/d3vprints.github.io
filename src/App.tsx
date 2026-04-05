@@ -896,17 +896,6 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
 
   // Google Sheets
   const sheetsPayload = {
-    name:        p.name        || '',
-    email:       p.email       || '',
-    projectType: p.items       || '',          // C — line items
-    message:     `Delivery: ${p.delivery}${p.notes && p.notes !== 'None' ? ` | Notes: ${p.notes}` : ''}`,  // D
-    files:       fileLinks,                    // E
-    date:        p.date        || new Date().toLocaleString(), // F
-    subtotal:    p.subtotal    || '',          // G
-    total:       p.total       || '',          // H
-    orderId:     p.orderId     || '',          // I
-  };
-  const sheetsPayload = {
   name:           p.name        || '',
   email:          p.email       || '',
   projectType:    p.items       || '',   // C — line items
