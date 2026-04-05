@@ -637,10 +637,9 @@ const CurrentProducts = () => {
 
 // ─── Reviews ──────────────────────────────────────────────────────────────────
 const BASE_REVIEWS = [
-  { name: "Sarah M.", rating: 5, text: "Ordered a flat panel lithophane of my dog and it came out absolutely beautiful. The detail is incredible, you can see every strand of fur. Will definitely be ordering more.", date: "March 2025" },
-  { name: "James R.", rating: 5, text: "Got the heart shape for my girlfriend for Valentine's Day. She cried. That is all I need to say. Incredible quality and the turnaround was super fast.", date: "February 2025" },
-  { name: "Priya K.", rating: 5, text: "Ordered a night light for my daughter's room. The automatic sensor is so cool, it just turns on at night by itself. She loves it and so do I.", date: "March 2025" },
-  { name: "Priya K.", rating: 5, text: "Ordered a night light for my daughter's room. The automatic sensor is so cool, it just turns on at night by itself. She loves it and so do I.", date: "March 2025" },
+  { name: "Sarah M.", rating: 5, text: "Ordered a flat panel lithophane of my dog and it came out absolutely beautiful. The detail is incredible, you can see every strand of fur. Will definitely be ordering more.", date: "March 2026" },
+  { name: "James R.", rating: 5, text: "Got the heart shape for my girlfriend for Valentine's Day. She cried. That is all I need to say. Incredible quality and the turnaround was super fast.", date: "March 2026" },
+  { name: "Priya K.", rating: 5, text: "Ordered a night light for my daughter's room. The automatic sensor is so cool, it just turns on at night by itself. She loves it and so do I.", date: "March 2026" },
 ];
 
 const ReviewCard = ({ review }: { review: any }) => (
