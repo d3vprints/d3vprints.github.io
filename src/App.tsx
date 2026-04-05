@@ -6,7 +6,7 @@ import {
   ChevronRight, Instagram, ArrowRight, Menu, X,
   CheckCircle, FileText, Image as ImageIcon, ChevronLeft,
   Paperclip, Heart, Camera, MapPin, Car, Tag, Sparkles,
-  Quote, Plus, Minus, Trash2, ShoppingBag, Star
+  Quote, Plus, Minus, Trash2, ShoppingBag, Star, AlertCircle
 } from 'lucide-react';
 
 const STANDARD_COLORS = ['Black', 'White', 'Blue'];
@@ -32,6 +32,7 @@ const PRODUCTS = [
   { id: 5, name: 'Custom Print',            basePrice: 0,  salePrice: null, tag: 'Any Design',   images: ['/octopus.png'],    description: 'Have a design in mind? Send us your STL file and we will print it for you. Any color, any material.', isCustom: true, credit: null },
 ] as const;
 
+// ─── Types ─────────────────────────────────────────────────────────────────────
 interface CartItem {
   cartId: string;
   type: 'product' | 'lithophane';
@@ -42,7 +43,6 @@ interface CartItem {
   unitPrice: number;
   image?: string;
 }
-
 interface CartContextType {
   items: CartItem[];
   addItem: (item: Omit<CartItem, 'cartId'>) => void;
@@ -55,8 +55,8 @@ interface CartContextType {
   setIsOpen: (v: boolean) => void;
 }
 
+// ─── Cart Context ──────────────────────────────────────────────────────────────
 const CartContext = createContext<CartContextType | null>(null);
-
 const useCart = () => {
   const ctx = useContext(CartContext);
   if (!ctx) throw new Error('useCart must be used within CartProvider');
@@ -100,6 +100,7 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// ─── Cart Drawer ───────────────────────────────────────────────────────────────
 const CartDrawer = () => {
   const { items, removeItem, updateQty, total, count, isOpen, setIsOpen, clearCart } = useCart();
   const navigate = useNavigate();
@@ -180,6 +181,7 @@ const CartDrawer = () => {
   );
 };
 
+// ─── Quick Add Modal ───────────────────────────────────────────────────────────
 const QuickAddModal = ({ product, onClose }: { product: any; onClose: () => void }) => {
   const { addItem } = useCart();
   const [color, setColor] = useState('');
@@ -238,6 +240,7 @@ const QuickAddModal = ({ product, onClose }: { product: any; onClose: () => void
   );
 };
 
+// ─── Navbar ───────────────────────────────────────────────────────────────────
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { count, setIsOpen: setCartOpen } = useCart();
@@ -289,6 +292,7 @@ const Navbar = () => {
   );
 };
 
+// ─── Hero ─────────────────────────────────────────────────────────────────────
 const Hero = () => (
   <section className="relative pt-32 pb-20 px-6 overflow-hidden">
     <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
@@ -339,6 +343,7 @@ const Hero = () => (
   </section>
 );
 
+// ─── Lithophane Section ───────────────────────────────────────────────────────
 const LithophaneSection = () => (
   <section id="lithophanes" className="py-24 px-6 bg-brand-dark text-white">
     <div className="max-w-7xl mx-auto">
@@ -376,16 +381,18 @@ const LithophaneSection = () => (
   </section>
 );
 
+// ─── Style Showcase ───────────────────────────────────────────────────────────
 const StyleShowcase = () => {
   const { addItem } = useCart();
   const [addedId, setAddedId] = useState<string | null>(null);
   const [imgIndexes, setImgIndexes] = useState<Record<string, number>>({});
 
   const styles = [
-    { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",    price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png", "/all litho.png"],               best: "Portraits, families, pets" },
-    { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",       detail: "Auto on/off light sensor", price: LITHOPHANE_PRICES['Night Light'],  images: ["/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
-    { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",     detail: "Stand-alone display piece", price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
-    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",              detail: "LED base included",          price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
+    { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",       price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png", "/all litho.png"],               best: "Portraits, families, pets" },
+    { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",        detail: "Auto on/off light sensor",     price: LITHOPHANE_PRICES['Night Light'],  images: ["/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
+    { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",      detail: "Stand-alone display piece",    price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
+    // ── FIX: Custom Shape — no LED base ──
+    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",               detail: "Stand-alone piece, no LED base", price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
   ];
 
   const getImg = (id: string) => imgIndexes[id] ?? 0;
@@ -473,6 +480,7 @@ const StyleShowcase = () => {
   );
 };
 
+// ─── How It Works ─────────────────────────────────────────────────────────────
 const HowItWorks = () => (
   <section id="how-it-works" className="py-24 px-6 bg-brand-light">
     <div className="max-w-7xl mx-auto">
@@ -519,7 +527,7 @@ const HowItWorks = () => (
   </section>
 );
 
-// ── FIX 1: credit moved ABOVE the mt-auto button block so all buttons sit at the same Y ──
+// ─── Product Card ─────────────────────────────────────────────────────────────
 const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => void }) => {
   const [currentImg, setCurrentImg] = useState(0);
   const [customAdded, setCustomAdded] = useState(false);
@@ -533,8 +541,7 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
   };
 
   const showSalePrice = SALE_ACTIVE && product.salePrice;
-  const showFromPrice = !showSalePrice && product.basePrice > 0;
-  const isQuote       = product.basePrice === 0;
+  const isQuote = product.basePrice === 0;
 
   return (
     <motion.div whileHover={{ y: -10 }} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
@@ -555,7 +562,6 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-base mb-1 group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
         <p className="text-gray-500 text-xs mb-2 leading-relaxed">{product.description}</p>
-        {/* Credit is rendered BEFORE mt-auto so it does not push the button down in cards that have it */}
         {product.credit && <p className="text-[9px] text-gray-300 mb-1 leading-relaxed">{product.credit}</p>}
         <div className="mt-auto pt-2 space-y-2">
           <div className="h-7 flex items-center">
@@ -566,18 +572,16 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
                 <span className="text-[9px] font-bold bg-brand-primary text-white px-1.5 py-0.5 rounded-full">SALE</span>
               </div>
             )}
-            {showFromPrice && <span className="text-lg font-bold font-mono">From ${product.basePrice.toFixed(2)}</span>}
+            {!showSalePrice && product.basePrice > 0 && <span className="text-lg font-bold font-mono">From ${product.basePrice.toFixed(2)}</span>}
           </div>
           <button
             onClick={() => product.isCustom ? handleCustomAdd() : onOrder(product)}
             className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${customAdded ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary'}`}>
-            {customAdded ? (
-              <><CheckCircle className="w-4 h-4" /> Added!</>
-            ) : isQuote ? (
-              <><ShoppingCart className="w-4 h-4" /> Get a Quote</>
-            ) : (
-              <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
-            )}
+            {customAdded
+              ? <><CheckCircle className="w-4 h-4" /> Added!</>
+              : isQuote
+              ? <><ShoppingCart className="w-4 h-4" /> Get a Quote</>
+              : <><ShoppingCart className="w-4 h-4" /> Add to Cart</>}
           </button>
         </div>
       </div>
@@ -585,6 +589,7 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
   );
 };
 
+// ─── Current Products ─────────────────────────────────────────────────────────
 const CurrentProducts = () => {
   const [modalProduct, setModalProduct] = useState<any>(null);
   return (
@@ -616,6 +621,7 @@ const CurrentProducts = () => {
   );
 };
 
+// ─── Reviews ──────────────────────────────────────────────────────────────────
 const BASE_REVIEWS = [
   { name: "Sarah M.", rating: 5, text: "Ordered a flat panel lithophane of my dog and it came out absolutely beautiful. The detail is incredible, you can see every strand of fur. Will definitely be ordering more.", date: "March 2025" },
   { name: "James R.", rating: 5, text: "Got the heart shape for my girlfriend for Valentine's Day. She cried. That is all I need to say. Incredible quality and the turnaround was super fast.", date: "February 2025" },
@@ -714,16 +720,22 @@ const Reviews = () => {
   );
 };
 
-const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: string; address: string; onDelivery: (v: string) => void; onAddress: (v: string) => void }) => (
+// ─── Delivery Picker ──────────────────────────────────────────────────────────
+const DeliveryPicker = ({ value, address, onDelivery, onAddress, error }: {
+  value: string; address: string;
+  onDelivery: (v: string) => void; onAddress: (v: string) => void;
+  error?: string;
+}) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">Delivery Preference</label>
     <div className="flex flex-col gap-2 mb-3">
       {[{ label: 'Pickup (Free, Plainsboro NJ)', value: 'Pickup' }, { label: 'Local Dropoff (small fee)', value: 'Dropoff' }].map(d => (
         <button key={d.value} type="button" onClick={() => onDelivery(d.value)}
-          className={`text-left px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${value === d.value ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{d.label}</button>
+          className={`text-left px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${value === d.value ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : error ? 'border-red-200 hover:border-red-300' : 'border-gray-200 hover:border-gray-300'}`}>{d.label}</button>
       ))}
       <button disabled className="text-left px-4 py-3 rounded-xl border-2 border-gray-100 text-sm font-bold text-gray-300 cursor-not-allowed">Shipping (not available yet)</button>
     </div>
+    {error && <p className="text-red-500 text-xs font-semibold mb-2 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
     {value === 'Dropoff' && (
       <input type="text" value={address} onChange={e => onAddress(e.target.value)}
         className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm"
@@ -732,8 +744,10 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
   </div>
 );
 
-// ── FIX 2: Binary 3D file types are wrapped in an explicit application/octet-stream Blob
-// so Uploadcare does not reject them based on an unrecognised MIME type ──
+// ─── STL-safe Uploadcare hook ─────────────────────────────────────────────────
+// FIX: Binary 3D files (.stl etc.) are re-wrapped as application/octet-stream
+// before upload. Some browsers assign no MIME type to these files which causes
+// Uploadcare to reject them. Explicit wrapping resolves this reliably.
 const useUploadcare = () => {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string; fallback?: boolean }[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -746,22 +760,21 @@ const useUploadcare = () => {
     const uploaded: { name: string; url: string; fallback?: boolean }[] = [];
 
     for (const file of files) {
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+      const binaryExts = ['stl', 'obj', '3mf', 'gcode', 'step', 'stp', 'ply', 'amf'];
+
       const data = new FormData();
       data.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
       data.append('UPLOADCARE_STORE', '1');
 
-      // Uploadcare rejects binary 3D files with unknown MIME types.
-      // Re-wrapping them as application/octet-stream fixes the upload.
-      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-      const binaryExts = ['stl', 'obj', '3mf', 'gcode', 'step', 'stp', 'ply', 'amf'];
       if (binaryExts.includes(ext)) {
+        // Re-wrap with explicit MIME so Uploadcare does not reject unknown binary types
         try {
-          const buf = await file.arrayBuffer();
-          const blob = new Blob([buf], { type: 'application/octet-stream' });
-          data.append('file', blob, file.name);
+          const buffer = await file.arrayBuffer();
+          const safeBlob = new Blob([buffer], { type: 'application/octet-stream' });
+          data.append('file', safeBlob, file.name);
         } catch {
-          // If arrayBuffer fails, fall through to normal append
-          data.append('file', file);
+          data.append('file', file); // fallback: use file as-is
         }
       } else {
         data.append('file', file);
@@ -773,6 +786,7 @@ const useUploadcare = () => {
         if (json.file) {
           uploaded.push({ name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` });
         } else {
+          // Uploadcare rejected the file — flag for email fallback
           setUsedFallback(true);
           uploaded.push({ name: file.name, url: '', fallback: true });
         }
@@ -789,21 +803,36 @@ const useUploadcare = () => {
   return { uploadedFiles, uploading, handleUpload, usedFallback };
 };
 
+// ─── File Upload UI ───────────────────────────────────────────────────────────
 const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
   files: { name: string; url: string; fallback?: boolean }[];
-  uploading: boolean; onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  label: string; usedFallback?: boolean;
+  uploading: boolean;
+  onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  usedFallback?: boolean;
 }) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">{label}</label>
     <div className="relative group">
-      <input type="file" multiple onChange={onUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+      {/*
+        accept lists all common image types + 3D/print file types.
+        The browser may hide files without these extensions in the picker,
+        but the binary-upload workaround in useUploadcare handles the actual upload.
+      */}
+      <input
+        type="file" multiple
+        accept="image/*,.stl,.obj,.3mf,.gcode,.step,.stp,.ply,.amf"
+        onChange={onUpload}
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+      />
       <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-6 text-center transition-colors">
         <Upload className="w-7 h-7 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
         <div className="text-sm font-bold text-gray-500">
-          {uploading ? 'Uploading...' : files.length > 0
-            ? `${files.filter(f => !f.fallback).length} file(s) uploaded${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''}`
-            : 'Drag and drop or click to upload'}
+          {uploading
+            ? 'Uploading...'
+            : files.length > 0
+              ? `${files.filter(f => !f.fallback).length} uploaded${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''} ✓`
+              : 'Drag and drop or click to upload'}
         </div>
         <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL, OBJ, 3MF — Max 10MB each</div>
       </div>
@@ -811,25 +840,29 @@ const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
     {usedFallback && (
       <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
         <p className="text-amber-800 text-xs font-bold mb-1">Some files could not be uploaded automatically</p>
-        <p className="text-amber-700 text-xs leading-relaxed">No problem. Just reply to our confirmation email with those files attached and we will take care of the rest.</p>
+        <p className="text-amber-700 text-xs leading-relaxed">No problem — just reply to our confirmation email with those files attached and we will handle the rest.</p>
       </div>
     )}
     {files.length > 0 && (
       <div className="flex flex-wrap gap-2 mt-2">
         {files.map((f, i) => f.fallback
-          ? <span key={i} className="bg-amber-100 text-amber-700 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2"><Paperclip className="w-3 h-3" /> {f.name} (send via email)</span>
-          : <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200"><Paperclip className="w-3 h-3" /> {f.name}</a>
+          ? <span key={i} className="bg-amber-100 text-amber-700 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2"><Paperclip className="w-3 h-3" />{f.name} (send via email)</span>
+          : <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2 hover:bg-gray-200"><Paperclip className="w-3 h-3" />{f.name}</a>
         )}
       </div>
     )}
   </div>
 );
 
-// ── FIX 3: sheetsPayload now sends subtotal and total as separate fields to match
-// the updated sheet columns: Name | Email | Project Type | Message | File | Date | Subtotal | Total | Payment Interface | Status ──
+// ─── Order submission ─────────────────────────────────────────────────────────
+// FIX: subtotal is now embedded directly in the projectType field sent to Sheets
+// so it appears in the spreadsheet even with the current 8-column script.
+// The sheets payload structure now matches:
+//   Name | Email | Project Type (includes subtotal) | Message | Files | Date | Payment Interface | Status
 const submitOrder = async (subject: string, payload: object, fileLinks: string) => {
   const p = payload as any;
 
+  // Email: full details
   const emailBody = {
     ...payload,
     access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
@@ -841,7 +874,11 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
     body: JSON.stringify(emailBody),
   });
 
-  const projectTypeSummary = [p.items].filter(Boolean).join(' | ');
+  // Sheets: projectType carries items + subtotal in one readable field
+  const projectTypeWithSubtotal = [
+    p.items,
+    p.subtotal ? `Subtotal: ${p.subtotal}` : '',
+  ].filter(Boolean).join(' | ');
 
   const messageSummary = [
     `Delivery: ${p.delivery}`,
@@ -849,17 +886,15 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
   ].filter(Boolean).join(' | ');
 
   const sheetsPayload = {
-    name:        p.name        || '',
-    email:       p.email       || '',
-    projectType: projectTypeSummary,
+    name:        p.name  || '',
+    email:       p.email || '',
+    projectType: projectTypeWithSubtotal,
     message:     messageSummary,
     files:       fileLinks,
-    date:        p.date        || new Date().toLocaleString(),
-    subtotal:    p.subtotal    || '',
-    total:       p.total       || '',
+    date:        p.date  || new Date().toLocaleString(),
   };
 
-  await fetch('https://script.google.com/macros/s/AKfycbxcqVmrcRAIt3oYnnVmJ51uPLzCEAOd7b-p1_pjKZTM-BbIs8jvTJl7MZ2luRpR4kMtXw/exec', {
+  await fetch('https://script.google.com/macros/s/AKfycbxWyfCUl0kyeaGNJ5Mn-A6M1SeZm8cqGrie-allRRxCPGnXFnxd8sJMmrW7Kd-rfw4E/exec', {
     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(sheetsPayload),
   });
@@ -867,32 +902,57 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
   return emailRes.ok;
 };
 
+// ─── Checkout Page ─────────────────────────────────────────────────────────────
 const CheckoutPage = () => {
   const { items, updateQty, removeItem, total, clearCart } = useCart();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName]       = useState('');
+  const [email, setEmail]     = useState('');
   const [delivery, setDelivery] = useState('');
   const [address, setAddress] = useState('');
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes]     = useState('');
   const { uploadedFiles, uploading, handleUpload, usedFallback } = useUploadcare();
+
+  // FIX: separate validation errors from server status so double-submission
+  // cannot happen — we validate first, only fetch if errors is empty.
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const hasLithophanes = items.some(i => i.type === 'lithophane');
   const hasCustomPrint = items.some(i => i.productId === 5);
-  const needsFiles = hasLithophanes || hasCustomPrint;
+  const needsFiles     = hasLithophanes || hasCustomPrint;
 
-  const lithoItems = items.filter(i => i.type === 'lithophane');
-  const lithoQty = lithoItems.reduce((s, i) => s + i.qty, 0);
+  const lithoItems    = items.filter(i => i.type === 'lithophane');
+  const lithoQty      = lithoItems.reduce((s, i) => s + i.qty, 0);
   const hasBulkDiscount = lithoQty > BULK_THRESHOLD;
   const lithoSubtotal = lithoItems.reduce((s, i) => s + i.unitPrice * i.qty, 0);
-  const discountAmount = hasBulkDiscount ? lithoSubtotal * BULK_DISCOUNT : 0;
-  const finalTotal = total - discountAmount;
-  const canSubmit = name.trim() && email.trim() && delivery;
+  const discountAmount  = hasBulkDiscount ? lithoSubtotal * BULK_DISCOUNT : 0;
+  const finalTotal      = total - discountAmount;
+
+  // ── Validate all fields before touching any network call ──
+  const validate = (): string[] => {
+    const errors: string[] = [];
+    if (!name.trim())
+      errors.push('Please enter your name.');
+    if (!email.trim())
+      errors.push('Please enter your email address.');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      errors.push('Please enter a valid email address (e.g. john@example.com).');
+    if (!delivery)
+      errors.push('Please select a delivery option.');
+    if (delivery === 'Dropoff' && !address.trim())
+      errors.push('Please enter your address for local dropoff.');
+    return errors;
+  };
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    // Step 1: validate — never touch the network if there are errors
+    const errors = validate();
+    setValidationErrors(errors);
+    if (errors.length > 0) return;
+
+    // Step 2: submit
     setStatus('submitting');
 
     const orderLines = items.map(i =>
@@ -906,25 +966,32 @@ const CheckoutPage = () => {
       : 'No files uploaded';
 
     const payload = {
-      name, email,
+      name:     name.trim(),
+      email:    email.trim(),
       delivery: delivery + (address ? ` (${address})` : ''),
-      items: orderLines.join('\n'),
+      items:    orderLines.join('\n'),
       subtotal: `$${total.toFixed(2)}`,
       ...(hasBulkDiscount ? { bulkDiscount: `-$${discountAmount.toFixed(2)} (${BULK_DISCOUNT * 100}% off lithophanes)` } : {}),
-      total: `$${finalTotal.toFixed(2)}`,
-      notes: notes || 'None',
-      date: new Date().toLocaleString(),
+      total:    `$${finalTotal.toFixed(2)}`,
+      notes:    notes || 'None',
+      date:     new Date().toLocaleString(),
     };
 
-    const subject = `New Order from ${name} - $${finalTotal.toFixed(2)}`;
+    const subject = `New Order from ${name.trim()} — $${finalTotal.toFixed(2)}`;
 
     try {
       const ok = await submitOrder(subject, payload, fileLinks);
       if (ok) { clearCart(); setStatus('success'); }
       else setStatus('error');
-    } catch { setStatus('error'); }
+    } catch {
+      setStatus('error');
+    }
   };
 
+  // Clear validation errors when the user fixes a field
+  const clearErrors = () => { if (validationErrors.length > 0) setValidationErrors([]); };
+
+  // ── Empty cart ──
   if (items.length === 0 && status !== 'success') {
     return (
       <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center justify-center text-center">
@@ -936,6 +1003,7 @@ const CheckoutPage = () => {
     );
   }
 
+  // ── Success ──
   if (status === 'success') {
     return (
       <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center justify-center text-center">
@@ -948,7 +1016,7 @@ const CheckoutPage = () => {
           {hasLithophanes && uploadedFiles.filter(f => !f.fallback).length === 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 text-left">
               <p className="text-amber-700 text-sm font-bold mb-1">Reminder: Photos needed</p>
-              <p className="text-amber-600 text-xs">You can reply to our confirmation email with your lithophane photos, or we will ask for them when we follow up.</p>
+              <p className="text-amber-600 text-xs">Reply to our confirmation email with your lithophane photos and we will get started.</p>
             </div>
           )}
           <Link to="/" className="inline-block bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Back to Shop</Link>
@@ -969,7 +1037,11 @@ const CheckoutPage = () => {
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8">
+
+          {/* ── Left: Cart + Upload ── */}
           <div className="lg:col-span-3 space-y-6">
+
+            {/* Cart Items */}
             <div className="bg-white rounded-3xl p-8 shadow-sm">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><ShoppingBag className="w-5 h-5 text-brand-primary" /> Your Items</h2>
               <div className="space-y-4">
@@ -1000,6 +1072,7 @@ const CheckoutPage = () => {
               </div>
             </div>
 
+            {/* File Upload */}
             {needsFiles && (
               <div className="bg-white rounded-3xl p-8 shadow-sm">
                 <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Upload className="w-5 h-5 text-brand-primary" /> Upload Your Files</h2>
@@ -1011,55 +1084,104 @@ const CheckoutPage = () => {
                     </p>
                     <p className="text-amber-700 text-xs leading-relaxed">
                       {lithoItems.length > 1
-                        ? `You have ${lithoItems.length} lithophane styles. Upload all photos here and use the Notes field to tell us which photo goes with which style.`
+                        ? `You have ${lithoItems.length} lithophane styles. Upload all photos here, then use the Notes field to tell us which photo goes with which style.`
                         : 'Upload the photo you want printed. Higher resolution means sharper detail.'}
                     </p>
                     {lithoItems.length > 1 && (
                       <div className="mt-3 space-y-1">
                         {lithoItems.map((item, i) => (
-                          <p key={item.cartId} className="text-amber-600 text-xs font-bold">Photo {i + 1} goes to {item.name.replace('Lithophane: ', '')} (qty: {item.qty})</p>
+                          <p key={item.cartId} className="text-amber-600 text-xs font-bold">Photo {i + 1} → {item.name.replace('Lithophane: ', '')} (qty: {item.qty})</p>
                         ))}
                       </div>
                     )}
                   </div>
                 )}
-                <FileUpload files={uploadedFiles} uploading={uploading} onUpload={handleUpload} usedFallback={usedFallback}
-                  label={hasLithophanes && hasCustomPrint ? 'All Photos and Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'} />
+                {hasCustomPrint && !hasLithophanes && (
+                  <p className="text-gray-500 text-sm mb-4">Upload your STL file or any reference images for your custom print.</p>
+                )}
+                {hasCustomPrint && hasLithophanes && (
+                  <p className="text-gray-500 text-sm mb-4">Also upload your STL or reference images for the custom print.</p>
+                )}
+                <FileUpload
+                  files={uploadedFiles} uploading={uploading} onUpload={handleUpload} usedFallback={usedFallback}
+                  label={hasLithophanes && hasCustomPrint ? 'All Photos and Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'}
+                />
               </div>
             )}
           </div>
 
+          {/* ── Right: Details + Summary ── */}
           <div className="lg:col-span-2 space-y-6">
+
+            {/* Inline validation error banner */}
+            <AnimatePresence>
+              {validationErrors.length > 0 && (
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                  className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4">
+                  <p className="text-red-700 font-bold text-sm flex items-center gap-2 mb-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" /> Please fix the following before placing your order:
+                  </p>
+                  <ul className="space-y-1">
+                    {validationErrors.map((err, i) => (
+                      <li key={i} className="text-red-600 text-xs flex items-start gap-1.5">
+                        <span className="shrink-0 mt-0.5">•</span>{err}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Your Details */}
             <div className="bg-white rounded-3xl p-8 shadow-sm">
               <h2 className="text-xl font-bold mb-6">Your Details</h2>
               <div className="space-y-4">
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm" placeholder="John Doe" />
+                  <input type="text" value={name}
+                    onChange={e => { setName(e.target.value); clearErrors(); }}
+                    className={`w-full px-5 py-3.5 rounded-2xl border focus:ring-2 focus:ring-brand-primary outline-none text-sm transition-colors ${validationErrors.some(e => e.includes('name')) ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}
+                    placeholder="John Doe" />
                 </div>
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none text-sm" placeholder="john@example.com" />
+                  <input type="email" value={email}
+                    onChange={e => { setEmail(e.target.value); clearErrors(); }}
+                    className={`w-full px-5 py-3.5 rounded-2xl border focus:ring-2 focus:ring-brand-primary outline-none text-sm transition-colors ${validationErrors.some(e => e.includes('email')) ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}
+                    placeholder="john@example.com" />
                 </div>
-                <DeliveryPicker value={delivery} address={address} onDelivery={setDelivery} onAddress={setAddress} />
+                <DeliveryPicker
+                  value={delivery} address={address}
+                  onDelivery={v => { setDelivery(v); clearErrors(); }}
+                  onAddress={setAddress}
+                  error={validationErrors.find(e => e.includes('delivery') || e.includes('address'))}
+                />
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Notes</label>
                   <textarea rows={3} value={notes} onChange={e => setNotes(e.target.value)}
                     className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
-                    placeholder={hasLithophanes && lithoItems.length > 1 ? 'Specify which photo is for which lithophane...' : hasLithophanes ? 'Any special requests (e.g. crop to face only)...' : 'Any special requests or notes...'} />
+                    placeholder={
+                      hasLithophanes && lithoItems.length > 1
+                        ? 'Specify which photo is for which lithophane (e.g. Photo 1 = Flat Panel, Photo 2 = Night Light)...'
+                        : hasLithophanes
+                        ? 'Any special requests (e.g. crop to face only, warm tone)...'
+                        : 'Any special requests or notes...'
+                    }
+                  />
                 </div>
               </div>
             </div>
 
+            {/* Order Summary */}
             <div className="bg-brand-dark text-white rounded-3xl p-8 shadow-sm">
               <h2 className="text-xl font-bold mb-6">Order Summary</h2>
               <div className="space-y-3 mb-6">
                 {items.map(item => (
                   <div key={item.cartId} className="flex justify-between text-sm">
-                    <span className="text-gray-400 truncate max-w-[65%]">{item.name}{item.color ? ` (${item.color})` : ''} x{item.qty}</span>
-                    <span className="font-bold shrink-0">{item.unitPrice === 0 ? <span className="text-gray-500 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}</span>
+                    <span className="text-gray-400 truncate max-w-[65%]">{item.name}{item.color ? ` (${item.color})` : ''} ×{item.qty}</span>
+                    <span className="font-bold shrink-0">
+                      {item.unitPrice === 0 ? <span className="text-gray-500 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -1081,12 +1203,19 @@ const CheckoutPage = () => {
                   <p className="text-brand-primary text-xs font-bold flex items-center gap-1"><Tag className="w-3 h-3" /> Launch sale pricing applied</p>
                 </div>
               )}
-              <button onClick={handleSubmit} disabled={!canSubmit || status === 'submitting'}
+              <button
+                onClick={handleSubmit}
+                disabled={status === 'submitting'}
                 className="w-full mt-6 bg-brand-primary text-brand-dark py-4 rounded-2xl font-black hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 text-base">
-                {status === 'submitting' ? 'Placing Order...' : 'Place Order'}
+                {status === 'submitting' ? 'Placing Order...' : 'Place Order →'}
               </button>
-              {status === 'error' && <p className="text-red-400 text-sm text-center mt-3">Something went wrong. Please try again.</p>}
+              {status === 'error' && (
+                <p className="text-red-400 text-sm text-center mt-3 flex items-center justify-center gap-1">
+                  <AlertCircle className="w-4 h-4" /> Something went wrong. Please try again.
+                </p>
+              )}
             </div>
+
           </div>
         </div>
       </div>
@@ -1094,6 +1223,7 @@ const CheckoutPage = () => {
   );
 };
 
+// ─── Footer ───────────────────────────────────────────────────────────────────
 const Footer = () => (
   <footer className="py-12 px-6 border-t border-gray-100">
     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
@@ -1122,6 +1252,7 @@ const Footer = () => (
   </footer>
 );
 
+// ─── Home + App ───────────────────────────────────────────────────────────────
 const Home = () => (
   <main>
     <Hero />
