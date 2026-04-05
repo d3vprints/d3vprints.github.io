@@ -6,9 +6,10 @@ import {
   ChevronRight, Instagram, ArrowRight, Menu, X,
   CheckCircle, FileText, Image as ImageIcon, ChevronLeft,
   Paperclip, Heart, Camera, MapPin, Car, Tag, Sparkles,
-  Quote, Plus, Minus, Trash2, ShoppingBag, Star, AlertCircle
+  Quote, Plus, Minus, Trash2, ShoppingBag, Star, AlertCircle, Mail
 } from 'lucide-react';
 
+// ─── Constants ─────────────────────────────────────────────────────────────────
 const STANDARD_COLORS = ['Black', 'White', 'Blue'];
 const PREMIUM_COLORS = ['Red', 'Green', 'Yellow', 'Orange', 'Purple', 'Pink', 'Gray', 'Teal', 'Gold', 'Silver'];
 const PREMIUM_SURCHARGE = 3;
@@ -16,6 +17,20 @@ const SALE_ACTIVE = true;
 const BULK_DISCOUNT = 0.15;
 const BULK_THRESHOLD = 5;
 const UPLOADCARE_PUB_KEY = 'bc495550492636fc4db6';
+
+// STL/3D file extensions — blocked from Uploadcare, must be emailed
+const STL_EXTS = ['stl', 'obj', '3mf', 'gcode', 'step', 'stp', 'ply', 'amf'];
+
+// Order ID generator — format: D3V-YYMMDD-XXXX
+const generateOrderId = (): string => {
+  const date = new Date();
+  const datePart = date.toISOString().slice(2, 10).replace(/-/g, '');
+  const randPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `D3V-${datePart}-${randPart}`;
+};
+
+const getFileExt = (name: string): string =>
+  name.split('.').pop()?.toLowerCase() ?? '';
 
 const LITHOPHANE_PRICES: Record<string, { original: number; sale: number }> = {
   'Flat Panel':   { original: 30, sale: 25 },
@@ -388,10 +403,9 @@ const StyleShowcase = () => {
   const [imgIndexes, setImgIndexes] = useState<Record<string, number>>({});
 
   const styles = [
-    { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",       price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png", "/all litho.png"],               best: "Portraits, families, pets" },
-    { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",        detail: "Auto on/off light sensor",     price: LITHOPHANE_PRICES['Night Light'],  images: ["/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
-    { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",      detail: "Stand-alone display piece",    price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
-    // ── FIX: Custom Shape — no LED base ──
+    { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",        price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png", "/all litho.png"],               best: "Portraits, families, pets" },
+    { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",        detail: "Auto on/off light sensor",      price: LITHOPHANE_PRICES['Night Light'],  images: ["/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
+    { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",      detail: "Stand-alone display piece",     price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
     { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",               detail: "Stand-alone piece, no LED base", price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
   ];
 
@@ -744,14 +758,9 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress, error }: {
   </div>
 );
 
-// ─── Upload hook ──────────────────────────────────────────────────────────────
-// 3D / binary file types (STL, OBJ, etc.) are NOT sent to Uploadcare at all —
-// Uploadcare rejects them regardless of MIME wrapping tricks.
-// Instead they are immediately flagged as "send via email" so the customer
-// gets a clear, honest message and no silent failure occurs.
-// Images and other supported types are uploaded to Uploadcare as normal.
-const STL_EXTS = ['stl', 'obj', '3mf', 'gcode', 'step', 'stp', 'ply', 'amf'];
-
+// ─── useUploadcare hook ───────────────────────────────────────────────────────
+// Handles image uploads only. STL/3D files are caught BEFORE this hook
+// in CheckoutPage and shown an "Email Now" button instead.
 const useUploadcare = () => {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string; fallback?: boolean }[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -764,21 +773,10 @@ const useUploadcare = () => {
     const uploaded: { name: string; url: string; fallback?: boolean }[] = [];
 
     for (const file of files) {
-      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-
-      // 3D files: skip upload entirely, mark for email
-      if (STL_EXTS.includes(ext)) {
-        setUsedFallback(true);
-        uploaded.push({ name: file.name, url: '', fallback: true });
-        continue;
-      }
-
-      // Images and other files: upload via Uploadcare
       const data = new FormData();
       data.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
       data.append('UPLOADCARE_STORE', '1');
       data.append('file', file);
-
       try {
         const res  = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
         const json = await res.json();
@@ -802,24 +800,25 @@ const useUploadcare = () => {
 };
 
 // ─── File Upload UI ───────────────────────────────────────────────────────────
-const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
+const FileUpload = ({
+  files, uploading, onUpload, label, usedFallback, stlError,
+}: {
   files: { name: string; url: string; fallback?: boolean }[];
   uploading: boolean;
   onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label: string;
   usedFallback?: boolean;
+  // stlError: set by parent when an STL/3D file is selected — contains mailto link
+  stlError?: { message: string; mailto: string } | null;
 }) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">{label}</label>
+
     <div className="relative group">
-      {/*
-        accept lists all common image types + 3D/print file types.
-        The browser may hide files without these extensions in the picker,
-        but the binary-upload workaround in useUploadcare handles the actual upload.
-      */}
+      {/* Only accept images — STL/3D files are caught in parent's onChange wrapper */}
       <input
         type="file" multiple
-        accept="image/*,.stl,.obj,.3mf,.gcode,.step,.stp,.ply,.amf"
+        accept="image/*,.pdf"
         onChange={onUpload}
         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
       />
@@ -830,17 +829,36 @@ const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
             ? 'Uploading...'
             : files.length > 0
               ? `${files.filter(f => !f.fallback).length} uploaded${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''} ✓`
-              : 'Drag and drop or click to upload'}
+              : 'Upload images or reference files (PNG, JPG, PDF)'}
         </div>
-        <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL, OBJ, 3MF — Max 10MB each</div>
+        <p className="text-xs text-gray-400 mt-1">STL, OBJ, and 3MF files must be emailed after checkout.</p>
       </div>
     </div>
-    {usedFallback && (
+
+    {/* STL blocked — show Email Now button */}
+    <AnimatePresence>
+      {stlError && (
+        <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+          className="mt-3 bg-red-50 border border-red-200 rounded-xl px-4 py-4">
+          <p className="text-red-600 text-sm font-bold mb-3 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" /> {stlError.message}
+          </p>
+          <a href={stlError.mailto}
+            className="inline-flex items-center gap-2 bg-brand-dark text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-primary transition-colors">
+            <Mail className="w-4 h-4" /> Email File Now
+          </a>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
+    {/* Uploadcare quota fallback */}
+    {usedFallback && !stlError && (
       <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
         <p className="text-amber-800 text-xs font-bold mb-1">Some files could not be uploaded automatically</p>
         <p className="text-amber-700 text-xs leading-relaxed">No problem — just reply to our confirmation email with those files attached and we will handle the rest.</p>
       </div>
     )}
+
     {files.length > 0 && (
       <div className="flex flex-wrap gap-2 mt-2">
         {files.map((f, i) => f.fallback
@@ -853,43 +871,40 @@ const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
 );
 
 // ─── Order submission ─────────────────────────────────────────────────────────
-// FIX: subtotal is now embedded directly in the projectType field sent to Sheets
-// so it appears in the spreadsheet even with the current 8-column script.
-// The sheets payload structure now matches:
-//   Name | Email | Project Type (includes subtotal) | Message | Files | Date | Payment Interface | Status
+// Sheet columns: A:Name | B:Email | C:ProjectType | D:Message | E:Files |
+//                F:Date | G:Subtotal | H:Total | I:OrderId | J:Payment Interface | K:Status
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwAg0CuOVk87VVPQ6p02HNR9DWeWFQOyMuMhbrJKyLMezb6RKb1LM6OX-Sr5clqWheJ_w/exec';
+
 const submitOrder = async (subject: string, payload: object, fileLinks: string) => {
   const p = payload as any;
 
-  // Email: full details
+  // web3forms email — full order details
   const emailBody = {
     ...payload,
     access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
     subject,
     'Attached Files': fileLinks,
+    'Order ID': p.orderId,
   };
   const emailRes = await fetch('https://api.web3forms.com/submit', {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify(emailBody),
   });
 
-  const messageSummary = [
-    `Delivery: ${p.delivery}`,
-    p.notes && p.notes !== 'None' ? `Notes: ${p.notes}` : null,
-  ].filter(Boolean).join(' | ');
-
-  // subtotal is its own key so Apps Script can write it to column G
-  // Layout: A:Name | B:Email | C:ProjectType | D:Message | E:Files | F:Date | G:Subtotal | H:Payment Interface | I:Status
+  // Google Sheets
   const sheetsPayload = {
-    name:        p.name     || '',
-    email:       p.email    || '',
-    projectType: p.items    || '',
-    message:     messageSummary,
-    files:       fileLinks,
-    date:        p.date     || new Date().toLocaleString(),
-    subtotal:    p.subtotal || '',
+    name:        p.name        || '',
+    email:       p.email       || '',
+    projectType: p.items       || '',          // C — line items
+    message:     `Delivery: ${p.delivery}${p.notes && p.notes !== 'None' ? ` | Notes: ${p.notes}` : ''}`,  // D
+    files:       fileLinks,                    // E
+    date:        p.date        || new Date().toLocaleString(), // F
+    subtotal:    p.subtotal    || '',          // G
+    total:       p.total       || '',          // H
+    orderId:     p.orderId     || '',          // I
   };
 
-  await fetch('https://script.google.com/macros/s/AKfycbwzBs2-9-sS8lMvRZ0OiXkxxRXphw4FrPZhHAuOMDWKMW4kkd5DwkJwYrsKZ2tITHIX-g/exec', {
+  await fetch(SHEETS_URL, {
     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(sheetsPayload),
   });
@@ -902,53 +917,85 @@ const CheckoutPage = () => {
   const { items, updateQty, removeItem, total, clearCart } = useCart();
   const navigate = useNavigate();
 
-  const [name, setName]       = useState('');
-  const [email, setEmail]     = useState('');
+  const [name, setName]         = useState('');
+  const [email, setEmail]       = useState('');
   const [delivery, setDelivery] = useState('');
-  const [address, setAddress] = useState('');
-  const [notes, setNotes]     = useState('');
+  const [address, setAddress]   = useState('');
+  const [notes, setNotes]       = useState('');
+
   const { uploadedFiles, uploading, handleUpload, usedFallback } = useUploadcare();
 
-  // FIX: separate validation errors from server status so double-submission
-  // cannot happen — we validate first, only fetch if errors is empty.
+  // STL block error — set when customer tries to upload a 3D file
+  const [stlError, setStlError] = useState<{ message: string; mailto: string } | null>(null);
+
+  // Order ID — generated at submit time so it's consistent across email + sheets
+  const [orderId, setOrderId] = useState<string | null>(null);
+
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  const hasLithophanes = items.some(i => i.type === 'lithophane');
-  const hasCustomPrint = items.some(i => i.productId === 5);
-  const needsFiles     = hasLithophanes || hasCustomPrint;
+  const hasLithophanes  = items.some(i => i.type === 'lithophane');
+  const hasCustomPrint  = items.some(i => i.productId === 5);
+  const needsFiles      = hasLithophanes || hasCustomPrint;
 
-  const lithoItems    = items.filter(i => i.type === 'lithophane');
-  const lithoQty      = lithoItems.reduce((s, i) => s + i.qty, 0);
+  const lithoItems      = items.filter(i => i.type === 'lithophane');
+  const lithoQty        = lithoItems.reduce((s, i) => s + i.qty, 0);
   const hasBulkDiscount = lithoQty > BULK_THRESHOLD;
-  const lithoSubtotal = lithoItems.reduce((s, i) => s + i.unitPrice * i.qty, 0);
+  const lithoSubtotal   = lithoItems.reduce((s, i) => s + i.unitPrice * i.qty, 0);
   const discountAmount  = hasBulkDiscount ? lithoSubtotal * BULK_DISCOUNT : 0;
   const finalTotal      = total - discountAmount;
 
-  // ── Validate all fields before touching any network call ──
+  // ── File input wrapper — intercepts STL/3D files before Uploadcare ──
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const blocked = files.filter(f => STL_EXTS.includes(getFileExt(f.name)));
+
+    if (blocked.length > 0) {
+      // Generate a temp order ID for the mailto subject so the customer can
+      // reference it even before they finish checkout. If they complete checkout,
+      // a fresh ID will be generated — they can mention both in the email.
+      const tempId = generateOrderId();
+      const subj = encodeURIComponent(`STL File for Order ${tempId} — ${name || 'Customer'}`);
+      const body = encodeURIComponent(
+        `Hi D3V Prints,\n\nOrder reference: ${tempId}\nName: ${name || ''}\nEmail: ${email || ''}\n\nI'm attaching my 3D file for my custom print order.\n\n[Attach your STL/OBJ/3MF file here]`
+      );
+      setStlError({
+        message: 'STL, OBJ, and 3MF files cannot be uploaded here.',
+        mailto: `mailto:d3vprint@gmail.com?subject=${subj}&body=${body}`,
+      });
+      // Reset the input so the same file can be re-selected after seeing the error
+      e.target.value = '';
+      return;
+    }
+
+    // No 3D files — clear any previous STL error and proceed with Uploadcare
+    setStlError(null);
+    handleUpload(e);
+  };
+
+  // ── Validation ──
   const validate = (): string[] => {
     const errors: string[] = [];
-    if (!name.trim())
-      errors.push('Please enter your name.');
-    if (!email.trim())
-      errors.push('Please enter your email address.');
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
-      errors.push('Please enter a valid email address (e.g. john@example.com).');
-    if (!delivery)
-      errors.push('Please select a delivery option.');
-    if (delivery === 'Dropoff' && !address.trim())
-      errors.push('Please enter your address for local dropoff.');
+    if (!name.trim()) errors.push('Please enter your name.');
+    if (!email.trim()) errors.push('Please enter your email address.');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.push('Please enter a valid email address (e.g. john@example.com).');
+    if (!delivery) errors.push('Please select a delivery option.');
+    if (delivery === 'Dropoff' && !address.trim()) errors.push('Please enter your address for local dropoff.');
     return errors;
   };
 
+  const clearErrors = () => { if (validationErrors.length > 0) setValidationErrors([]); };
+
+  // ── Submit ──
   const handleSubmit = async () => {
-    // Step 1: validate — never touch the network if there are errors
     const errors = validate();
     setValidationErrors(errors);
     if (errors.length > 0) return;
 
-    // Step 2: submit
     setStatus('submitting');
+
+    const newOrderId = generateOrderId();
+    setOrderId(newOrderId);
 
     const orderLines = items.map(i =>
       i.unitPrice === 0
@@ -961,6 +1008,7 @@ const CheckoutPage = () => {
       : 'No files uploaded';
 
     const payload = {
+      orderId:  newOrderId,
       name:     name.trim(),
       email:    email.trim(),
       delivery: delivery + (address ? ` (${address})` : ''),
@@ -972,7 +1020,7 @@ const CheckoutPage = () => {
       date:     new Date().toLocaleString(),
     };
 
-    const subject = `New Order from ${name.trim()} — $${finalTotal.toFixed(2)}`;
+    const subject = `[${newOrderId}] New Order from ${name.trim()} — $${finalTotal.toFixed(2)}`;
 
     try {
       const ok = await submitOrder(subject, payload, fileLinks);
@@ -982,9 +1030,6 @@ const CheckoutPage = () => {
       setStatus('error');
     }
   };
-
-  // Clear validation errors when the user fixes a field
-  const clearErrors = () => { if (validationErrors.length > 0) setValidationErrors([]); };
 
   // ── Empty cart ──
   if (items.length === 0 && status !== 'success') {
@@ -1002,24 +1047,38 @@ const CheckoutPage = () => {
   if (status === 'success') {
     return (
       <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center justify-center text-center">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md">
-          <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8"><CheckCircle className="w-12 h-12" /></div>
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full">
+          <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8">
+            <CheckCircle className="w-12 h-12" />
+          </div>
           <h2 className="text-4xl font-bold mb-4">Order Placed!</h2>
           <p className="text-gray-500 mb-3 leading-relaxed">
-            Thanks, <span className="font-bold text-brand-dark">{name}</span>! We have received your order and will email you at <span className="font-bold text-brand-dark">{email}</span> within 12 hours with confirmation and payment details.
+            Thanks, <span className="font-bold text-brand-dark">{name}</span>! We will email you at <span className="font-bold text-brand-dark">{email}</span> within 12 hours with confirmation and payment details.
           </p>
+
+          {/* Order ID card */}
+          {orderId && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-6 py-5 mb-6">
+              <p className="text-sm text-gray-500 mb-1">Your Order ID</p>
+              <p className="text-2xl font-black text-emerald-600 tracking-widest font-mono">{orderId}</p>
+              <p className="text-xs text-gray-400 mt-2">Save this to reference your order — we will include it in our email too.</p>
+            </div>
+          )}
+
           {hasLithophanes && uploadedFiles.filter(f => !f.fallback).length === 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 text-left">
               <p className="text-amber-700 text-sm font-bold mb-1">Reminder: Photos needed</p>
               <p className="text-amber-600 text-xs">Reply to our confirmation email with your lithophane photos and we will get started.</p>
             </div>
           )}
+
           <Link to="/" className="inline-block bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Back to Shop</Link>
         </motion.div>
       </div>
     );
   }
 
+  // ── Main checkout layout ──
   return (
     <div className="min-h-screen pt-28 pb-20 px-6 bg-brand-light">
       <div className="max-w-6xl mx-auto">
@@ -1050,7 +1109,7 @@ const CheckoutPage = () => {
                       </div>
                       {item.color && <p className="text-xs text-gray-500 mb-1">Color: {item.color}</p>}
                       {item.type === 'lithophane' && <p className="text-[10px] text-amber-600 font-bold mb-2 flex items-center gap-1"><Camera className="w-3 h-3" /> Upload photo below</p>}
-                      {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mb-2 flex items-center gap-1"><FileText className="w-3 h-3" /> Upload STL or file below</p>}
+                      {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mb-2 flex items-center gap-1"><FileText className="w-3 h-3" /> Email your STL file after checkout</p>}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <button onClick={() => updateQty(item.cartId, item.qty - 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors"><Minus className="w-3 h-3" /></button>
@@ -1091,15 +1150,23 @@ const CheckoutPage = () => {
                     )}
                   </div>
                 )}
-                {hasCustomPrint && !hasLithophanes && (
-                  <p className="text-gray-500 text-sm mb-4">Upload your STL file or any reference images for your custom print.</p>
-                )}
-                {hasCustomPrint && hasLithophanes && (
-                  <p className="text-gray-500 text-sm mb-4">Also upload your STL or reference images for the custom print.</p>
+                {hasCustomPrint && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-2xl px-5 py-4 mb-5">
+                    <p className="text-blue-800 font-bold text-sm mb-1 flex items-center gap-2">
+                      <Mail className="w-4 h-4" /> STL/3D files — email after checkout
+                    </p>
+                    <p className="text-blue-700 text-xs leading-relaxed">
+                      STL, OBJ, and 3MF files cannot be uploaded here. After placing your order, email your file to <span className="font-bold">d3vprint@gmail.com</span> with your Order ID in the subject line.
+                    </p>
+                  </div>
                 )}
                 <FileUpload
-                  files={uploadedFiles} uploading={uploading} onUpload={handleUpload} usedFallback={usedFallback}
-                  label={hasLithophanes && hasCustomPrint ? 'All Photos and Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'}
+                  files={uploadedFiles}
+                  uploading={uploading}
+                  onUpload={handleFileChange}
+                  usedFallback={usedFallback}
+                  stlError={stlError}
+                  label={hasLithophanes ? 'Lithophane Photos' : 'Reference Images (optional)'}
                 />
               </div>
             )}
@@ -1108,19 +1175,17 @@ const CheckoutPage = () => {
           {/* ── Right: Details + Summary ── */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* Inline validation error banner */}
+            {/* Validation errors */}
             <AnimatePresence>
               {validationErrors.length > 0 && (
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                   className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4">
                   <p className="text-red-700 font-bold text-sm flex items-center gap-2 mb-2">
-                    <AlertCircle className="w-4 h-4 shrink-0" /> Please fix the following before placing your order:
+                    <AlertCircle className="w-4 h-4 shrink-0" /> Please fix the following:
                   </p>
                   <ul className="space-y-1">
                     {validationErrors.map((err, i) => (
-                      <li key={i} className="text-red-600 text-xs flex items-start gap-1.5">
-                        <span className="shrink-0 mt-0.5">•</span>{err}
-                      </li>
+                      <li key={i} className="text-red-600 text-xs flex items-start gap-1.5"><span className="shrink-0 mt-0.5">•</span>{err}</li>
                     ))}
                   </ul>
                 </motion.div>
@@ -1133,15 +1198,13 @@ const CheckoutPage = () => {
               <div className="space-y-4">
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Your Name</label>
-                  <input type="text" value={name}
-                    onChange={e => { setName(e.target.value); clearErrors(); }}
+                  <input type="text" value={name} onChange={e => { setName(e.target.value); clearErrors(); }}
                     className={`w-full px-5 py-3.5 rounded-2xl border focus:ring-2 focus:ring-brand-primary outline-none text-sm transition-colors ${validationErrors.some(e => e.includes('name')) ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}
                     placeholder="John Doe" />
                 </div>
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Email Address</label>
-                  <input type="email" value={email}
-                    onChange={e => { setEmail(e.target.value); clearErrors(); }}
+                  <input type="email" value={email} onChange={e => { setEmail(e.target.value); clearErrors(); }}
                     className={`w-full px-5 py-3.5 rounded-2xl border focus:ring-2 focus:ring-brand-primary outline-none text-sm transition-colors ${validationErrors.some(e => e.includes('email')) ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}
                     placeholder="john@example.com" />
                 </div>
