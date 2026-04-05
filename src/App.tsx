@@ -9,7 +9,6 @@ import {
   Quote, Plus, Minus, Trash2, ShoppingBag, Star
 } from 'lucide-react';
 
-// ─── Constants ─────────────────────────────────────────────────────────────────
 const STANDARD_COLORS = ['Black', 'White', 'Blue'];
 const PREMIUM_COLORS = ['Red', 'Green', 'Yellow', 'Orange', 'Purple', 'Pink', 'Gray', 'Teal', 'Gold', 'Silver'];
 const PREMIUM_SURCHARGE = 3;
@@ -33,7 +32,6 @@ const PRODUCTS = [
   { id: 5, name: 'Custom Print',            basePrice: 0,  salePrice: null, tag: 'Any Design',   images: ['/octopus.png'],    description: 'Have a design in mind? Send us your STL file and we will print it for you. Any color, any material.', isCustom: true, credit: null },
 ] as const;
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
 interface CartItem {
   cartId: string;
   type: 'product' | 'lithophane';
@@ -57,7 +55,6 @@ interface CartContextType {
   setIsOpen: (v: boolean) => void;
 }
 
-// ─── Cart Context ──────────────────────────────────────────────────────────────
 const CartContext = createContext<CartContextType | null>(null);
 
 const useCart = () => {
@@ -73,9 +70,7 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem('d3vprints_cart', JSON.stringify(items));
-  }, [items]);
+  useEffect(() => { localStorage.setItem('d3vprints_cart', JSON.stringify(items)); }, [items]);
 
   const addItem = useCallback((item: Omit<CartItem, 'cartId'>) => {
     const cartId = `${item.type}-${item.productId ?? item.name}-${item.color ?? ''}-${Date.now()}`;
@@ -90,14 +85,11 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const removeItem = useCallback((cartId: string) => setItems(prev => prev.filter(i => i.cartId !== cartId)), []);
-
   const updateQty = useCallback((cartId: string, qty: number) => {
     if (qty <= 0) setItems(prev => prev.filter(i => i.cartId !== cartId));
     else setItems(prev => prev.map(i => i.cartId === cartId ? { ...i, qty } : i));
   }, []);
-
   const clearCart = useCallback(() => setItems([]), []);
-
   const total = items.reduce((s, i) => s + i.unitPrice * i.qty, 0);
   const count = items.reduce((s, i) => s + i.qty, 0);
 
@@ -108,15 +100,9 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// ─── Cart Drawer ───────────────────────────────────────────────────────────────
 const CartDrawer = () => {
   const { items, removeItem, updateQty, total, count, isOpen, setIsOpen, clearCart } = useCart();
   const navigate = useNavigate();
-
-  const handleCheckout = () => {
-    setIsOpen(false);
-    navigate('/checkout');
-  };
 
   return (
     <AnimatePresence>
@@ -137,15 +123,12 @@ const CartDrawer = () => {
                 <X className="w-4 h-4" />
               </button>
             </div>
-
             {items.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-10">
                 <ShoppingBag className="w-14 h-14 text-gray-200 mb-4" />
                 <p className="font-bold text-gray-500">Your cart is empty</p>
                 <p className="text-gray-400 text-sm mt-1">Add items to save them for later</p>
-                <button onClick={() => setIsOpen(false)} className="mt-6 bg-brand-dark text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-primary transition-colors text-sm">
-                  Browse Products
-                </button>
+                <button onClick={() => setIsOpen(false)} className="mt-6 bg-brand-dark text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-primary transition-colors text-sm">Browse Products</button>
               </div>
             ) : (
               <>
@@ -159,21 +142,15 @@ const CartDrawer = () => {
                             <p className="font-bold text-sm leading-tight">{item.name}</p>
                             {item.color && <p className="text-xs text-gray-500">Color: {item.color}</p>}
                             {item.type === 'lithophane' && <p className="text-[10px] text-brand-primary font-bold mt-0.5">Photo needed at checkout</p>}
-                            {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mt-0.5">File upload + quote at checkout</p>}
+                            {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mt-0.5">File upload at checkout</p>}
                           </div>
-                          <button onClick={() => removeItem(item.cartId)} className="text-gray-300 hover:text-red-400 transition-colors shrink-0">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <button onClick={() => removeItem(item.cartId)} className="text-gray-300 hover:text-red-400 transition-colors shrink-0"><Trash2 className="w-4 h-4" /></button>
                         </div>
                         <div className="flex items-center justify-between mt-2">
                           <div className="flex items-center gap-2">
-                            <button onClick={() => updateQty(item.cartId, item.qty - 1)} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center hover:border-brand-primary transition-colors">
-                              <Minus className="w-3 h-3" />
-                            </button>
+                            <button onClick={() => updateQty(item.cartId, item.qty - 1)} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center hover:border-brand-primary transition-colors"><Minus className="w-3 h-3" /></button>
                             <span className="text-sm font-bold w-5 text-center">{item.qty}</span>
-                            <button onClick={() => updateQty(item.cartId, item.qty + 1)} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center hover:border-brand-primary transition-colors">
-                              <Plus className="w-3 h-3" />
-                            </button>
+                            <button onClick={() => updateQty(item.cartId, item.qty + 1)} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center hover:border-brand-primary transition-colors"><Plus className="w-3 h-3" /></button>
                           </div>
                           <p className="font-bold text-brand-primary text-sm">
                             {item.unitPrice === 0 ? 'Quote' : `$${(item.unitPrice * item.qty).toFixed(2)}`}
@@ -189,12 +166,10 @@ const CartDrawer = () => {
                     <span className="text-2xl font-black text-brand-primary">${total.toFixed(2)}</span>
                   </div>
                   <p className="text-xs text-gray-400">Final price confirmed via email. Photos and files uploaded at checkout.</p>
-                  <button onClick={handleCheckout} className="block w-full text-center bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
+                  <button onClick={() => { setIsOpen(false); navigate('/checkout'); }} className="block w-full text-center bg-brand-dark text-white py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">
                     Proceed to Checkout
                   </button>
-                  <button onClick={clearCart} className="w-full text-gray-400 text-sm py-1 hover:text-gray-600 transition-colors font-medium">
-                    Clear cart
-                  </button>
+                  <button onClick={clearCart} className="w-full text-gray-400 text-sm py-1 hover:text-gray-600 transition-colors font-medium">Clear cart</button>
                 </div>
               </>
             )}
@@ -205,7 +180,6 @@ const CartDrawer = () => {
   );
 };
 
-// ─── Quick Add Modal ───────────────────────────────────────────────────────────
 const QuickAddModal = ({ product, onClose }: { product: any; onClose: () => void }) => {
   const { addItem } = useCart();
   const [color, setColor] = useState('');
@@ -224,30 +198,23 @@ const QuickAddModal = ({ product, onClose }: { product: any; onClose: () => void
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
       <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
         className="relative w-full max-w-md bg-white rounded-[2rem] p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
         <button onClick={onClose} className="absolute top-5 right-5 w-9 h-9 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20"><X className="w-4 h-4" /></button>
         <h3 className="text-xl font-bold mb-1">{product.name}</h3>
         <p className="text-gray-500 text-sm mb-6">{product.description}</p>
-
         <div className="mb-5">
           <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Color</label>
           <p className="text-xs text-gray-400 mb-2">Standard (no extra charge)</p>
           <div className="flex flex-wrap gap-2 mb-3">
-            {STANDARD_COLORS.map(c => (
-              <button key={c} onClick={() => setColor(c)} className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
-            ))}
+            {STANDARD_COLORS.map(c => (<button key={c} onClick={() => setColor(c)} className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>))}
           </div>
           <p className="text-xs text-gray-400 mb-2">Premium (+${PREMIUM_SURCHARGE})</p>
           <div className="flex flex-wrap gap-2">
-            {PREMIUM_COLORS.map(c => (
-              <button key={c} onClick={() => setColor(c)} className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>
-            ))}
+            {PREMIUM_COLORS.map(c => (<button key={c} onClick={() => setColor(c)} className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${color === c ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{c}</button>))}
           </div>
         </div>
-
         <div className="mb-6">
           <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Quantity</label>
           <div className="flex items-center gap-4">
@@ -256,14 +223,12 @@ const QuickAddModal = ({ product, onClose }: { product: any; onClose: () => void
             <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center font-bold hover:border-brand-primary transition-colors">+</button>
           </div>
         </div>
-
         {color && (
           <div className="bg-brand-light rounded-xl px-4 py-3 mb-4 flex justify-between text-sm">
             <span className="text-gray-500">Estimated</span>
             <span className="font-black text-brand-primary">${(unitPrice * qty).toFixed(2)}</span>
           </div>
         )}
-
         <button onClick={handleAdd} disabled={!color || added}
           className={`w-full py-4 rounded-2xl font-bold transition-all ${added ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary disabled:opacity-50'}`}>
           {added ? 'Added to Cart!' : 'Add to Cart'}
@@ -273,7 +238,6 @@ const QuickAddModal = ({ product, onClose }: { product: any; onClose: () => void
   );
 };
 
-// ─── Navbar ───────────────────────────────────────────────────────────────────
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { count, setIsOpen: setCartOpen } = useCart();
@@ -325,7 +289,6 @@ const Navbar = () => {
   );
 };
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
 const Hero = () => (
   <section className="relative pt-32 pb-20 px-6 overflow-hidden">
     <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
@@ -343,9 +306,7 @@ const Hero = () => (
           <a href="#styles" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
             Order a Night Light <ArrowRight className="w-5 h-5" />
           </a>
-          <a href="#styles" className="bg-white border border-gray-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-50 transition-colors">
-            See Styles
-          </a>
+          <a href="#styles" className="bg-white border border-gray-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-50 transition-colors">See Styles</a>
         </div>
         {SALE_ACTIVE && (
           <div className="inline-flex items-center gap-2 bg-brand-primary/10 border border-brand-primary/30 text-brand-dark px-4 py-2 rounded-xl text-sm font-bold">
@@ -378,7 +339,6 @@ const Hero = () => (
   </section>
 );
 
-// ─── Lithophane Section ───────────────────────────────────────────────────────
 const LithophaneSection = () => (
   <section id="lithophanes" className="py-24 px-6 bg-brand-dark text-white">
     <div className="max-w-7xl mx-auto">
@@ -416,7 +376,6 @@ const LithophaneSection = () => (
   </section>
 );
 
-// ─── Style Showcase ───────────────────────────────────────────────────────────
 const StyleShowcase = () => {
   const { addItem } = useCart();
   const [addedId, setAddedId] = useState<string | null>(null);
@@ -426,7 +385,7 @@ const StyleShowcase = () => {
     { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",    price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png", "/all litho.png"],               best: "Portraits, families, pets" },
     { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",       detail: "Auto on/off light sensor", price: LITHOPHANE_PRICES['Night Light'],  images: ["/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
     { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",     detail: "Stand-alone display piece", price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
-    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",              detail: "Stand-alone piece, no base", price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
+    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",              detail: "LED base included",          price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
   ];
 
   const getImg = (id: string) => imgIndexes[id] ?? 0;
@@ -514,7 +473,6 @@ const StyleShowcase = () => {
   );
 };
 
-// ─── How It Works ─────────────────────────────────────────────────────────────
 const HowItWorks = () => (
   <section id="how-it-works" className="py-24 px-6 bg-brand-light">
     <div className="max-w-7xl mx-auto">
@@ -561,9 +519,7 @@ const HowItWorks = () => (
   </section>
 );
 
-// ─── Product Card ─────────────────────────────────────────────────────────────
-// FIX: price row is a fixed h-7 container. "Get a quote" is removed from the price
-// row entirely and moved into the button label instead — so all 5 buttons align.
+// ── FIX 1: removed flex-1 from description so all buttons align consistently ──
 const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => void }) => {
   const [currentImg, setCurrentImg] = useState(0);
   const [customAdded, setCustomAdded] = useState(false);
@@ -598,10 +554,9 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
       </div>
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-base mb-1 group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
-        <p className="text-gray-500 text-xs mb-4 leading-relaxed flex-1">{product.description}</p>
-
+        {/* No flex-1 on description — mt-auto on the button container handles alignment */}
+        <p className="text-gray-500 text-xs mb-3 leading-relaxed">{product.description}</p>
         <div className="mt-auto space-y-2">
-          {/* Fixed-height price row — empty for quote products so button Y is identical */}
           <div className="h-7 flex items-center">
             {showSalePrice && (
               <div className="flex items-center gap-2">
@@ -610,12 +565,8 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
                 <span className="text-[9px] font-bold bg-brand-primary text-white px-1.5 py-0.5 rounded-full">SALE</span>
               </div>
             )}
-            {showFromPrice && (
-              <span className="text-lg font-bold font-mono">From ${product.basePrice.toFixed(2)}</span>
-            )}
-            {/* isQuote: row intentionally empty — button below says "Get a Quote" */}
+            {showFromPrice && <span className="text-lg font-bold font-mono">From ${product.basePrice.toFixed(2)}</span>}
           </div>
-
           <button
             onClick={() => product.isCustom ? handleCustomAdd() : onOrder(product)}
             className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${customAdded ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary'}`}>
@@ -628,17 +579,14 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
             )}
           </button>
         </div>
-
         {product.credit && <p className="text-[9px] text-gray-300 mt-3 leading-relaxed">{product.credit}</p>}
       </div>
     </motion.div>
   );
 };
 
-// ─── Current Products ─────────────────────────────────────────────────────────
 const CurrentProducts = () => {
   const [modalProduct, setModalProduct] = useState<any>(null);
-
   return (
     <section id="products" className="py-24 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -668,7 +616,6 @@ const CurrentProducts = () => {
   );
 };
 
-// ─── Reviews ──────────────────────────────────────────────────────────────────
 const BASE_REVIEWS = [
   { name: "Sarah M.", rating: 5, text: "Ordered a flat panel lithophane of my dog and it came out absolutely beautiful. The detail is incredible, you can see every strand of fur. Will definitely be ordering more.", date: "March 2025" },
   { name: "James R.", rating: 5, text: "Got the heart shape for my girlfriend for Valentine's Day. She cried. That is all I need to say. Incredible quality and the turnaround was super fast.", date: "February 2025" },
@@ -767,7 +714,6 @@ const Reviews = () => {
   );
 };
 
-// ─── Reusable: Delivery Picker ────────────────────────────────────────────────
 const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: string; address: string; onDelivery: (v: string) => void; onAddress: (v: string) => void }) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">Delivery Preference</label>
@@ -786,24 +732,10 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
   </div>
 );
 
-// ─── useUploadcare — with quota fallback ─────────────────────────────────────
 const useUploadcare = () => {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string; fallback?: boolean }[]>([]);
   const [uploading, setUploading] = useState(false);
   const [usedFallback, setUsedFallback] = useState(false);
-
-  const tryUploadcare = async (file: File): Promise<{ name: string; url: string } | null> => {
-    const data = new FormData();
-    data.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
-    data.append('UPLOADCARE_STORE', '1');
-    data.append('file', file);
-    try {
-      const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
-      const json = await res.json();
-      if (json.file) return { name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` };
-      return null;
-    } catch { return null; }
-  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -811,9 +743,16 @@ const useUploadcare = () => {
     setUploading(true);
     const uploaded: { name: string; url: string; fallback?: boolean }[] = [];
     for (const file of files) {
-      const result = await tryUploadcare(file);
-      if (result) { uploaded.push(result); }
-      else { setUsedFallback(true); uploaded.push({ name: file.name, url: '', fallback: true }); }
+      const data = new FormData();
+      data.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
+      data.append('UPLOADCARE_STORE', '1');
+      data.append('file', file);
+      try {
+        const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
+        const json = await res.json();
+        if (json.file) { uploaded.push({ name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` }); }
+        else { setUsedFallback(true); uploaded.push({ name: file.name, url: '', fallback: true }); }
+      } catch { setUsedFallback(true); uploaded.push({ name: file.name, url: '', fallback: true }); }
     }
     setUploadedFiles(prev => [...prev, ...uploaded]);
     setUploading(false);
@@ -822,23 +761,20 @@ const useUploadcare = () => {
   return { uploadedFiles, uploading, handleUpload, usedFallback };
 };
 
-// ─── Reusable: File Upload ────────────────────────────────────────────────────
-const FileUpload = ({ files, uploading, onUpload, label, hint, usedFallback }: {
+const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
   files: { name: string; url: string; fallback?: boolean }[];
-  uploading: boolean;
-  onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  label: string; hint?: string; usedFallback?: boolean;
+  uploading: boolean; onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string; usedFallback?: boolean;
 }) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">{label}</label>
-    {hint && <p className="text-xs text-gray-400 mb-3 leading-relaxed">{hint}</p>}
     <div className="relative group">
       <input type="file" multiple onChange={onUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
       <div className="border-2 border-dashed border-gray-200 group-hover:border-brand-primary rounded-2xl p-6 text-center transition-colors">
         <Upload className="w-7 h-7 text-gray-300 group-hover:text-brand-primary mx-auto mb-2" />
         <div className="text-sm font-bold text-gray-500">
           {uploading ? 'Uploading...' : files.length > 0
-            ? `${files.filter(f => !f.fallback).length} file(s) uploaded ✓${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''}`
+            ? `${files.filter(f => !f.fallback).length} file(s) uploaded${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''}`
             : 'Drag and drop or click to upload'}
         </div>
         <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB each</div>
@@ -861,31 +797,48 @@ const FileUpload = ({ files, uploading, onUpload, label, hint, usedFallback }: {
   </div>
 );
 
-// ─── submitOrder ──────────────────────────────────────────────────────────────
-// Sheet columns: Name | Email | Project Type | Message | Files | Date | Payment Interface | Status
-// We map: name→Name, email→Email, delivery→Project Type, items+notes→Message, fileLinks→Files, date→Date
-// "Payment Interface" and "Status" stay blank — you fill those in manually per order.
+// ── FIX 2: submitOrder now maps data to match sheet columns exactly:
+// Name | Email | Project Type | Message | File | Date | Payment Interface | Status
 const submitOrder = async (subject: string, payload: object, fileLinks: string) => {
   const p = payload as any;
 
-  // web3forms email
-  const emailBody = { ...payload, access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55', subject, 'Attached Files': fileLinks };
+  // Email via Web3Forms
+  const emailBody = {
+    ...payload,
+    access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
+    subject,
+    'Attached Files': fileLinks,
+  };
   const emailRes = await fetch('https://api.web3forms.com/submit', {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify(emailBody),
   });
 
-  // Google Sheets — fields keyed to match your existing doPost handler exactly
+  // Google Sheets — mapped to: Name | Email | Project Type | Message | File | Date
+  // "Project Type" = what was ordered (items list + totals)
+  // "Message" = delivery method + notes
+  const projectTypeSummary = [
+    p.items,
+    p.bulkDiscount ? `Bulk Discount: ${p.bulkDiscount}` : null,
+    `Subtotal: ${p.subtotal}`,
+    `Total: ${p.total}`,
+  ].filter(Boolean).join(' | ');
+
+  const messageSummary = [
+    `Delivery: ${p.delivery}`,
+    p.notes && p.notes !== 'None' ? `Notes: ${p.notes}` : null,
+  ].filter(Boolean).join(' | ');
+
   const sheetsPayload = {
     name:        p.name,
     email:       p.email,
-    projectType: p.delivery,
-    message:     `ITEMS:\n${p.items}${p.bulkDiscount ? `\nBulk Discount: ${p.bulkDiscount}` : ''}\nSubtotal: ${p.subtotal}\nTotal: ${p.total}\n\nNotes: ${p.notes}`,
+    projectType: projectTypeSummary,
+    message:     messageSummary,
     files:       fileLinks,
     date:        p.date,
   };
 
-  await fetch('https://script.google.com/macros/s/AKfycbxWkorFdGZlupFCzIlw4KkkLtYCj4BrL7jmH2DfOeuNyUzUw4yd9u-_Rs1TI2eX7dparQ/exec', {
+  await fetch('https://script.google.com/macros/s/AKfycbyTm53Y4_yrfbFxLkM83agw_KdQ2rCmTQT8VJ0MBthucgY2x9hMbPik-_xBNtewOWwWoA/exec', {
     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(sheetsPayload),
   });
@@ -893,7 +846,6 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
   return emailRes.ok;
 };
 
-// ─── Checkout Page ─────────────────────────────────────────────────────────────
 const CheckoutPage = () => {
   const { items, updateQty, removeItem, total, clearCart } = useCart();
   const navigate = useNavigate();
@@ -916,7 +868,6 @@ const CheckoutPage = () => {
   const lithoSubtotal = lithoItems.reduce((s, i) => s + i.unitPrice * i.qty, 0);
   const discountAmount = hasBulkDiscount ? lithoSubtotal * BULK_DISCOUNT : 0;
   const finalTotal = total - discountAmount;
-
   const canSubmit = name.trim() && email.trim() && delivery;
 
   const handleSubmit = async () => {
@@ -935,7 +886,7 @@ const CheckoutPage = () => {
 
     const payload = {
       name, email,
-      delivery: delivery + (address ? ` — ${address}` : ''),
+      delivery: delivery + (address ? ` (${address})` : ''),
       items: orderLines.join('\n'),
       subtotal: `$${total.toFixed(2)}`,
       ...(hasBulkDiscount ? { bulkDiscount: `-$${discountAmount.toFixed(2)} (${BULK_DISCOUNT * 100}% off lithophanes)` } : {}),
@@ -977,12 +928,6 @@ const CheckoutPage = () => {
             <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 text-left">
               <p className="text-amber-700 text-sm font-bold mb-1">Reminder: Photos needed</p>
               <p className="text-amber-600 text-xs">You can reply to our confirmation email with your lithophane photos, or we will ask for them when we follow up.</p>
-            </div>
-          )}
-          {usedFallback && (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 text-left">
-              <p className="text-amber-700 text-sm font-bold mb-1">Send your files via email</p>
-              <p className="text-amber-600 text-xs">Some files could not upload. Please reply to our confirmation email with them attached.</p>
             </div>
           )}
           <Link to="/" className="inline-block bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-primary transition-colors">Back to Shop</Link>
@@ -1036,31 +981,29 @@ const CheckoutPage = () => {
 
             {needsFiles && (
               <div className="bg-white rounded-3xl p-8 shadow-sm">
-                <h2 className="text-xl font-bold mb-2 flex items-center gap-2"><Upload className="w-5 h-5 text-brand-primary" /> Upload Your Files</h2>
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Upload className="w-5 h-5 text-brand-primary" /> Upload Your Files</h2>
                 {hasLithophanes && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6">
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-5">
                     <p className="text-amber-800 font-bold text-sm mb-1 flex items-center gap-2">
                       <Camera className="w-4 h-4" />
                       {lithoItems.length > 1 ? 'Multiple lithophanes — please read' : 'Lithophane photo instructions'}
                     </p>
                     <p className="text-amber-700 text-xs leading-relaxed">
                       {lithoItems.length > 1
-                        ? `You have ${lithoItems.length} lithophane styles in your cart. Upload all your photos here, then use the Notes field to tell us which photo goes with which lithophane.`
-                        : 'Upload the photo you want printed as a lithophane. Higher resolution = sharper detail.'}
+                        ? `You have ${lithoItems.length} lithophane styles. Upload all photos here and use the Notes field to tell us which photo goes with which style.`
+                        : 'Upload the photo you want printed. Higher resolution = sharper detail.'}
                     </p>
                     {lithoItems.length > 1 && (
                       <div className="mt-3 space-y-1">
                         {lithoItems.map((item, i) => (
-                          <p key={item.cartId} className="text-amber-600 text-xs font-bold">• Photo {i + 1} → {item.name.replace('Lithophane: ', '')} (qty: {item.qty})</p>
+                          <p key={item.cartId} className="text-amber-600 text-xs font-bold">Photo {i + 1} goes to {item.name.replace('Lithophane: ', '')} (qty: {item.qty})</p>
                         ))}
                       </div>
                     )}
                   </div>
                 )}
-                {hasCustomPrint && !hasLithophanes && <p className="text-gray-500 text-sm mb-4">Upload your STL file or any reference images for your custom print.</p>}
-                {hasCustomPrint && hasLithophanes && <p className="text-gray-500 text-sm mb-4">Also upload your STL file or reference images for the custom print.</p>}
                 <FileUpload files={uploadedFiles} uploading={uploading} onUpload={handleUpload} usedFallback={usedFallback}
-                  label={hasLithophanes && hasCustomPrint ? 'All Photos & Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'} />
+                  label={hasLithophanes && hasCustomPrint ? 'All Photos and Files' : hasLithophanes ? 'Lithophane Photos' : 'STL or Reference Files'} />
               </div>
             )}
           </div>
@@ -1084,7 +1027,7 @@ const CheckoutPage = () => {
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Notes</label>
                   <textarea rows={3} value={notes} onChange={e => setNotes(e.target.value)}
                     className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-brand-primary outline-none resize-none text-sm"
-                    placeholder={hasLithophanes && lithoItems.length > 1 ? 'Specify which photo is for which lithophane...' : hasLithophanes ? 'Any special requests (e.g. crop to face only, warm tone)...' : 'Any special requests or notes...'} />
+                    placeholder={hasLithophanes && lithoItems.length > 1 ? 'Specify which photo is for which lithophane...' : hasLithophanes ? 'Any special requests (e.g. crop to face only)...' : 'Any special requests or notes...'} />
                 </div>
               </div>
             </div>
@@ -1094,7 +1037,7 @@ const CheckoutPage = () => {
               <div className="space-y-3 mb-6">
                 {items.map(item => (
                   <div key={item.cartId} className="flex justify-between text-sm">
-                    <span className="text-gray-400 truncate max-w-[65%]">{item.name}{item.color ? ` (${item.color})` : ''} ×{item.qty}</span>
+                    <span className="text-gray-400 truncate max-w-[65%]">{item.name}{item.color ? ` (${item.color})` : ''} x{item.qty}</span>
                     <span className="font-bold shrink-0">{item.unitPrice === 0 ? <span className="text-gray-500 italic">Quote</span> : `$${(item.unitPrice * item.qty).toFixed(2)}`}</span>
                   </div>
                 ))}
@@ -1119,7 +1062,7 @@ const CheckoutPage = () => {
               )}
               <button onClick={handleSubmit} disabled={!canSubmit || status === 'submitting'}
                 className="w-full mt-6 bg-brand-primary text-brand-dark py-4 rounded-2xl font-black hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 text-base">
-                {status === 'submitting' ? 'Placing Order...' : 'Place Order →'}
+                {status === 'submitting' ? 'Placing Order...' : 'Place Order'}
               </button>
               {status === 'error' && <p className="text-red-400 text-sm text-center mt-3">Something went wrong. Please try again.</p>}
             </div>
@@ -1130,7 +1073,6 @@ const CheckoutPage = () => {
   );
 };
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
 const Footer = () => (
   <footer className="py-12 px-6 border-t border-gray-100">
     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
@@ -1159,7 +1101,6 @@ const Footer = () => (
   </footer>
 );
 
-// ─── Home ─────────────────────────────────────────────────────────────────────
 const Home = () => (
   <main>
     <Hero />
@@ -1171,7 +1112,6 @@ const Home = () => (
   </main>
 );
 
-// ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const location = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
