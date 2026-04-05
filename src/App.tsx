@@ -355,7 +355,7 @@ const LithophaneSection = () => (
       </div>
       <div className="grid lg:grid-cols-3 gap-8 mb-16">
         {[
-          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works — portraits, landscapes, pets, couples. The higher the resolution, the sharper the detail." },
+          { icon: <Camera className="w-8 h-8" />, title: "Send Us Your Photo", desc: "Any photo works. Portraits, landscapes, pets, couples. The higher the resolution, the sharper the detail." },
           { icon: <Printer className="w-8 h-8" />, title: "We Print It", desc: "Using 0.1mm layer resolution and premium PLA+ white filament for the clearest possible image." },
           { icon: <Lightbulb className="w-8 h-8" />, title: "It Glows", desc: "Plug in the LED base and watch your photo appear in stunning backlit detail. Pure magic." }
         ].map((f, i) => (
@@ -385,7 +385,7 @@ const StyleShowcase = () => {
     { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",    price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png", "/all litho.png"],               best: "Portraits, families, pets" },
     { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",       detail: "Auto on/off light sensor", price: LITHOPHANE_PRICES['Night Light'],  images: ["/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
     { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",     detail: "Stand-alone display piece", price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
-    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes — names, initials, logos, animals, silhouettes.",              detail: "LED base included",          price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
+    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",              detail: "LED base included",          price: LITHOPHANE_PRICES['Custom Shape'], images: ["/flatlitho.png"],                                best: "Logos, names, unique gifts" },
   ];
 
   const getImg = (id: string) => imgIndexes[id] ?? 0;
@@ -519,7 +519,7 @@ const HowItWorks = () => (
   </section>
 );
 
-// ── FIX 1: removed flex-1 from description so all buttons align consistently ──
+// ── FIX 1: credit moved ABOVE the mt-auto button block so all buttons sit at the same Y ──
 const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => void }) => {
   const [currentImg, setCurrentImg] = useState(0);
   const [customAdded, setCustomAdded] = useState(false);
@@ -554,9 +554,10 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
       </div>
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-base mb-1 group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
-        {/* No flex-1 on description — mt-auto on the button container handles alignment */}
-        <p className="text-gray-500 text-xs mb-3 leading-relaxed">{product.description}</p>
-        <div className="mt-auto space-y-2">
+        <p className="text-gray-500 text-xs mb-2 leading-relaxed">{product.description}</p>
+        {/* Credit is rendered BEFORE mt-auto so it does not push the button down in cards that have it */}
+        {product.credit && <p className="text-[9px] text-gray-300 mb-1 leading-relaxed">{product.credit}</p>}
+        <div className="mt-auto pt-2 space-y-2">
           <div className="h-7 flex items-center">
             {showSalePrice && (
               <div className="flex items-center gap-2">
@@ -579,7 +580,6 @@ const ProductCard = ({ product, onOrder }: { product: any; onOrder: (p: any) => 
             )}
           </button>
         </div>
-        {product.credit && <p className="text-[9px] text-gray-300 mt-3 leading-relaxed">{product.credit}</p>}
       </div>
     </motion.div>
   );
@@ -718,7 +718,7 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">Delivery Preference</label>
     <div className="flex flex-col gap-2 mb-3">
-      {[{ label: 'Pickup (Free — Plainsboro, NJ)', value: 'Pickup' }, { label: 'Local Dropoff (small fee)', value: 'Dropoff' }].map(d => (
+      {[{ label: 'Pickup (Free, Plainsboro NJ)', value: 'Pickup' }, { label: 'Local Dropoff (small fee)', value: 'Dropoff' }].map(d => (
         <button key={d.value} type="button" onClick={() => onDelivery(d.value)}
           className={`text-left px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${value === d.value ? 'border-brand-primary bg-brand-primary/10 text-brand-primary' : 'border-gray-200 hover:border-gray-300'}`}>{d.label}</button>
       ))}
@@ -732,6 +732,8 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress }: { value: stri
   </div>
 );
 
+// ── FIX 2: Binary 3D file types are wrapped in an explicit application/octet-stream Blob
+// so Uploadcare does not reject them based on an unrecognised MIME type ──
 const useUploadcare = () => {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string; fallback?: boolean }[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -742,18 +744,44 @@ const useUploadcare = () => {
     const files = Array.from(e.target.files);
     setUploading(true);
     const uploaded: { name: string; url: string; fallback?: boolean }[] = [];
+
     for (const file of files) {
       const data = new FormData();
       data.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
       data.append('UPLOADCARE_STORE', '1');
-      data.append('file', file);
+
+      // Uploadcare rejects binary 3D files with unknown MIME types.
+      // Re-wrapping them as application/octet-stream fixes the upload.
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+      const binaryExts = ['stl', 'obj', '3mf', 'gcode', 'step', 'stp', 'ply', 'amf'];
+      if (binaryExts.includes(ext)) {
+        try {
+          const buf = await file.arrayBuffer();
+          const blob = new Blob([buf], { type: 'application/octet-stream' });
+          data.append('file', blob, file.name);
+        } catch {
+          // If arrayBuffer fails, fall through to normal append
+          data.append('file', file);
+        }
+      } else {
+        data.append('file', file);
+      }
+
       try {
         const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
         const json = await res.json();
-        if (json.file) { uploaded.push({ name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` }); }
-        else { setUsedFallback(true); uploaded.push({ name: file.name, url: '', fallback: true }); }
-      } catch { setUsedFallback(true); uploaded.push({ name: file.name, url: '', fallback: true }); }
+        if (json.file) {
+          uploaded.push({ name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` });
+        } else {
+          setUsedFallback(true);
+          uploaded.push({ name: file.name, url: '', fallback: true });
+        }
+      } catch {
+        setUsedFallback(true);
+        uploaded.push({ name: file.name, url: '', fallback: true });
+      }
     }
+
     setUploadedFiles(prev => [...prev, ...uploaded]);
     setUploading(false);
   };
@@ -777,13 +805,13 @@ const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
             ? `${files.filter(f => !f.fallback).length} file(s) uploaded${files.some(f => f.fallback) ? `, ${files.filter(f => f.fallback).length} to send via email` : ''}`
             : 'Drag and drop or click to upload'}
         </div>
-        <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL — Max 10MB each</div>
+        <div className="text-xs text-gray-400 mt-1">JPG, PNG, STL, OBJ, 3MF — Max 10MB each</div>
       </div>
     </div>
     {usedFallback && (
       <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-        <p className="text-amber-800 text-xs font-bold mb-1">File upload temporarily unavailable</p>
-        <p className="text-amber-700 text-xs leading-relaxed">No worries — just reply to our confirmation email with your photos or files attached. We will take care of the rest.</p>
+        <p className="text-amber-800 text-xs font-bold mb-1">Some files could not be uploaded automatically</p>
+        <p className="text-amber-700 text-xs leading-relaxed">No problem. Just reply to our confirmation email with those files attached and we will take care of the rest.</p>
       </div>
     )}
     {files.length > 0 && (
@@ -797,12 +825,11 @@ const FileUpload = ({ files, uploading, onUpload, label, usedFallback }: {
   </div>
 );
 
-// ── FIX 2: submitOrder now maps data to match sheet columns exactly:
-// Name | Email | Project Type | Message | File | Date | Payment Interface | Status
+// ── FIX 3: sheetsPayload now sends subtotal and total as separate fields to match
+// the updated sheet columns: Name | Email | Project Type | Message | File | Date | Subtotal | Total | Payment Interface | Status ──
 const submitOrder = async (subject: string, payload: object, fileLinks: string) => {
   const p = payload as any;
 
-  // Email via Web3Forms
   const emailBody = {
     ...payload,
     access_key: '28aa3f21-d905-4e73-95bb-686ad236eb55',
@@ -814,15 +841,7 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
     body: JSON.stringify(emailBody),
   });
 
-  // Google Sheets — mapped to: Name | Email | Project Type | Message | File | Date
-  // "Project Type" = what was ordered (items list + totals)
-  // "Message" = delivery method + notes
-  const projectTypeSummary = [
-    p.items,
-    p.bulkDiscount ? `Bulk Discount: ${p.bulkDiscount}` : null,
-    `Subtotal: ${p.subtotal}`,
-    `Total: ${p.total}`,
-  ].filter(Boolean).join(' | ');
+  const projectTypeSummary = [p.items].filter(Boolean).join(' | ');
 
   const messageSummary = [
     `Delivery: ${p.delivery}`,
@@ -830,15 +849,17 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
   ].filter(Boolean).join(' | ');
 
   const sheetsPayload = {
-    name:        p.name,
-    email:       p.email,
+    name:        p.name        || '',
+    email:       p.email       || '',
     projectType: projectTypeSummary,
     message:     messageSummary,
     files:       fileLinks,
-    date:        p.date,
+    date:        p.date        || new Date().toLocaleString(),
+    subtotal:    p.subtotal    || '',
+    total:       p.total       || '',
   };
 
-  await fetch('https://script.google.com/macros/s/AKfycbyTm53Y4_yrfbFxLkM83agw_KdQ2rCmTQT8VJ0MBthucgY2x9hMbPik-_xBNtewOWwWoA/exec', {
+  await fetch('https://script.google.com/macros/s/AKfycbxcqVmrcRAIt3oYnnVmJ51uPLzCEAOd7b-p1_pjKZTM-BbIs8jvTJl7MZ2luRpR4kMtXw/exec', {
     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(sheetsPayload),
   });
@@ -876,7 +897,7 @@ const CheckoutPage = () => {
 
     const orderLines = items.map(i =>
       i.unitPrice === 0
-        ? `${i.name} x${i.qty} — Quote on request`
+        ? `${i.name} x${i.qty} - Quote on request`
         : `${i.name}${i.color ? ` (${i.color})` : ''} x${i.qty} @ $${i.unitPrice.toFixed(2)} = $${(i.unitPrice * i.qty).toFixed(2)}`
     );
 
@@ -895,7 +916,7 @@ const CheckoutPage = () => {
       date: new Date().toLocaleString(),
     };
 
-    const subject = `New Order from ${name} — $${finalTotal.toFixed(2)}`;
+    const subject = `New Order from ${name} - $${finalTotal.toFixed(2)}`;
 
     try {
       const ok = await submitOrder(subject, payload, fileLinks);
@@ -962,7 +983,7 @@ const CheckoutPage = () => {
                       </div>
                       {item.color && <p className="text-xs text-gray-500 mb-1">Color: {item.color}</p>}
                       {item.type === 'lithophane' && <p className="text-[10px] text-amber-600 font-bold mb-2 flex items-center gap-1"><Camera className="w-3 h-3" /> Upload photo below</p>}
-                      {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mb-2 flex items-center gap-1"><FileText className="w-3 h-3" /> Upload STL/file below</p>}
+                      {item.productId === 5 && <p className="text-[10px] text-brand-primary font-bold mb-2 flex items-center gap-1"><FileText className="w-3 h-3" /> Upload STL or file below</p>}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <button onClick={() => updateQty(item.cartId, item.qty - 1)} className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:border-brand-primary transition-colors"><Minus className="w-3 h-3" /></button>
@@ -991,7 +1012,7 @@ const CheckoutPage = () => {
                     <p className="text-amber-700 text-xs leading-relaxed">
                       {lithoItems.length > 1
                         ? `You have ${lithoItems.length} lithophane styles. Upload all photos here and use the Notes field to tell us which photo goes with which style.`
-                        : 'Upload the photo you want printed. Higher resolution = sharper detail.'}
+                        : 'Upload the photo you want printed. Higher resolution means sharper detail.'}
                     </p>
                     {lithoItems.length > 1 && (
                       <div className="mt-3 space-y-1">
