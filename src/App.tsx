@@ -744,10 +744,14 @@ const DeliveryPicker = ({ value, address, onDelivery, onAddress, error }: {
   </div>
 );
 
-// ─── STL-safe Uploadcare hook ─────────────────────────────────────────────────
-// FIX: Binary 3D files (.stl etc.) are re-wrapped as application/octet-stream
-// before upload. Some browsers assign no MIME type to these files which causes
-// Uploadcare to reject them. Explicit wrapping resolves this reliably.
+// ─── Upload hook ──────────────────────────────────────────────────────────────
+// 3D / binary file types (STL, OBJ, etc.) are NOT sent to Uploadcare at all —
+// Uploadcare rejects them regardless of MIME wrapping tricks.
+// Instead they are immediately flagged as "send via email" so the customer
+// gets a clear, honest message and no silent failure occurs.
+// Images and other supported types are uploaded to Uploadcare as normal.
+const STL_EXTS = ['stl', 'obj', '3mf', 'gcode', 'step', 'stp', 'ply', 'amf'];
+
 const useUploadcare = () => {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string; fallback?: boolean }[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -761,32 +765,26 @@ const useUploadcare = () => {
 
     for (const file of files) {
       const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-      const binaryExts = ['stl', 'obj', '3mf', 'gcode', 'step', 'stp', 'ply', 'amf'];
 
+      // 3D files: skip upload entirely, mark for email
+      if (STL_EXTS.includes(ext)) {
+        setUsedFallback(true);
+        uploaded.push({ name: file.name, url: '', fallback: true });
+        continue;
+      }
+
+      // Images and other files: upload via Uploadcare
       const data = new FormData();
       data.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
       data.append('UPLOADCARE_STORE', '1');
-
-      if (binaryExts.includes(ext)) {
-        // Re-wrap with explicit MIME so Uploadcare does not reject unknown binary types
-        try {
-          const buffer = await file.arrayBuffer();
-          const safeBlob = new Blob([buffer], { type: 'application/octet-stream' });
-          data.append('file', safeBlob, file.name);
-        } catch {
-          data.append('file', file); // fallback: use file as-is
-        }
-      } else {
-        data.append('file', file);
-      }
+      data.append('file', file);
 
       try {
-        const res = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
+        const res  = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: data });
         const json = await res.json();
         if (json.file) {
           uploaded.push({ name: file.name, url: `https://rk9fjvy09i.ucarecd.net/${json.file}/` });
         } else {
-          // Uploadcare rejected the file — flag for email fallback
           setUsedFallback(true);
           uploaded.push({ name: file.name, url: '', fallback: true });
         }
@@ -874,27 +872,24 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
     body: JSON.stringify(emailBody),
   });
 
-  // Sheets: projectType carries items + subtotal in one readable field
-  const projectTypeWithSubtotal = [
-    p.items,
-    p.subtotal ? `Subtotal: ${p.subtotal}` : '',
-  ].filter(Boolean).join(' | ');
-
   const messageSummary = [
     `Delivery: ${p.delivery}`,
     p.notes && p.notes !== 'None' ? `Notes: ${p.notes}` : null,
   ].filter(Boolean).join(' | ');
 
+  // subtotal is its own key so Apps Script can write it to column G
+  // Layout: A:Name | B:Email | C:ProjectType | D:Message | E:Files | F:Date | G:Subtotal | H:Payment Interface | I:Status
   const sheetsPayload = {
-    name:        p.name  || '',
-    email:       p.email || '',
-    projectType: projectTypeWithSubtotal,
+    name:        p.name     || '',
+    email:       p.email    || '',
+    projectType: p.items    || '',
     message:     messageSummary,
     files:       fileLinks,
-    date:        p.date  || new Date().toLocaleString(),
+    date:        p.date     || new Date().toLocaleString(),
+    subtotal:    p.subtotal || '',
   };
 
-  await fetch('https://script.google.com/macros/s/AKfycbxWyfCUl0kyeaGNJ5Mn-A6M1SeZm8cqGrie-allRRxCPGnXFnxd8sJMmrW7Kd-rfw4E/exec', {
+  await fetch('https://script.google.com/macros/s/AKfycbwzBs2-9-sS8lMvRZ0OiXkxxRXphw4FrPZhHAuOMDWKMW4kkd5DwkJwYrsKZ2tITHIX-g/exec', {
     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(sheetsPayload),
   });
