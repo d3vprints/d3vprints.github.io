@@ -906,6 +906,18 @@ const submitOrder = async (subject: string, payload: object, fileLinks: string) 
     total:       p.total       || '',          // H
     orderId:     p.orderId     || '',          // I
   };
+  const sheetsPayload = {
+  name:           p.name        || '',
+  email:          p.email       || '',
+  projectType:    p.items       || '',   // C — line items
+  notes:          p.notes && p.notes !== 'None' ? p.notes : '', // D — just notes
+  files:          fileLinks,             // E
+  date:           p.date        || new Date().toLocaleString(), // F
+  subtotal:       p.subtotal    || '',   // G
+  total:          0       || '',          // H
+  orderId:        p.orderId     || '',          // I
+  shipmentMethod: p.delivery    || '',   // J — e.g. "Dropoff (123 Main St)"
+};
 
   await fetch(SHEETS_URL, {
     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
