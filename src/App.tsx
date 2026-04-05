@@ -403,11 +403,11 @@ const StyleShowcase = () => {
   const [imgIndexes, setImgIndexes] = useState<Record<string, number>>({});
 
   const styles = [
-    { id: 'flat',   name: "Flat Panel",   tag: "Most Popular", desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",        price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png"],               best: "Portraits, families, pets" },
-    { id: 'night',  name: "Night Light",  tag: "Smart Light",  desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",        detail: "Auto on/off light sensor",      price: LITHOPHANE_PRICES['Night Light'],  images: ["/transformation.png","/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
-    { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",      detail: "Stand-alone display piece",     price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],                               best: "Couples, Valentine's Day, memorials" },
-    { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",               detail: "Stand-alone piece, no LED base", price: LITHOPHANE_PRICES['Custom Shape'], images: ["/custom1.png","/custom2.png","/custom3.png","/custom4.png"],                                best: "Logos, names, unique gifts" },
-  ];
+  { id: 'night',  name: "Night Light",  tag: "Most Popular", desc: "A curved cylindrical lithophane with a built-in smart sensor. Turns on when the room gets dark and off when there is light.",        detail: "Auto on/off light sensor",      price: LITHOPHANE_PRICES['Night Light'],  images: ["/transformation.png","/nightlightlitho.png", "/nightlight2litho.png"], best: "Bedrooms, kids rooms, hallways", highlight: true },
+  { id: 'heart',  name: "Heart Shape",  tag: "Best Gift",    desc: "A heart-shaped lithophane panel with the same photographic detail. Stand-alone or can be hung. The most gifted style we make.",      detail: "Stand-alone display piece",     price: LITHOPHANE_PRICES['Heart Shape'],  images: ["/heartlitho.png"],              best: "Couples, Valentine's Day, memorials" },
+  { id: 'flat',   name: "Flat Panel",   tag: "Classic",      desc: "The classic lithophane. A thin rectangular panel that sits on a warm LED base. Great for portraits, family shots, and pet photos.", detail: "Warm LED base included",        price: LITHOPHANE_PRICES['Flat Panel'],   images: ["/flatlitho.png"],               best: "Portraits, families, pets" },
+  { id: 'custom', name: "Custom Shape", tag: "Unique",       desc: "Want something different? We can print lithophanes in custom shapes: names, initials, logos, animals, silhouettes.",               detail: "Stand-alone piece, no LED base", price: LITHOPHANE_PRICES['Custom Shape'], images: ["/custom1.png","/custom2.png","/custom3.png","/custom4.png"], best: "Logos, names, unique gifts" },
+];
 
   const getImg = (id: string) => imgIndexes[id] ?? 0;
   const prevImg = (id: string, len: number) => setImgIndexes(prev => ({ ...prev, [id]: (getImg(id) - 1 + len) % len }));
@@ -640,6 +640,7 @@ const BASE_REVIEWS = [
   { name: "Sarah M.", rating: 5, text: "Ordered a flat panel lithophane of my dog and it came out absolutely beautiful. The detail is incredible, you can see every strand of fur. Will definitely be ordering more.", date: "March 2025" },
   { name: "James R.", rating: 5, text: "Got the heart shape for my girlfriend for Valentine's Day. She cried. That is all I need to say. Incredible quality and the turnaround was super fast.", date: "February 2025" },
   { name: "Priya K.", rating: 5, text: "Ordered a night light for my daughter's room. The automatic sensor is so cool, it just turns on at night by itself. She loves it and so do I.", date: "March 2025" },
+  { name: "Priya K.", rating: 5, text: "Ordered a night light for my daughter's room. The automatic sensor is so cool, it just turns on at night by itself. She loves it and so do I.", date: "March 2025" },
 ];
 
 const ReviewCard = ({ review }: { review: any }) => (
@@ -659,14 +660,14 @@ const ReviewCard = ({ review }: { review: any }) => (
 
 const Reviews = () => {
   const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({ name: '', rating: 5, text: '' });
+  const [form, setForm] = useState({ name: '', rating: 0, text: '' });
   const reviews = BASE_REVIEWS;
   const doubled = [...reviews, ...reviews];
   const duration = Math.max(reviews.length * 8, 24);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.text) return;
+    if (!form.name || !form.text || form.rating === 0) return;
     try {
       await fetch('https://api.web3forms.com/submit', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -715,11 +716,17 @@ const Reviews = () => {
                   className="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary" placeholder="Your name" required />
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Rating</label>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mb-1">
                     {[1,2,3,4,5].map(n => (
-                      <button key={n} type="button" onClick={() => setForm({ ...form, rating: n })} className={`text-2xl transition-all ${n <= form.rating ? 'text-yellow-400' : 'text-gray-600'}`}>★</button>
+                      <button key={n} type="button" onClick={() => setForm({ ...form, rating: n })}
+                        className={`text-2xl transition-all ${n <= form.rating ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-300'}`}>★</button>
                     ))}
                   </div>
+                  {form.rating === 0 && form.name && form.text && (
+                    <p className="text-red-400 text-xs font-semibold mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" /> Please select a rating before submitting.
+                    </p>
+                  )}
                 </div>
                 <textarea rows={4} value={form.text} onChange={e => setForm({ ...form, text: e.target.value })}
                   className="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"
@@ -809,7 +816,7 @@ const FileUpload = ({
   label: string;
   usedFallback?: boolean;
   // stlError: set by parent when an STL/3D file is selected — contains mailto link
-  stlError?: { message: string; mailto: string } | null;
+  stlError?: string | null;
 }) => (
   <div>
     <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">{label}</label>
@@ -837,19 +844,15 @@ const FileUpload = ({
 
     {/* STL blocked — show Email Now button */}
     <AnimatePresence>
-      {stlError && (
-        <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-          className="mt-3 bg-red-50 border border-red-200 rounded-xl px-4 py-4">
-          <p className="text-red-600 text-sm font-bold mb-3 flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" /> {stlError.message}
-          </p>
-          <a href={stlError.mailto}
-            className="inline-flex items-center gap-2 bg-brand-dark text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-primary transition-colors">
-            <Mail className="w-4 h-4" /> Email File Now
-          </a>
-        </motion.div>
-      )}
-    </AnimatePresence>
+  {stlError && (
+    <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+      className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-4">
+      <p className="text-amber-800 text-sm font-bold flex items-center gap-2">
+        <AlertCircle className="w-4 h-4 shrink-0" /> {stlError}
+      </p>
+    </motion.div>
+  )}
+</AnimatePresence>
 
     {/* Uploadcare quota fallback */}
     {usedFallback && !stlError && (
@@ -926,7 +929,7 @@ const CheckoutPage = () => {
   const { uploadedFiles, uploading, handleUpload, usedFallback } = useUploadcare();
 
   // STL block error — set when customer tries to upload a 3D file
-  const [stlError, setStlError] = useState<{ message: string; mailto: string } | null>(null);
+ const [stlError, setStlError] = useState<string | null>(null);
 
   // Order ID — generated at submit time so it's consistent across email + sheets
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -959,10 +962,7 @@ const CheckoutPage = () => {
       const body = encodeURIComponent(
         `Hi D3V Prints,\n\nOrder reference: ${tempId}\nName: ${name || ''}\nEmail: ${email || ''}\n\nI'm attaching my 3D file for my custom print order.\n\n[Attach your STL/OBJ/3MF file here]`
       );
-      setStlError({
-        message: 'STL, OBJ, and 3MF files cannot be uploaded here.',
-        mailto: `mailto:d3vprint@gmail.com?subject=${subj}&body=${body}`,
-      });
+      setStlError('STL, OBJ, and 3MF files cannot be uploaded here. After placing your order, email your file to d3vprint@gmail.com with your Order ID in the subject line.');
       // Reset the input so the same file can be re-selected after seeing the error
       e.target.value = '';
       return;
@@ -1151,12 +1151,12 @@ const CheckoutPage = () => {
                   </div>
                 )}
                 {hasCustomPrint && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-2xl px-5 py-4 mb-5">
-                    <p className="text-blue-800 font-bold text-sm mb-1 flex items-center gap-2">
-                      <Mail className="w-4 h-4" /> STL/3D files — email after checkout
+                  <div className="bg-blue-50 border border-blue-200 rounded-2xl px-5 py-4 mb-6 text-left">
+                    <p className="text-blue-700 text-sm font-bold mb-1 flex items-center gap-2">
+                      <Mail className="w-4 h-4" /> Action needed: Send your STL file
                     </p>
-                    <p className="text-blue-700 text-xs leading-relaxed">
-                      STL, OBJ, and 3MF files cannot be uploaded here. After placing your order, email your file to <span className="font-bold">d3vprint@gmail.com</span> with your Order ID in the subject line.
+                    <p className="text-blue-600 text-xs leading-relaxed">
+                      Email your STL, OBJ, or 3MF file to <span className="font-bold">d3vprint@gmail.com</span> with your Order ID <span className="font-bold">{orderId}</span> in the subject line. We won't start printing until we receive it.
                     </p>
                   </div>
                 )}
