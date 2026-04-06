@@ -326,7 +326,7 @@ const Hero = () => (
         <p className="text-lg text-gray-600 max-w-md mb-8 leading-relaxed">
           D3V Prints transforms your favorite photos into stunning lithophane night lights. Upload a photo, we do the rest.
         </p>
-        <div className="flex flex-wrap gap-4 mb-8">
+        <div className="flex flex-wrap gap-4 mb-8 justify-center lg:justify-start">
           <a href="#styles" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
             Order a Night Light <ArrowRight className="w-5 h-5" />
           </a>
