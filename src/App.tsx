@@ -310,8 +310,13 @@ const Navbar = () => {
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 const Hero = () => (
   <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-      <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center text-center lg:text-left">
+      <motion.div
+  initial={{ opacity: 0, x: -50 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.6 }}
+  className="flex flex-col items-center lg:items-start"
+>
         <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
           <Camera className="w-3 h-3" /> Turn Your Photos Into Art
         </div>
@@ -325,7 +330,7 @@ const Hero = () => (
           <a href="#styles" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
             Order a Night Light <ArrowRight className="w-5 h-5" />
           </a>
-          <a href="#styles" className="bg-white border border-gray-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-50 transition-colors">See Styles</a>
+          //<a href="#styles" className="bg-white border border-gray-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-50 transition-colors">See Styles</a>
         </div>
         {SALE_ACTIVE && (
           <div className="inline-flex items-center gap-2 bg-brand-primary/10 border border-brand-primary/30 text-brand-dark px-4 py-2 rounded-xl text-sm font-bold">
@@ -1314,10 +1319,10 @@ const Footer = () => (
 const Home = () => (
   <main>
     <Hero />
+		<CurrentProducts />
+		<StyleShowcase />
     <LithophaneSection />
-    <StyleShowcase />
     <HowItWorks />
-    <CurrentProducts />
     <Reviews />
   </main>
 );
