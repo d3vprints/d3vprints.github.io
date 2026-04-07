@@ -478,7 +478,7 @@ const StyleShowcase = () => {
                     )}
                   </div>
                   <button onClick={() => handleAddToCart(style)}
-                    className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${addedId === style.id ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-primary'}`}>
+                    className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${addedId === style.id ? 'bg-green-500 text-white' : 'bg-white/5 border border-white/10 text-white hover:bg-brand-primary'}`}>
                     {addedId === style.id ? <><CheckCircle className="w-4 h-4" /> Added to Cart</> : <><ShoppingCart className="w-4 h-4" /> Add to Cart</>}
                   </button>
                 </div>
