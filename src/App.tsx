@@ -425,16 +425,16 @@ const StyleShowcase = () => {
   };
 
   return (
-    <section id="styles" className="py-24 px-6 bg-white">
+    <section id="styles" className="py-24 px-6 bg-brand-dark">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">Choose Your Style</div>
-          <h2 className="text-5xl font-bold mb-4">Which One Is Right <span className="text-brand-primary italic">For You?</span></h2>
-          <p className="text-gray-500 max-w-xl mx-auto">Same 0.1mm precision printing across every style. Pick the shape and light that fits your space.</p>
+          <h2 className="text-5xl font-bold mb-4 text-white">Which One Is Right <span className="text-brand-primary italic">For You?</span></h2>
+			<p className="text-gray-400 max-w-xl mx-auto">Same 0.1mm precision printing across every style. Pick the shape and light that fits your space.</p>
         </div>
         {SALE_ACTIVE && (
           <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-2xl px-6 py-4 mb-10 text-center">
-            <p className="text-brand-dark font-bold text-sm"><Tag className="w-4 h-4 inline mr-1 text-brand-primary" />Launch Sale: First 50 customers only. Prices shown are already reduced.</p>
+            <p className="text-white font-bold text-sm"><Tag className="w-4 h-4 inline mr-1 text-brand-primary" />Launch Sale: First 50 customers only. Prices shown are already reduced.</p>
           </div>
         )}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -486,7 +486,7 @@ const StyleShowcase = () => {
             </motion.div>
           ))}
         </div>
-        <div className="bg-brand-dark text-white rounded-2xl px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className=" bg-white/5 border border-white/10 text-white rounded-2xl px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <h4 className="font-bold text-lg mb-1">Ordering 6 or more? You get a bulk discount.</h4>
             <p className="text-gray-400 text-sm">Orders of {BULK_THRESHOLD + 1}+ lithophanes automatically get {BULK_DISCOUNT * 100}% off. Perfect for events, weddings, or family gifts.</p>
