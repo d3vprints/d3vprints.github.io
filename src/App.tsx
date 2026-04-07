@@ -330,7 +330,6 @@ const Hero = () => (
           <a href="#styles" className="bg-brand-dark text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
             Order a Night Light <ArrowRight className="w-5 h-5" />
           </a>
-          //<a href="#styles" className="bg-white border border-gray-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-50 transition-colors">See Styles</a>
         </div>
         {SALE_ACTIVE && (
           <div className="inline-flex items-center gap-2 bg-brand-primary/10 border border-brand-primary/30 text-brand-dark px-4 py-2 rounded-xl text-sm font-bold">
@@ -1319,11 +1318,11 @@ const Footer = () => (
 const Home = () => (
   <main>
     <Hero />
-		<CurrentProducts />
 		<StyleShowcase />
-    <LithophaneSection />
-    <HowItWorks />
-    <Reviews />
+		<CurrentProducts />
+		<LithophaneSection />
+		<HowItWorks />
+		<Reviews />
   </main>
 );
 
