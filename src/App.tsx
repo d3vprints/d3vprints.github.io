@@ -271,7 +271,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#styles" className="hover:text-brand-primary transition-colors">Styles</a>
           <a href="#products" className="hover:text-brand-primary transition-colors">Products</a>
-		  <a href="#lithophanes" className="hover:text-brand-primary transition-colors font-semibold text-brand-primary">Lithophanes</a>
+		  <a href="#lithophanes" className="hover:text-brand-primary transition-colors">Lithophanes</a>
           <a href="#reviews" className="hover:text-brand-primary transition-colors">Reviews</a>
           <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors">
             <ShoppingCart className="w-5 h-5" />
