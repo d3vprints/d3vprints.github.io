@@ -20,6 +20,75 @@
     li { margin-bottom: 8px; font-size: 15px; }
     .divider { border: none; border-top: 1px solid #e5e5e5; margin: 40px 0; }
     a { color: #10b981; }
+
+    /* ── Design Credits collapsible ── */
+    .credits-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #888;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: border-color 0.2s, color 0.2s;
+      font-family: inherit;
+    }
+    .credits-toggle:hover { border-color: #10b981; color: #10b981; }
+    .credits-toggle .arrow {
+      display: inline-block;
+      transition: transform 0.25s ease;
+      font-style: normal;
+    }
+    .credits-toggle.open .arrow { transform: rotate(180deg); }
+
+    .credits-panel {
+      display: none;
+      margin-top: 14px;
+      background: #fafafa;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .credits-panel.open { display: block; }
+
+    .credit-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #eeeeee;
+    }
+    .credit-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .credit-item strong {
+      display: block;
+      font-size: 13px;
+      color: #0a0a0a;
+      margin-bottom: 3px;
+    }
+    .credit-item span {
+      font-size: 11.5px;
+      color: #888;
+      line-height: 1.6;
+    }
+    .credit-item a {
+      color: #10b981;
+      font-size: 11.5px;
+      word-break: break-all;
+    }
+    .license-badge {
+      display: inline-block;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+    }
   </style>
 </head>
 <body>
@@ -51,8 +120,56 @@
     <p>Refunds are not provided for orders where the issue was caused by low quality photos uploaded by the customer or incorrect information provided at the time of ordering.</p>
 
     <h2>5. Intellectual Property</h2>
-    <p>Some products sold by D3V Prints use third party designs licensed under Creative Commons Attribution 4.0 International (CC BY 4.0) or similar open licenses. Original designers retain full copyright of their respective works. D3V Prints provides physical printing services only and is not affiliated with original designers. Full design credits are available upon request.</p>
-    <p>The D3V Prints name, logo, and website content are the property of D3V Prints and may not be reproduced without permission.</p>
+    <p>Some products sold by D3V Prints use third party designs licensed under Creative Commons Attribution 4.0 International (CC BY 4.0), Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0), or similar open licenses. Original designers retain full copyright of their respective works. D3V Prints provides physical printing services only and is not affiliated with original designers.</p>
+    <p>In accordance with the terms of these licenses, we provide full attribution for each applicable design below.</p>
+
+    <button class="credits-toggle" onclick="toggleCredits(this)">
+      <span class="arrow">▾</span> View design credits and license links
+    </button>
+
+    <div class="credits-panel" id="creditsPanel">
+
+      <div class="credit-item">
+        <strong>Mini Flexi Octopus</strong>
+        <span>
+          "Cute mini octopus" by Louay23644 on Thingiverse.<br />
+          <a href="https://www.thingiverse.com/thing:6942215" target="_blank" rel="noopener noreferrer">thingiverse.com/thing:4576952</a><br />
+          License: <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)</a>
+        </span>
+        <br /><span class="license-badge">CC BY-SA 3.0</span>
+      </div>
+
+      <div class="credit-item">
+        <strong>Credit Card Phone Stand</strong>
+        <span>
+          "0.8mm thin adjustable credit card phone stand" by jq910 on Thingiverse.<br />
+          <a href="https://www.thingiverse.com/thing:5424800" target="_blank" rel="noopener noreferrer">thingiverse.com/thing:4811896</a><br />
+          License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>
+        </span>
+        <br /><span class="license-badge">CC BY 4.0</span>
+      </div>
+
+      <div class="credit-item">
+        <strong>118dB Emergency Whistle</strong>
+        <span>
+          "V29" by jzisa on Thingiverse.<br />
+          <a href="https://www.thingiverse.com/thing:1179160" target="_blank" rel="noopener noreferrer">thingiverse.com/thing:2358367</a><br />
+          License: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>
+        </span>
+        <br /><span class="license-badge">CC BY 4.0</span>
+      </div>
+
+      <div class="credit-item">
+        <strong>Custom Keychains</strong>
+        <span>
+          Credits vary by design. Specific attribution is provided upon request and included in order confirmation emails for each custom keychain order. All designs used are sourced from platforms such as Thingiverse and are used under their applicable Creative Commons licenses.
+        </span>
+        <br /><span class="license-badge">Credits on request</span>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 20px;">The D3V Prints name, logo, and website content are the property of D3V Prints and may not be reproduced without permission.</p>
 
     <h2>6. Limitation of Liability</h2>
     <p>D3V Prints is a small business and our liability is limited to the value of your individual order. We are not responsible for indirect, incidental, or consequential damages arising from the use of our products.</p>
@@ -61,7 +178,16 @@
     <p>We may update these terms from time to time. Continued use of our website after changes are posted constitutes your acceptance of the updated terms.</p>
 
     <h2>8. Contact</h2>
-    <p>If you have any questions about these terms, you can reach us at <a href="mailto:d3vprints@gmail.com">d3vprints@gmail.com</a> or through the order form on our website.</p>
+    <p>If you have any questions about these terms, you can reach us at <a href="mailto:d3vprint@gmail.com">d3vprint@gmail.com</a> or through the order form on our website.</p>
   </div>
+
+  <script>
+    function toggleCredits(btn) {
+      const panel = document.getElementById('creditsPanel');
+      const isOpen = panel.classList.contains('open');
+      panel.classList.toggle('open', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+    }
+  </script>
 </body>
 </html>
